@@ -14,8 +14,8 @@ sap.ui.define(
 
     // libs
     'sap/ui/thirdparty/d3',
-    'ps/libs/c3',
-    'ps/libs/lodash'
+    'vendor/c3',
+    'vendor/lodash'
   ],
   function(Control, ChartAxis, ChartAxisLabel, library) {
     /**

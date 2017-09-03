@@ -1,0 +1,10 @@
+### macOS ###
+*.DS_Store
+
+### IDE (Atom/Webstorm/etc) ###
+.imdone/
+/.idea/
+
+### Node ###
+node_modules/
+*.log
