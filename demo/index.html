@@ -10,7 +10,7 @@
 
     <script
         id="sap-ui-bootstrap"
-        src="https://openui5.hana.ondemand.com/1.48.2/resources/sap-ui-core.js"
+        src="https://openui5.hana.ondemand.com/1.38.6/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_belize"
         data-sap-ui-theme-roots='{
             "pulseshiftred1": "../../../../ui5-themes/pulseshiftred1/UI5"
@@ -29,7 +29,6 @@
     <script>
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
-                "sap/m/Label",
                 "ui5/viz/Chart",
                 "ui5/viz/ChartSeries",
                 "ui5/viz/ChartDataPoint",
@@ -49,7 +48,7 @@
 
                 var oDataSeries = new ChartSeries({
                     type: "bar",
-                    shapeStyle: "striped",
+                    shapeStyle: ui5.viz.LineStyle.Striped,
                     name: "Metric",
                     data: [
                         new ChartDataPoint({
@@ -71,9 +70,9 @@
                 });
 
                 var oDataSeries2 = new ChartSeries({
-                    type: "area",
-                    lineStyle: "dashed",
-                    shapeStyle: "striped",
+                    type: ui5.viz.ChartSeriesType.Spline,
+                    lineStyle: ui5.viz.LineStyle.Dashed,
+                    shapeStyle: ui5.viz.LineStyle.Striped,
                     showLabels: false,
                     data: [
                         oDataPoint,
@@ -129,7 +128,7 @@
                     value: 6,
                     axis: "y",
                     title: "Z I E L W E R T",
-                    style: "dashed",
+                    style: ui5.viz.LineStyle.Dashed,
                     color: "red"
                 });
 
@@ -146,14 +145,14 @@
                             value: 8,
                             axis: "y",
                             title: "T O P",
-                            style: "dashed",
+                            style: ui5.viz.LineStyle.Dashed,
                             color: "blue"
                         }),
                         new ChartLine({
                             value: 2,
                             axis: "x",
                             title: "V E R T I C A L",
-                            style: "dotted",
+                            style: ui5.viz.LineStyle.Dashed.Dotted,
                             color: "green"
                         })
                     ],
@@ -161,14 +160,14 @@
                         new ChartArea({
                             startValue: 2,
                             endValue: 4,
-                            axis: "y",
+                            axis: ui5.viz.Axis.Y,
                             color: "green"
                         }),
                         new ChartArea({
                             startValue: 3,
                             endValue: 4,
-                            axis: "x",
-                            style: "striped",
+                            axis: ui5.viz.Axis.X,
+                            style: ui5.viz.LineStyle.Striped,
                             color: "black"
                         })
                     ],
@@ -180,55 +179,55 @@
 
                 oChartStatic.placeAt("chart1").addStyleClass("sapUiSmallMargin");
 
-                setTimeout(() => oDataPoint.setValue(10), 500);
+                // setTimeout(() => oDataPoint.setValue(10), 500);
 
-                setTimeout(() => oDataPoint.setValue(5), 1000);
+                // setTimeout(() => oDataPoint.setValue(5), 1000);
 
-                setTimeout(() => oDataSeries.setColor("#ff0000"), 1250);
+                // setTimeout(() => oDataSeries.setColor("#ff0000"), 1250);
 
-                setTimeout(() => oDataSeries.setType("area-spline"), 2500);
+                // setTimeout(() => oDataSeries.setType("area-spline"), 2500);
 
-                setTimeout(() => oDataSeries.setName("Critical Metric"), 3000);
+                // setTimeout(() => oDataSeries.setName("Critical Metric"), 3000);
 
-                setTimeout(() => oDataSeries.setColor("#00ff00"), 3500);
+                // setTimeout(() => oDataSeries.setColor("#00ff00"), 3500);
 
-                setTimeout(() => oDataSeries.setShowLabels(true), 4000);
+                // setTimeout(() => oDataSeries.setShowLabels(true), 4000);
 
-                setTimeout(() => {
-                    oDataSeries2.setType("area-spline");
-                    oDataSeries.setGroupKey("group1");
-                    oDataSeries2.setGroupKey("group1");
-                }, 4500);
+                // setTimeout(() => {
+                //     oDataSeries2.setType("area-spline");
+                //     oDataSeries.setGroupKey("group1");
+                //     oDataSeries2.setGroupKey("group1");
+                // }, 4500);
 
-                setTimeout(() => oDataSeries.setVisible(false), 5000);
+                // setTimeout(() => oDataSeries.setVisible(false), 5000);
 
-                setTimeout(() => oDataPoint.setVisible(false), 5500);
+                // setTimeout(() => oDataPoint.setVisible(false), 5500);
 
-                setTimeout(() => oDataSeries.setVisible(true), 6000);
+                // setTimeout(() => oDataSeries.setVisible(true), 6000);
 
-                setTimeout(() => oXAxis.setVisible(false), 6500);
+                // setTimeout(() => oXAxis.setVisible(false), 6500);
 
-                setTimeout(() => oXAxis.setVisible(true), 7000);
+                // setTimeout(() => oXAxis.setVisible(true), 7000);
 
-                setTimeout(() => oXAxis.setTitle("YESSSSSSS"), 7500);
+                // setTimeout(() => oXAxis.setTitle("YESSSSSSS"), 7500);
 
-                setTimeout(() => oXAxis.setShowTitle(false), 8000);
+                // setTimeout(() => oXAxis.setShowTitle(false), 8000);
 
-                setTimeout(() => oXAxis.setShowGridLines(false), 8500);
+                // setTimeout(() => oXAxis.setShowGridLines(false), 8500);
 
-                setTimeout(() => oXAxisLabel.setTitle("Fette Katze"), 9000);
+                // setTimeout(() => oXAxisLabel.setTitle("Fette Katze"), 9000);
 
-                setTimeout(() => oChartStatic.setYAxis(new ChartAxis({
-                    labels: [new ChartAxisLabel({
-                        value: 8,
-                        title: "TARGET"
-                    })]
-                })), 9500);
+                // setTimeout(() => oChartStatic.setYAxis(new ChartAxis({
+                //     labels: [new ChartAxisLabel({
+                //         value: 8,
+                //         title: "TARGET"
+                //     })]
+                // })), 9500);
 
-                setTimeout(() => {
-                    oLine.setValue(3);
-                    oLine.destroy(); //setAxis("x");
-                }, 10500);
+                // setTimeout(() => {
+                //     oLine.setValue(3);
+                //     oLine.destroy(); //setAxis("x");
+                // }, 10500);
 
 
                 /* === TEST WITH BINDED DATA === */
@@ -336,7 +335,7 @@
                     showLabels: true,
                     groupKey: "elephant", // assign group key to all series
                     lineStyle: "dashed",
-                    shapeStyle: "striped",
+                    shapeStyle: ui5.viz.LineStyle.Striped,
                     yAxis: "{axis}",
                     data: {
                         path: "data/",
@@ -413,13 +412,13 @@
                 oChartBinded.setModel(oModel);
                 oChartBinded.placeAt("chart2");
 
-                setTimeout(() => oModel.setProperty("/series/0/data/1/value", 10), 1500);
+                // setTimeout(() => oModel.setProperty("/series/0/data/1/value", 10), 1500);
 
-                setTimeout(() => oModel.setProperty("/series/0/data/1/value", 5), 2000);
+                // setTimeout(() => oModel.setProperty("/series/0/data/1/value", 5), 2000);
 
-                setTimeout(() => oModel.setProperty("/series/1/data/2/value", 10), 2250);
+                // setTimeout(() => oModel.setProperty("/series/1/data/2/value", 10), 2250);
 
-                setTimeout(() => oModel.setProperty("/series/1/axis", "y2"), 10000);
+                // setTimeout(() => oModel.setProperty("/series/1/axis", "y2"), 10000);
 
                 /* === A STATIC ONE AGAIN === */
 
@@ -460,7 +459,7 @@
                         new ChartSeries({
                             type: "bar",
                             lineStyle: "dotted",
-                            shapeStyle: "striped",
+                            shapeStyle: ui5.viz.LineStyle.Striped,
                             name: "Metric",
                             groupKey: "stackUs",
                             data: [
@@ -532,9 +531,9 @@
 
                 oChartStatic3.placeAt("chart3").addStyleClass("sapUiSmallMargin");
 
-                setTimeout(() => oChartSeries.setShapeStyle("striped"), 6500);
+                // setTimeout(() => oChartSeries.setShapeStyle(ui5.viz.LineStyle.Striped), 6500);
 
-                setTimeout(() => oChartSeries.setShapeStyle("default"), 7000);
+                // setTimeout(() => oChartSeries.setShapeStyle("default"), 7000);
 
 
                 /* === A NAKED ONE === */

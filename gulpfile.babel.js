@@ -6,16 +6,36 @@ const babel = require('gulp-babel')
 const uglify = require('gulp-uglify')
 const rename = require('gulp-rename')
 const ui5preload = require('gulp-ui5-preload')
+const gulpSequence = require('gulp-sequence')
 
 const CONFIG = {
-    libs: [
-      {
-        name: 'ui5.libs',
-        path: './src/ui5',
-        createPreload: true
-      }
-    ]
-  }
+  libs: [
+    {
+      name: 'ui5.libs',
+      path: './src/ui5',
+      createPreload: true
+    }
+  ]
+}
+
+// default task
+gulp.task('default', done => {
+  gulpSequence('scripts', 'ui5-preload', done)
+})
+
+// lint task to compile babel es2016 to es2015 and save them minified
+gulp.task('scripts', () => {
+  return (
+    gulp
+      .src([
+        './src/**/*.js',
+        '!./src/**/*-dbg.js'
+      ])
+      .pipe(babel())
+      .pipe(rename({ suffix: '-dbg' }))
+      .pipe(gulp.dest('./src'))
+  )
+})
 
 // build library-preload.js file for all ui5 modules
 gulp.task('ui5-preload', () =>
@@ -24,7 +44,10 @@ Promise.all(
     oLib =>
       new Promise((resolve, reject) =>
         gulp
-          .src([`${oLib.path}/**/*.js`])
+          .src([
+            `${oLib.path}/**/*.js`,
+            `!${oLib.path}/**/*-dbg.js`
+          ])
           // will apply settings from /.babelrc automatically
           .pipe(babel())
           // minify JS
