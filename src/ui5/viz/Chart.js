@@ -1282,7 +1282,7 @@ sap.ui.define(
 
         if (iAxisTicks < iSeriesTicks) {
           iDeltaTicks = iSeriesTicks - iAxisTicks
-          for (let i = 0; i <= iDeltaTicks; i++) {
+          for (let i = 0; i < iDeltaTicks; i++) {
             // add label without fire update event
             Control.prototype.addAggregation.call(
               oXAxis,
@@ -1316,7 +1316,7 @@ sap.ui.define(
 
       /**
        * Getter for aggregation <code>y2Axis</code>.
-       *
+       *        
        * @return {ui5.viz.ChartAxis} return y2 axis
        * @public
        */
@@ -1361,7 +1361,7 @@ sap.ui.define(
           }
         }
 
-        if (['xAxis', 'yAxis', 'y2Axis2'].includes(sAggregationName)) {
+        if (['xAxis', 'yAxis', 'y2Axis'].includes(sAggregationName)) {
           // other than the CHartSeries, we must rerender the chart when an Axis is added, because not all attributes/aggregations can be updated via c3js API, yet
           Control.prototype.setAggregation.call(
             this,
@@ -1843,7 +1843,7 @@ sap.ui.define(
               : aSeries.reduce((oTypes, oSeries) => {
                   // return a map with the structure: { @seriesKey: @seriesColor, ... }
                   if (oSeries.getColor()) {
-                    oTypes[oSeries.getKey()] = oSeries.getColor()
+                    oTypes[oSeries.getKey()] = oSeries.getColor();
                   }
                   return oTypes
                 }, {})

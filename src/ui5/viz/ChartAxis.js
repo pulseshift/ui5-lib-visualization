@@ -187,10 +187,10 @@ sap.ui.define(
       /**
        * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param iIndex {int} the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {int} [iIndex] the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
        */
