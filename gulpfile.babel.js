@@ -29,7 +29,12 @@ gulp.task('default', done => {
 // lint task to compile babel es2016 to es2015 and save them minified
 gulp.task('scripts', () => {
   return gulp
-    .src(['./src/**/*.js', '!./src/**/*-dbg.js'])
+    .src([
+      './src/**/*.js',
+      '!./src/**/*-dbg.js',
+      '!./src/**/*-preload.js',
+      '!./src/vendor/**/*'
+    ])
     .pipe(babel())
     .pipe(rename({ suffix: '-dbg' }))
     .pipe(gulp.dest('./src'))

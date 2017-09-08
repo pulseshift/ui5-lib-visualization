@@ -159,7 +159,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.AxisType = {
-      Default: 'Default',
+      Indexed: 'Indexed',
+      Category: 'Category',
       Time: 'Time'
     }
 
@@ -287,9 +288,8 @@ sap.ui.define(
      * @protected
      */
     ui5.viz.parseCSSSize = function(sCSSSize) {
-      var aUnitMatches = sCSSSize.match(
-        /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/i
-      ) || []
+      var aUnitMatches =
+        sCSSSize.match(/^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/i) || []
       return {
         value: parseFloat(sCSSSize, 10),
         unit: aUnitMatches[2] ? aUnitMatches[2].toLowerCase() : 'px'
@@ -312,41 +312,44 @@ sap.ui.define(
     /* c3js library extension                                      */
     /* =========================================================== */
 
-    // // add toggle function to show/hide Y2 axis by API
-    // if (!c3.chart.fn.axis.showY2) {
-    //   // show/hide Y2 axis
-    //   c3.chart.fn.axis.showY2 = function(shown) {
-    //     let $$ = this.internal, config = $$.config
-    //     config.axis_y2_show = !!shown
-    //     $$.axes.y2.style(
-    //       'visibility',
-    //       config.axis_y2_show ? 'visible' : 'hidden'
-    //     )
-    //     $$.redraw()
-    //   }
-    // }
+    // add toggle function to show/hide Y2 axis by API
+    if (!c3.chart.fn.axis.showY2) {
+      // show/hide Y2 axis
+      c3.chart.fn.axis.showY2 = function(shown) {
+        let $$ = this.internal,
+          config = $$.config
+        config.axis_y2_show = !!shown
+        $$.axes.y2.style(
+          'visibility',
+          config.axis_y2_show ? 'visible' : 'hidden'
+        )
+        $$.redraw()
+      }
+    }
 
-    // // add toggle function to show/hide Y axis by API
-    // if (!c3.chart.fn.axis.showY) {
-    //   // show/hide Y axis
-    //   c3.chart.fn.axis.showY = function(shown) {
-    //     let $$ = this.internal, config = $$.config
-    //     config.axis_y_show = !!shown
-    //     $$.axes.y.style('visibility', config.axis_y_show ? 'visible' : 'hidden')
-    //     $$.redraw()
-    //   }
-    // }
+    // add toggle function to show/hide Y axis by API
+    if (!c3.chart.fn.axis.showY) {
+      // show/hide Y axis
+      c3.chart.fn.axis.showY = function(shown) {
+        let $$ = this.internal,
+          config = $$.config
+        config.axis_y_show = !!shown
+        $$.axes.y.style('visibility', config.axis_y_show ? 'visible' : 'hidden')
+        $$.redraw()
+      }
+    }
 
-    // // add toggle function to show/hide X axis by API
-    // if (!c3.chart.fn.axis.showX) {
-    //   // show/hide X axis
-    //   c3.chart.fn.axis.showX = function(shown) {
-    //     let $$ = this.internal, config = $$.config
-    //     config.axis_x_show = !!shown
-    //     $$.axes.x.style('visibility', config.axis_x_show ? 'visible' : 'hidden')
-    //     $$.redraw()
-    //   }
-    // }
+    // add toggle function to show/hide X axis by API
+    if (!c3.chart.fn.axis.showX) {
+      // show/hide X axis
+      c3.chart.fn.axis.showX = function(shown) {
+        let $$ = this.internal,
+          config = $$.config
+        config.axis_x_show = !!shown
+        $$.axes.x.style('visibility', config.axis_x_show ? 'visible' : 'hidden')
+        $$.redraw()
+      }
+    }
 
     /* =========================================================== */
     /* Polyfills                                                   */

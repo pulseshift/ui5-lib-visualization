@@ -8,45 +8,32 @@
 
     <title>Chart Test</title>
 
-    <script
-        id="sap-ui-bootstrap"
-        src="https://openui5.hana.ondemand.com/1.38.6/resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_belize"
+    <script id="sap-ui-bootstrap" src="https://openui5.hana.ondemand.com/1.40.1/resources/sap-ui-core.js" data-sap-ui-theme="sap_belize"
         data-sap-ui-theme-roots='{
             "pulseshiftred1": "../../../../ui5-themes/pulseshiftred1/UI5"
-        }'
-        data-sap-ui-libs="sap.m"
-        data-sap-ui-bindingSyntax="complex"
-        data-sap-ui-compactVersion="edge"
-        data-sap-ui-preload="async"
+        }' data-sap-ui-libs="sap.m, ui5.viz" data-sap-ui-bindingSyntax="complex" data-sap-ui-compactVersion="edge" data-sap-ui-preload="async"
         data-sap-ui-resourceroots='{
             "ui5": "../src/ui5",
             "vendor": "../src/vendor",
             "sap.ui.demo.wt" : "./view"
-        }'
-        data-sap-ui-frameOptions="allow">
+        }' data-sap-ui-frameOptions="allow">
     </script>
-    
-    
-    
+
     <script>
-    sap.ui.getCore().attachInit(function() {
-    	   "use strict";
-    	   sap.ui.controller("MyController", {
-    	     onInit: function() {
-    	     
-    	     }
-    	   });
-    	   new sap.ui.xmlview({
-				viewName: "sap.ui.demo.wt.App"
-			}).placeAt("content");
-		});
+        sap.ui.getCore().attachInit(function () {
+            "use strict";
+            sap.ui.controller("MyController", {
+                onInit: function () {
+
+                }
+            });
+            new sap.ui.xmlview({
+                viewName: "sap.ui.demo.wt.App"
+            }).placeAt("content");
+        });
     </script>
 
-
-
-
-<body class="sapUiBody" >
-<h1 style="font-family:'Arial'; margin-left:50px">UI5.viz Demo</h1>
-	<div id="content" style="margin: 50px"></div>
-</body>
+    <body class="sapUiBody">
+        <h1 style="font-family:'Arial'; margin-left:50px">UI5.viz Demo</h1>
+        <div id="content" style="margin: 50px"></div>
+    </body>

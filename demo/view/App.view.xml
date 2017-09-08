@@ -1,7 +1,7 @@
  <mvc:View controllerName="MyController" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
   xmlns:layout="sap.ui.commons.layout" xmlns:viz="ui5.viz">
 
-<viz:Chart width="100%" height="400px" zoomEnabled="true" showTooltip="true" groupedTooltip="true" showLegend="true" showSubchart="true">
+<viz:Chart xAxisType="Indexed" width="100%" height="400px" zoomEnabled="true" showTooltip="true" groupedTooltip="true" showLegend="true" showSubchart="true">
 	<viz:series>
 		<viz:ChartSeries type="line" name="firstSeries" shapeStyle="ui5.viz.LineStyle.Dashed">
 			<viz:data>
@@ -22,6 +22,8 @@
 				<viz:ChartDataPoint value = "5" label = "value 3"/>
 				<viz:ChartDataPoint value = "4" label = "value 4"/>
 				<viz:ChartDataPoint value = "5" label = "value 5"/>
+				<!-- <viz:ChartDataPoint value = "null" /> -->
+				<!-- <viz:ChartDataPoint value = "null" /> -->
 			</viz:data>
 		</viz:ChartSeries>
 	</viz:series>
@@ -30,7 +32,6 @@
 		<viz:ChartArea startValue="2" endValue="3" axis="ui5.viz.Axis.Y" color="lightblue"/>
 	</viz:areas>
 	
-
 	<viz:xAxis>
 		<viz:ChartAxis
 			title = "Lenas X-Axis"
@@ -38,13 +39,16 @@
             showGridLines = "false"
             visible = "true">
             <viz:labels>
-            	<viz:ChartAxisLabel value = "0" title = "v1"/>
-            	<viz:ChartAxisLabel value = "1" title = "v2"/>
-            	<viz:ChartAxisLabel value = "4" title = "v3"/>
+            	<viz:ChartAxisLabel value = "1" title = "value 1" visible="false" />
+				<viz:ChartAxisLabel value = "2" title = "value 2"/>
+				<viz:ChartAxisLabel value = "3" title = "value 3"/>
+				<viz:ChartAxisLabel value = "4" />
+				<viz:ChartAxisLabel value = "5" title = "value 5"/>
+				<viz:ChartAxisLabel value = "6" title = "value 6"/>
+				<viz:ChartAxisLabel value = "7" title = "value 7"/>
             </viz:labels>
    		</viz:ChartAxis>
 	</viz:xAxis>
-	
 	
 	<viz:yAxis>
 		<viz:ChartAxis
@@ -53,9 +57,10 @@
             showGridLines = "true"
             visible = "true">
             <viz:labels>
-            	<viz:ChartAxisLabel value = "0" title = "v1"/>
-            	<viz:ChartAxisLabel value = "1" title = "v2"/>
-            	<viz:ChartAxisLabel value = "10" title = "v3"/>
+            	<viz:ChartAxisLabel value = "-1" title = "v0"/>
+            	<viz:ChartAxisLabel value = "1" title = "v1"/>
+				<viz:ChartAxisLabel value = "5" title = "v5" visible="false"/>
+            	<viz:ChartAxisLabel value = "10" title = "v10"/>
             </viz:labels>
    		</viz:ChartAxis>
 	</viz:yAxis>
