@@ -2430,7 +2430,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
                         value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null,
+                        valuePair = isNaN(d[id]) ? d[id] : undefined, //{l: 50, h: 200},
                         x;
+                        
                     // use x as categories if custom x and categorized
                     if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
@@ -2448,7 +2450,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
                         x = undefined;
                     }
-                    return { x: x, value: value, id: convertedId };
+                    return { x: x, value: value, id: convertedId, valueP: valuePair};
                 }).filter(function (v) {
                     return isDefined(v.x);
                 })
@@ -3439,16 +3441,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             return (isSub ? $$.subxx : $$.xx).call($$, d);
         },
             value0 = function value0(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(config.ci.ci_high[i]);
+            return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.valueP.l);
         },
             value1 = function value1(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(config.ci.ci_low[i]);
+            return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.valueP.h);
         };
 
         area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
         if (!config.line_connectNull) {
             area = area.defined(function (d) {
-                return d.value !== null;
+                return d.valueP !== null;
             });
         }
 
