@@ -975,6 +975,20 @@ sap.ui.define(
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
         }
+        /*
+        //append an <svg></svg> to the HTML body
+        var svgContainer = d3.select("body").append("svg")
+        .attr("width", 100)
+        .attr("height", 100)
+        .attr("id", "myCircle")
+
+        //Draw the Circle
+        var circle = svgContainer.append("circle")
+        .attr("cx", 30)
+        .attr("cy", 30)
+        .attr("r", 20)
+        */
+
 
         // set series style for shape areas
         this._updateSeriesStyles()
