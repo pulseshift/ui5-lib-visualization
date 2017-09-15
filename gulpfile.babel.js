@@ -20,7 +20,8 @@ const CONFIG = {
 // default task
 gulp.task('default', done => {
   gulpSequence(
-    'scripts',
+    // 'scripts',
+    'controller',
     // 'ui5-preload',
     done
   )
@@ -33,6 +34,14 @@ gulp.task('scripts', () => {
     .pipe(babel())
     .pipe(rename({ suffix: '-dbg' }))
     .pipe(gulp.dest('./src'))
+})
+
+gulp.task('controller', () => {
+  return gulp
+    .src(['./demo/controller/*.js', '!./demo/controller/*-dbg.js'])
+    .pipe(babel())
+    .pipe(rename({ suffix: '-dbg' }))
+    .pipe(gulp.dest('./demo/controller'))
 })
 
 // build library-preload.js file for all ui5 modules
