@@ -31,36 +31,39 @@
                 //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
                 columns: [
                     ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05',
-                        '2013-01-06'
+                        '2013-01-09'
                     ],
                     //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-                    // ['data1', 30, 200, 100, 400, 150, 250],
-                    ['data2', 230, 440, 300, 600, null, null],
+                    ['data2', 230, 440, 200, 600, 300, 499],
+                    ['data1', 100, 210, null, 400, 150, 250],
                     ['ci', {
-                        l: 50,
-                        h: 210
+                        low: -100,
+                        high: 100
                     }, {
-                        l: 60,
-                        h: 230
+                        low: 60,
+                        high: 230
                     }, {
-                        l: 70,
-                        h: 250
+                        low: 70,
+                        high: 250
                     }, {
-                        l: 80,
-                        h: 230
+                        low: 80,
+                        high: 230
                     }, {
-                        l: 50,
-                        h: 260
+                        low: 300,
+                        high: 480
                     }, {
-                        l: 40,
-                        h: 230
+                        low: 240,
+                        high: 390
                     }]
                 ],
                 types: {
                     data1: 'area-spline',
-                    data2: 'spline',
-                    ci: 'area-spline',
+                    data2: 'line',
+                    ci: 'ribbon-spline',
                 }
+            },
+            line: {
+                connectNull: true
             },
             axis: {
                 x: {
@@ -71,7 +74,13 @@
                 }
             }
         });
+
+        setTimeout(function () {
+            chart.load({
+                columns: [
+                    ['data3', 600, 100, -100, -150, -200, -280]
+                ]
+            });
+        }, 3000);
     </script>
-    <button onclick="c3.chart.fn">
-    </button>
 </body>

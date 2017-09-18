@@ -1505,7 +1505,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var $$ = this,
             config = $$.config,
             ids = $$.mapToIds(targets),
-            ys = $$.getValuesAsIdKeyed(targets),
+            ys = $$.getValuesAsIdKeyed(targets, false),
             j,
             k,
             baseId,
@@ -1543,15 +1543,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-        return $$.d3.min(Object.keys(ys).map(function (key) {
+    // ===== START OPAL EXTENSION =====
+    // as the d3.min-function can only find the minimum in a 1 dim array we need custom functionality for the low
+
+            return $$.d3.min(Object.keys(ys).map(function (key) {
             return $$.d3.min(ys[key]);
         }));
     };
+
     c3_chart_internal_fn.getYDomainMax = function (targets) {
         var $$ = this,
             config = $$.config,
             ids = $$.mapToIds(targets),
-            ys = $$.getValuesAsIdKeyed(targets),
+            ys = $$.getValuesAsIdKeyed(targets, true),
             j,
             k,
             baseId,
@@ -1589,10 +1593,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
+        // ===== START OPAL EXTENSION =====
+        // as the d3.max-function can only find the maximum in a 1 dim array we need custom functionality for the high
         return $$.d3.max(Object.keys(ys).map(function (key) {
             return $$.d3.max(ys[key]);
         }));
     };
+
     c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
         var $$ = this,
             config = $$.config,
@@ -2031,16 +2038,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             return targetIds.indexOf(id) < 0;
         });
     };
-    c3_chart_internal_fn.getValuesAsIdKeyed = function (targets) {
+
+    // ===== START OPAL EXTENSION =====
+    // function needed an additional parameter to tell whether the highs or the lows of the ribbons are supposed to be read
+    c3_chart_internal_fn.getValuesAsIdKeyed = function (targets, ribbonHighs) {
         var ys = {};
         targets.forEach(function (t) {
             ys[t.id] = [];
             t.values.forEach(function (v) {
+                if(v.ribbonYs)
+                ribbonHighs ? ys[t.id].push(v.ribbonYs.high) : ys[t.id].push(v.ribbonYs.low);
+                else
                 ys[t.id].push(v.value);
             });
         });
         return ys;
     };
+    // ===== END OPAL EXTENSION =====
+
     c3_chart_internal_fn.checkValueInTargets = function (targets, checker) {
         var ids = Object.keys(targets),
             i,
@@ -2430,7 +2445,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
                         value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null,
-                        valuePair = isNaN(d[id]) ? d[id] : undefined, //{l: 50, h: 200},
+
+                        // ===== START OPAL EXTENSION =====
+                        // introducing ribbonYs, which is a pair of y values at the same x value: a high and a low
+                        ribbonYvalues = isNaN(d[id]) ? d[id] : undefined, //FIXME: isNaN could be a string or anything - should be specified
                         x;
                         
                     // use x as categories if custom x and categorized
@@ -2450,7 +2468,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
                         x = undefined;
                     }
-                    return { x: x, value: value, id: convertedId, valueP: valuePair};
+                    return { x: x, value: value, id: convertedId, ribbonYs: ribbonYvalues};
+                    // ===== END OPAL EXTENSION =====
+
                 }).filter(function (v) {
                     return isDefined(v.x);
                 })
@@ -3440,17 +3460,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             xValue = function xValue(d) {
             return (isSub ? $$.subxx : $$.xx).call($$, d);
         },
+
+            // ===== START OPAL EXTENSION =====
+            // in case of the ribbon type, area.y0 and area.y1 get the high and the low value
             value0 = function value0(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.valueP.l);
+                if($$.isRibbonType(d))
+                    return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.ribbonYs.low);
+                else
+                    return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
         },
             value1 = function value1(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.valueP.h);
+                if($$.isRibbonType(d))
+                    return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.ribbonYs.high);
+                else 
+                    return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
+            // ===== END OPAL EXTENSION =====
         };
 
         area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
         if (!config.line_connectNull) {
             area = area.defined(function (d) {
-                return d.valueP !== null;
+                return d.ribbonYs !== null; //FIXME: check difference value/ribbonYs
             });
         }
 
@@ -3844,22 +3874,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     c3_chart_internal_fn.hasArcType = function (targets) {
         return this.hasType('pie', targets) || this.hasType('donut', targets) || this.hasType('gauge', targets);
     };
+    // ===== START OPAL EXTENSION =====
+    // adding three different ribbon types and a ribbon type check function
     c3_chart_internal_fn.isLineType = function (d) {
         var config = this.config,
             id = isString(d) ? d : d.id;
-        return !config.data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(config.data_types[id]) >= 0;
+        return !config.data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step', 'ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isStepType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['step', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+        return ['step', 'area-step', 'ribbon-step'].indexOf(this.config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isSplineType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['spline', 'area-spline'].indexOf(this.config.data_types[id]) >= 0;
+        return ['spline', 'area-spline', 'ribbon-spline'].indexOf(this.config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isAreaType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['area', 'area-spline', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+        return ['area', 'area-spline', 'area-step', 'ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(this.config.data_types[id]) >= 0;
+    };
+    c3_chart_internal_fn.isRibbonType = function (d) {
+        var id = isString(d) ? d : d.id;
+        return ['ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(this.config.data_types[id]) >= 0;
+    // ===== END OPAL EXTENSION =====
     };
     c3_chart_internal_fn.isBarType = function (d) {
         var id = isString(d) ? d : d.id;
