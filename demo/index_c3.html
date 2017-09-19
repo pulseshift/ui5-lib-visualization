@@ -28,59 +28,72 @@
             aaatest1: '6',
             data: {
                 x: 'x',
-                //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+                colors: {
+                    ci: '#5c99f9'
+                },
                 columns: [
-                    ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05',
-                        '2013-01-09'
+                    ['x', '2017-01-01', '2017-01-02', '2017-01-03', '2017-01-04', '2017-01-05',
+                        '2017-01-06', '2017-01-07', '2017-01-08', '2017-01-09', '2017-01-10'
                     ],
-                    //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-                    ['data2', 230, 440, 200, 600, 300, 499],
-                    ['data1', 100, 210, null, 400, 150, 250],
+                    ['data', -200, -10, -30, 100, 90, 210, 100, 400, 150, 250],
+                    ['data2', 300, 20, null, -150, -160],
                     ['ci', {
-                        low: -100,
-                        high: 100
+                        low: null,
+                        high: null
                     }, {
-                        low: 60,
-                        high: 230
+                        low: null,
+                        high: null
                     }, {
-                        low: 70,
-                        high: 250
+                        low: null,
+                        high: null
                     }, {
-                        low: 80,
-                        high: 230
+                        low: 30,
+                        high: 160
+                    }, {
+                        low: 10,
+                        high: 180
+                    }, {
+                        low: 100,
+                        high: 300
+                    }, {
+                        low: 20,
+                        high: 150
                     }, {
                         low: 300,
-                        high: 480
+                        high: 470
                     }, {
-                        low: 240,
-                        high: 390
+                        low: 100,
+                        high: 220
+                    }, {
+                        low: 190,
+                        high: 280
                     }]
                 ],
                 types: {
-                    data1: 'area-spline',
-                    data2: 'line',
+                    data: 'spline',
+                    data2: 'area-spline',
                     ci: 'ribbon-spline',
                 }
-            },
-            line: {
-                connectNull: true
             },
             axis: {
                 x: {
                     type: 'timeseries',
                     tick: {
-                        format: '%Y-%m-%d'
+                        format: '%d-%m-%Y'
                     }
                 }
+            },
+            line: {
+                connectNull: true
             }
         });
 
-        setTimeout(function () {
-            chart.load({
-                columns: [
-                    ['data3', 600, 100, -100, -150, -200, -280]
-                ]
-            });
-        }, 3000);
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [
+        //             ['data3', 600, 100, -100, -150, -200, -280]
+        //         ]
+        //     });
+        // }, 3000);
     </script>
 </body>

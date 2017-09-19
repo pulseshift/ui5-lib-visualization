@@ -3457,7 +3457,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             area = $$.d3.svg.area(),
             getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
             yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
-            xValue = function xValue(d) {
+            xValue = function xValue(d, i) {
             return (isSub ? $$.subxx : $$.xx).call($$, d);
         },
 
@@ -3485,7 +3485,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         return function (d) {
-            var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
+            // ===== START OPAL EXTENSION =====
+            // additional condition is necessary, otherwise filterRemoveNull will leave the values-array of the ribbon object empty
+            var values = config.line_connectNull && (!$$.isRibbonType(d)) ? $$.filterRemoveNull(d.values) : d.values,
+            // ===== END OPAL EXTENSION =====
                 x0 = 0,
                 y0 = 0,
                 path;
@@ -3493,6 +3496,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 if ($$.isStepType(d)) {
                     values = $$.convertValuesToStep(values);
                 }
+
+                // ===== START OPAL EXTENSION =====
+                // in case of the ribbon type, the null defined sequence in the beginning needs to be cut off
+                if($$.isRibbonType(d)) {
+                    var sliceStart = 0;
+                    for(var i=0; i<values.length; i++){
+                        if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null)
+                            sliceStart++;
+                        else break;
+                    }
+                    values = values.slice(sliceStart, (values.length));
+                }
+                // ===== END OPAL EXTENSION =====
+                
                 path = area.interpolate($$.getInterpolate(d))(values);
             } else {
                 if (values[0]) {
