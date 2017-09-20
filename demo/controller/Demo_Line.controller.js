@@ -1,12 +1,8 @@
-'use strict'
-
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Line', {
-    onInit: function onInit() {
-      var _this = this
-
+    onInit() {
       // Create a JSON model from an object literal
       var oModel = new sap.ui.model.json.JSONModel({
         title: 'Line chart',
@@ -35,11 +31,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         ]
       })
 
-      setTimeout(function() {
+      setTimeout(() => {
         //declares outer scope as 'this'
-        var oModel = _this.getView().getModel('store') //'this' would be the window
-        var aSeries = oModel.getProperty('/series/')
-        var aNewSeries = aSeries.concat({
+        const oModel = this.getView().getModel('store') //'this' would be the window
+        const aSeries = oModel.getProperty('/series/')
+        const aNewSeries = aSeries.concat({
           name: 'Strawberry 🍓',
           dataPoints: [8, 11, 12, 21, 24, 31]
         })

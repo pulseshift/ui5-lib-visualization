@@ -38,9 +38,17 @@ gulp.task('scripts', () => {
 
 gulp.task('controller', () => {
   return gulp
-    .src(['./demo/controller/*.js', '!./demo/controller/*-dbg.js'])
+    .src([
+      './demo/controller/*.controller.js',
+      '!./demo/controller/*-dbg.controller.js'
+    ])
     .pipe(babel())
-    .pipe(rename({ suffix: '-dbg' }))
+    .pipe(
+      rename(function(path) {
+        path.basename = path.basename.slice(0, -11)
+        path.extname = '-dbg.controller.js'
+      })
+    )
     .pipe(gulp.dest('./demo/controller'))
 })
 

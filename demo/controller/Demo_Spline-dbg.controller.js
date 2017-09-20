@@ -3,34 +3,29 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.Demo_Line', {
+  return Controller.extend('sap.ui.demo.db.controller.Demo_Spline', {
     onInit: function onInit() {
       var _this = this
 
       // Create a JSON model from an object literal
       var oModel = new sap.ui.model.json.JSONModel({
-        title: 'Line chart',
+        title: 'Spline chart',
         width: '100%',
         height: '300px',
-        type: 'line',
+        type: 'spline',
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
         xAxis: [
           {
-            title: 'Summerdays 🌞',
-            labels: [1, 2, 3, 4, 5, 6]
-          }
-        ],
-        yAxis: [
-          {
-            title: 'Sold ice cream scoops 🍧'
+            title: 'Finds in the village 🏡',
+            labels: ['January', 'Febuary', 'March', 'April', 'May', 'June']
           }
         ],
         series: [
           {
-            name: 'Chocolate 🍫',
-            dataPoints: [10, 15, 18, 17, 29, 40]
+            name: 'Snow angels ❄️',
+            dataPoints: [33, 31, 11, 0, 0, 0]
           }
         ]
       })
@@ -40,8 +35,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var oModel = _this.getView().getModel('store') //'this' would be the window
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
-          name: 'Strawberry 🍓',
-          dataPoints: [8, 11, 12, 21, 24, 31]
+          name: 'Ripe cherry trees 🍒',
+          dataPoints: [0, 0, 0, 1, 24, 28]
         })
 
         oModel.setProperty('/series/', aNewSeries)
