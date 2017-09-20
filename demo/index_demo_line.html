@@ -47,14 +47,14 @@
                                 </viz:ChartSeries>
                             </viz:series>
                             <viz:xAxis>
-                                <viz:ChartAxis title="{store>title}" labels="{ path: 'store>labels'}">
+                                <viz:ChartAxis title="{store>/xAxis/0/title}" labels="{ path: 'store>/xAxis/0/labels'}">
                                     <viz:labels>
                                         <viz:ChartAxisLabel value="{store>}" />
                                     </viz:labels>
                                 </viz:ChartAxis>
                             </viz:xAxis>
                             <viz:yAxis>
-                                <viz:ChartAxis title="{store>title}">
+                                <viz:ChartAxis title="{store>/yAxis/0/title}">
                                 </viz:ChartAxis>
                             </viz:yAxis>
                         </viz:Chart>

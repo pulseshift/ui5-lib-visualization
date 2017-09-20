@@ -18,18 +18,18 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showLegend: true,
         xAxis: [
           {
-            title: 'summerdays',
+            title: 'Summerdays 🌞',
             labels: [1, 2, 3, 4, 5, 6]
           }
         ],
         yAxis: [
           {
-            title: 'sold ice cream scoops'
+            title: 'Sold ice cream scoops 🍧'
           }
         ],
         series: [
           {
-            name: 'Chocolate',
+            name: 'Chocolate 🍫',
             dataPoints: [10, 15, 18, 17, 29, 40]
           }
         ]
@@ -40,7 +40,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var oModel = _this.getView().getModel('store') //'this' would be the window
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
-          name: 'Strawberry',
+          name: 'Strawberry 🍓',
           dataPoints: [8, 11, 12, 21, 24, 31]
         })
 
