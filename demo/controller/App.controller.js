@@ -10,12 +10,6 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
-        seriesName: 'firstSeries',
-        v1: 100,
-        v2: 110,
-        v3: 105,
-        v4: 103,
-        v5: 108,
         series: [
           {
             name: 'firstSeries',

@@ -3,31 +3,34 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.App', {
+  return Controller.extend('sap.ui.demo.db.controller.Demo_Line', {
     onInit: function onInit() {
       var _this = this
 
       // Create a JSON model from an object literal
       var oModel = new sap.ui.model.json.JSONModel({
+        title: 'Line chart',
         width: '100%',
         height: '300px',
+        type: 'line',
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
-        seriesName: 'firstSeries',
-        v1: 100,
-        v2: 110,
-        v3: 105,
-        v4: 103,
-        v5: 108,
+        xAxis: [
+          {
+            title: 'summerdays',
+            labels: [1, 2, 3, 4, 5, 6]
+          }
+        ],
+        yAxis: [
+          {
+            title: 'sold ice cream scoops'
+          }
+        ],
         series: [
           {
-            name: 'firstSeries',
-            dataPoints: [100, 110, 105, 103, 108, 107, 155, 206, 130, 120, 240]
-          },
-          {
-            name: 'secondSeries',
-            dataPoints: [23, 54, 56, 98, 100, 73, 95, 23, 11, 65, 34]
+            name: 'Chocolate',
+            dataPoints: [10, 15, 18, 17, 29, 40]
           }
         ]
       })
@@ -37,13 +40,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var oModel = _this.getView().getModel('store') //'this' would be the window
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
-          name: 'thirdSeries',
-          dataPoints: [45, 98, 11, 233, 56]
+          name: 'Strawberry',
+          dataPoints: [8, 11, 12, 21, 24, 31]
         })
 
         oModel.setProperty('/series/', aNewSeries)
         // oModel.refresh(true)
-      }, 5000)
+      }, 3000)
 
       // Assign the model object to the SAPUI5 core
       this.getView().setModel(oModel, 'store')
