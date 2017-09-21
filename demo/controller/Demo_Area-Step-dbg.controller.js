@@ -22,7 +22,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
         }],
         series: [{
           name: 'Oak City 🌳',
-          dataPoints: [0, 1, 3, 10, 9, 1]
+          dataPoints: [0, 1, 3, 10, 9, 1],
+          type: 'ui5.viz.ChartSeriesType.AreaStep'
         }]
       });
 

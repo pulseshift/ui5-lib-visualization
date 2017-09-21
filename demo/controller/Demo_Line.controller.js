@@ -24,7 +24,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         series: [
           {
             name: 'Chocolate 🍫',
-            dataPoints: [10, 15, 18, 17, 29, 40]
+            dataPoints: [10, 15, 18, 17, 29, 40],
+            type: 'ui5.viz.ChartSeriesType.Line'
           }
         ]
       })

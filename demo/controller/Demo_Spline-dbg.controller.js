@@ -21,7 +21,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
         }],
         series: [{
           name: 'Snow angels ❄️',
-          dataPoints: [33, 31, 11, 0, 0, 0]
+          dataPoints: [33, 31, 11, 0, 0, 0],
+          type: 'ui5.viz.ChartSeriesType.Spline'
         }]
       });
 
