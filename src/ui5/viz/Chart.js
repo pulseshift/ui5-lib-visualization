@@ -599,9 +599,16 @@ sap.ui.define(
                         animation: oDataPoint.getHighlightAnimation()
                       })
                     }
-                    return isVisible
-                      ? parseInt(oDataPoint.getValue(), 10)
-                      : null
+                  // ===== START OPAL EXTENSION =====
+                  //not working yet!
+                  //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
+
+                  //workaround:
+                  //return isVisible ? oDataPoint.getValue() : null;
+
+                  //original:
+                  return isVisible ? (parseInt(oDataPoint.getValue(), 10)) : null;
+                  // ===== END OPAL EXTENSION =====
                   }) || []
 
                 // add key of data series
@@ -2488,6 +2495,7 @@ sap.ui.define(
           case library.ChartSeriesType.AreaLine:
           case library.ChartSeriesType.AreaSpline:
           case library.ChartSeriesType.AreaStep:
+          case library.ChartSeriesType.RibbonLine:
             bTypeValid = true
             break
           default:
@@ -2496,6 +2504,12 @@ sap.ui.define(
         }
         return bTypeValid
       },
+
+      // ===== START OPAL EXTENSION =====
+      _isRibbonType: function _isRibbonType(sSeriesType){
+        return sSeriesType ===  (library.ChartSeriesType.RibbonLine);
+      },
+      // ===== END OPAL EXTENSION =====
 
       /**
        * Get available size in pixel of parent element.

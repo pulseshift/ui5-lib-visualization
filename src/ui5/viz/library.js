@@ -100,7 +100,8 @@ sap.ui.define(
       Step: 'step',
       AreaLine: 'area',
       AreaSpline: 'area-spline',
-      AreaStep: 'area-step'
+      AreaStep: 'area-step',
+      RibbonLine: 'ribbon-line'
     }
 
     /**
@@ -287,9 +288,8 @@ sap.ui.define(
      * @protected
      */
     ui5.viz.parseCSSSize = function(sCSSSize) {
-      var aUnitMatches = sCSSSize.match(
-        /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/i
-      ) || []
+      var aUnitMatches =
+        sCSSSize.match(/^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/i) || []
       return {
         value: parseFloat(sCSSSize, 10),
         unit: aUnitMatches[2] ? aUnitMatches[2].toLowerCase() : 'px'

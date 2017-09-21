@@ -1,14 +1,10 @@
-'use strict'
-
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.Demo_Line', {
-    onInit: function onInit() {
-      var _this = this
-
+  return Controller.extend('sap.ui.demo.db.controller.Demo_Line-Region', {
+    onInit() {
       var oModel = new sap.ui.model.json.JSONModel({
-        title: 'Line chart',
+        title: 'Line chart with region',
         width: '100%',
         height: '300px',
         showTooltip: true,
@@ -16,7 +12,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showLegend: true,
         xAxis: [
           {
-            title: 'Summerdays 🌞'
+            title: 'Summerdays 🌞',
+            labels: [1, 2, 3, 4, 5, 6]
           }
         ],
         yAxis: [
