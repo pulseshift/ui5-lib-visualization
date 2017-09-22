@@ -1,10 +1,10 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.Demo_Line-Region', {
+  return Controller.extend('sap.ui.demo.db.controller.Demo_Bar', {
     onInit() {
       var oModel = new sap.ui.model.json.JSONModel({
-        title: 'Line chart with region',
+        title: 'Bar chart',
         width: '100%',
         height: '300px',
         showTooltip: true,
@@ -18,14 +18,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         ],
         yAxis: [
           {
-            title: 'Sold ice cream scoops 🍧'
+            title: 'Hatched birds in the wood 🦉'
           }
         ],
         series: [
           {
-            name: 'Chocolate 🍫',
-            dataPoints: [10, 15, 18, 17, 29, 40],
-            type: 'ui5.viz.ChartSeriesType.Line'
+            name: 'Male',
+            dataPoints: [13, 15, 18, 17, 19, 12],
+            type: 'ui5.viz.ChartSeriesType.Bar'
           }
         ]
       })
@@ -34,8 +34,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         const oModel = this.getView().getModel('store')
         const aSeries = oModel.getProperty('/series/')
         const aNewSeries = aSeries.concat({
-          name: 'Strawberry 🍓',
-          dataPoints: [8, 11, 12, 21, 24, 31]
+          name: 'Female',
+          dataPoints: [14, 11, 18, 21, 24, 12]
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)

@@ -37,7 +37,7 @@
             <App>
                 <Page title="{store>/title}">
                     <content>
-                        <viz:Chart class="sapUiTinyMargin" id="myChart" width="{store>/width}" height="{store>/height}" showTooltip="{store>/showTooltip}"
+                        <viz:Chart class="sapUiTinyMargin" id="myChart" showSubchart="true" width="{store>/width}" height="{store>/height}" showTooltip="{store>/showTooltip}"
                             groupedTooltip="{store>/groupedTooltip}" showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}">
                             <viz:series>
                                 <viz:ChartSeries type="ui5.viz.ChartSeriesType.RibbonLine" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">

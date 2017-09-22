@@ -2507,7 +2507,7 @@ sap.ui.define(
 
       // ===== START OPAL EXTENSION =====
       _isRibbonType: function _isRibbonType(sSeriesType){
-        return sSeriesType ===  (library.ChartSeriesType.RibbonLine);
+        return sSeriesType ===  (library.ChartSeriesType.RibbonLine || library.ChartSeriesType.RibbonSpline || library.ChartSeriesType.RibbonStep);
       },
       // ===== END OPAL EXTENSION =====
 

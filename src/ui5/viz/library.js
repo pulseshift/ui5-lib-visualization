@@ -101,7 +101,9 @@ sap.ui.define(
       AreaLine: 'area',
       AreaSpline: 'area-spline',
       AreaStep: 'area-step',
-      RibbonLine: 'ribbon-line'
+      RibbonLine: 'ribbon-line',
+      RibbonStep: 'ribbon-step',
+      RibbonSpline: 'ribbon-spline'
     }
 
     /**
