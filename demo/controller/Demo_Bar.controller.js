@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         series: [
           {
             name: 'Male',
-            dataPoints: [13, 15, 18, 17, 19, 12],
+            dataPoints: [13, 15, 18, 17, 19, 14],
             type: 'ui5.viz.ChartSeriesType.Bar'
           }
         ]
@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         const aSeries = oModel.getProperty('/series/')
         const aNewSeries = aSeries.concat({
           name: 'Female',
-          dataPoints: [14, 11, 18, 21, 24, 12]
+          dataPoints: [14, 11, 18, 21, 16, 14]
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)

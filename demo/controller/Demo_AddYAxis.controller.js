@@ -1,14 +1,10 @@
-'use strict'
-
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.Demo_Spline', {
-    onInit: function onInit() {
-      var _this = this
-
+  return Controller.extend('sap.ui.demo.db.controller.Demo_AddYAxis', {
+    onInit() {
       var oModel = new sap.ui.model.json.JSONModel({
-        title: 'Spline chart',
+        title: 'Additional Y axis chart',
         width: '100%',
         height: '300px',
         type: 'spline',
@@ -30,8 +26,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         ]
       })
 
-      setTimeout(function() {
-        var oModel = _this.getView().getModel('store') //'this' would be the window
+      setTimeout(() => {
+        var oModel = this.getView().getModel('store') //'this' would be the window
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
           name: 'Ripe cherry trees 🍒',
