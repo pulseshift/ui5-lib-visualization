@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Chart Test</title>
+
+    <script id="vendor-bootstrap" src="../src/vendor/lodash-dbg.js"></script>
+
+    <script src="../src/vendor/c3-extended.js"></script>
+    <link href="../src/vendor/c3.css" rel="stylesheet" type="text/css" />
+
+    <script src="../src/vendor/d3.js"></script>
+    <script src="../demo/plugin.js"></script>
+</head>
+
+
+
+<body>
+    <h1 style="font-family:'Arial'; margin-left:50px">C3 Ribbon Extension</h1>
+    <div id="chart"></div>
+    <script>
+        var chart = c3.generate({
+            bindto: '#chart',
+            size: {
+                height: 400
+            },
+            data: {
+                x: 'x',
+                colors: {
+                    ci: '#5c99f9'
+                },
+                columns: [
+                    ['x', '2017-01-01', '2017-01-02', '2017-01-03', '2017-01-04', '2017-01-05',
+                        '2017-01-06', '2017-01-07', '2017-01-08', '2017-01-09', '2017-01-10'
+                    ],
+                    ['data', -200, -10, -30, 100, 90, 210, 100, 400, 150, 250],
+                    //['data2', 300, 20, null, -150, -160],
+                    ['ci', {
+                        low: null,
+                        high: null
+                    }, {
+                        low: null,
+                        high: null
+                    }, {
+                        low: null,
+                        high: null
+                    }, {
+                        low: 30,
+                        high: 160
+                    }, {
+                        low: 10,
+                        high: 180
+                    }, {
+                        low: 100,
+                        high: 300
+                    }, {
+                        low: 20,
+                        high: 150
+                    }, {
+                        low: 300,
+                        high: 470
+                    }, {
+                        low: 100,
+                        high: 220
+                    }, {
+                        low: 190,
+                        high: 280
+                    }]
+                ],
+                types: {
+                    data: 'spline',
+                    data2: 'area-spline',
+                    ci: 'ribbon-spline',
+                }
+            },
+            axis: {
+                x: {
+                    type: 'timeseries',
+                    tick: {
+                        format: '%d-%m-%Y'
+                    }
+                }
+            },
+            subchart: {
+                show: true
+            },
+            line: {
+                connectNull: true
+            }
+        });
+
+        // setTimeout(function () {
+        //     chart.load({
+        //         columns: [
+        //             ['data3', 600, 100, -100, -150, -200, -280]
+        //         ]
+        //     });
+        // }, 3000);
+    </script>
+</body>
