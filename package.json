@@ -2,25 +2,52 @@
   "name": "ui5-lib-visualization",
   "version": "0.0.1",
   "scripts": {
-    "build": "node_modules/gulp/bin/gulp.js"
+    "start": "node_modules/gulp/bin/gulp.js --silent",
+    "build": "node_modules/gulp/bin/gulp.js build --silent",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": ["prettier --write --no-semi --single-quote", "git add"]
   },
   "description": "UI5 Visualization Library",
-  "main": "index.js",
   "repository": "https://github.com/pulseshift/ui5-lib-visualization.git",
-  "author": "Jascha Quintern <jascha.quintern@googlemail.com>",
+  "author": "Jascha Quintern <jascha.quintern@pulseshift.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pulseshift/ui5-lib-visualization/issues"
+  },
+  "homepage": "https://github.com/pulseshift/openui5-gulp-starter-kit#readme",
+  "main": "dist/ui5/viz/library-preload.js",
+  "ui5": {
+    "libraries": [
+      {
+        "name": "ui5.viz",
+        "path": "src/ui5/viz"
+      }
+    ]
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
-    "gulp": "^3.9.1",
+    "browser-sync": "^2.18.13",
+    "del": "^3.0.0",
+    "gulp": "gulpjs/gulp#4.0",
     "gulp-babel": "^6.1.2",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.1",
+    "gulp-imagemin": "^3.3.0",
+    "gulp-less": "^3.3.2",
+    "gulp-plumber": "^1.1.0",
+    "gulp-pretty-data": "^0.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sequence": "^0.4.6",
     "gulp-tap": "^1.0.1",
     "gulp-uglify": "^3.0.0",
-    "gulp-ui5-preload": "^1.3.1"
+    "gulp-ui5-preload": "^1.3.1",
+    "less-plugin-autoprefix": "^1.5.1",
+    "ora": "^1.3.0"
   }
 }
