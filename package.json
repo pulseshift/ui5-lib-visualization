@@ -7,10 +7,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write --no-semi --single-quote",
-      "git add"
-    ]
+    "*.js": ["prettier --write --no-semi --single-quote", "git add"]
   },
   "description": "UI5 Visualization Library",
   "repository": "https://github.com/pulseshift/ui5-lib-visualization.git",

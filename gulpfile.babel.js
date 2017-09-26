@@ -212,6 +212,7 @@ function watch() {
     port: 3000,
     server: {
       baseDir: `./${DEV}`,
+      index: 'demo/index.html',
       routes: {
         '/ui5': './ui5'
       }
