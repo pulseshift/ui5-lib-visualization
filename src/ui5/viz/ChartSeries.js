@@ -6,8 +6,8 @@
  * Created by Jascha Quintern (fuchsvomwalde) on 20. Jul 2016.
  */
 sap.ui.define(
-  ['sap/ui/core/Control', './library'],
-  function(Control, library) {
+  ['sap/ui/core/Element', './library'],
+  function(Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartSeries</code>.
      *
@@ -17,7 +17,7 @@ sap.ui.define(
      * @class
      * The <code>ChartSeries</code> control: ChartSeries container for bar, line and other chart types. Based on C3.js..
      *
-     * @extends sap.ui.core.Control
+     * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
      * @version 1.0.0
@@ -27,7 +27,7 @@ sap.ui.define(
      * @public
      * @alias ui5.viz.ChartSeries
      */
-    return Control.extend('ui5.viz.ChartSeries', {
+    return Element.extend('ui5.viz.ChartSeries', {
       /* =========================================================== */
       /* meta data definition                                        */
       /* =========================================================== */
@@ -129,6 +129,16 @@ sap.ui.define(
             defaultValue: library.Axis.Y
           },
 
+          /**
+           * Sets visibility of the element.
+           * @since: 1.0.0
+           */
+          visible: {
+            type: 'boolean',
+            group: 'Appereance',
+            defaultValue: true
+          },
+
           /* === Data === */
 
           /**
@@ -186,44 +196,22 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-       * @private
-       * @override
-       */
-      init() {},
-
-      /**
        * Constructor for a new <code>ui5.viz.Chart</code>.
        *
        * @param {string} [sId] Id for the new control, generated automatically if no id is given
        * @param {object} [mSettings] Initial settings for the new control
        */
       constructor() {
-        Control.prototype.constructor.apply(this, arguments)
+        Element.prototype.constructor.apply(this, arguments)
       },
 
       /**
-       * Method called before control gets rendered
+       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
        * @override
        */
-      onBeforeRendering() {},
-
-      /**
-       * Renderer function of control <code>ui5.viz.Chart</code>.
-       *
-       * @param {object} [oRm] Render Manager
-       * @param {object} [oControl] Current control (this)
-       */
-      // renderer(oRm, oControl) {},
-
-      /**
-       * Method called after control gets rendered
-       * @private
-       * @override
-       */
-      onAfterRendering() {},
+      init() {},
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
@@ -260,7 +248,7 @@ sap.ui.define(
       ) {
         if (sAggregationName === 'data') {
           // important: update value, before fire event
-          Control.prototype.insertAggregation.call(
+          Element.prototype.insertAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -279,7 +267,7 @@ sap.ui.define(
             code: library.ChartUpdateCode.DataPoint
           })
         } else {
-          Control.prototype.insertAggregation.call(
+          Element.prototype.insertAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -303,7 +291,7 @@ sap.ui.define(
       addAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
           // important: update value, before fire event
-          Control.prototype.addAggregation.call(
+          Element.prototype.addAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -322,7 +310,7 @@ sap.ui.define(
             code: library.ChartUpdateCode.DataPoint
           })
         } else {
-          Control.prototype.addAggregation.call(
+          Element.prototype.addAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -345,7 +333,7 @@ sap.ui.define(
       removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
           // important: update value, before fire event
-          Control.prototype.removeAggregation.call(
+          Element.prototype.removeAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -364,7 +352,7 @@ sap.ui.define(
             code: library.ChartUpdateCode.DataPoint
           })
         } else {
-          Control.prototype.removeAggregation.call(
+          Element.prototype.removeAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -386,7 +374,7 @@ sap.ui.define(
       removeAllAggregation(sAggregationName, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
           // important: update value, before fire event
-          Control.prototype.removeAllAggregation.call(
+          Element.prototype.removeAllAggregation.call(
             this,
             sAggregationName,
             true
@@ -397,7 +385,7 @@ sap.ui.define(
             code: library.ChartUpdateCode.DataPoint
           })
         } else {
-          Control.prototype.removeAllAggregation.call(
+          Element.prototype.removeAllAggregation.call(
             this,
             sAggregationName,
             bSuppressInvalidate
@@ -418,7 +406,7 @@ sap.ui.define(
       destroyAggregation(sAggregationName, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
           // important: update value, before fire event
-          Control.prototype.destroyAggregation.call(
+          Element.prototype.destroyAggregation.call(
             this,
             sAggregationName,
             true
@@ -429,7 +417,7 @@ sap.ui.define(
             code: library.ChartUpdateCode.DataPoint
           })
         } else {
-          Control.prototype.destroyAggregation.call(
+          Element.prototype.destroyAggregation.call(
             this,
             sAggregationName,
             bSuppressInvalidate
@@ -465,20 +453,20 @@ sap.ui.define(
           ].includes(sName)
         ) {
           // important: update value, before fire event
-          Control.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
+          Element.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
 
           // inform observers about data update
           this.fireSeriesDataUpdate()
         } else if (sName === 'visible') {
           // important: update value, before fire event
-          Control.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
+          Element.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
 
           // inform observers about show/hide series
           this.fireSeriesVisibilityChange({
             chartSeries: this
           })
         } else {
-          Control.prototype.setProperty.call(
+          Element.prototype.setProperty.call(
             this,
             sName,
             vValue,

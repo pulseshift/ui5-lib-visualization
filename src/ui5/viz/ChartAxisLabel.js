@@ -6,8 +6,8 @@
  * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
  */
 sap.ui.define(
-  ['sap/ui/core/Control', './library'],
-  function(Control, library) {
+  ['sap/ui/core/Element', './library'],
+  function(Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxisLabel</code>.
      *
@@ -17,7 +17,7 @@ sap.ui.define(
      * @class
      * The <code>ChartAxisLabel</code> control: ChartAxisLabel container for bar, line and other chart types. Based on C3.js..
      *
-     * @extends sap.ui.core.Control
+     * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
      * @version 1.0.0
@@ -27,7 +27,7 @@ sap.ui.define(
      * @public
      * @alias ui5.viz.ChartAxisLabel
      */
-    return Control.extend('ui5.viz.ChartAxisLabel', {
+    return Element.extend('ui5.viz.ChartAxisLabel', {
       /* =========================================================== */
       /* meta data definition                                        */
       /* =========================================================== */
@@ -47,13 +47,23 @@ sap.ui.define(
            * Sets axis label title
            * @since: 1.0.0
            */
-          title: { type: 'string', group: 'Appereance', defaultValue: null }
+          title: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets axis label icon
            * @since: ?
            */
           // icon: { type: "sap.ui.core.URI", group: "Appereance", defaultValue: false }
+
+          /**
+           * Sets visibility of the element.
+           * @since: 1.0.0
+           */
+          visible: {
+            type: 'boolean',
+            group: 'Appereance',
+            defaultValue: true
+          }
         },
         aggregations: {},
         associations: {},
@@ -78,44 +88,22 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-       * @private
-       * @override
-       */
-      init() {},
-
-      /**
        * Constructor for a new <code>ui5.viz.Chart</code>.
        *
        * @param {string} [sId] Id for the new control, generated automatically if no id is given
        * @param {object} [mSettings] Initial settings for the new control
        */
       constructor() {
-        Control.prototype.constructor.apply(this, arguments)
+        Element.prototype.constructor.apply(this, arguments)
       },
 
       /**
-       * Method called before control gets rendered
+       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
        * @override
        */
-      onBeforeRendering() {},
-
-      /**
-       * Renderer function of control <code>ui5.viz.Chart</code>.
-       *
-       * @param {object} [oRm] Render Manager
-       * @param {object} [oControl] Current control (this)
-       */
-      renderer(oRm, oControl) {},
-
-      /**
-       * Method called after control gets rendered
-       * @private
-       * @override
-       */
-      onAfterRendering() {},
+      init() {},
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
@@ -149,12 +137,12 @@ sap.ui.define(
 
         if (['value', 'title', 'visible'].includes(sName)) {
           // important: update value, before fire event
-          Control.prototype.setProperty.call(this, sName, vValue, true)
+          Element.prototype.setProperty.call(this, sName, vValue, true)
 
           // inform observers about data update
           this.fireAxisLabelUpdate()
         } else {
-          Control.prototype.setProperty.call(
+          Element.prototype.setProperty.call(
             this,
             sName,
             vValue,
