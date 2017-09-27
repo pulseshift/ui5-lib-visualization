@@ -1543,10 +1543,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-    // ===== START OPAL EXTENSION =====
-    // as the d3.min-function can only find the minimum in a 1 dim array we need custom functionality for the low
 
-            return $$.d3.min(Object.keys(ys).map(function (key) {
+        return $$.d3.min(Object.keys(ys).map(function (key) {
             return $$.d3.min(ys[key]);
         }));
     };
@@ -1593,8 +1591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-        // ===== START OPAL EXTENSION =====
-        // as the d3.max-function can only find the maximum in a 1 dim array we need custom functionality for the high
+        
         return $$.d3.max(Object.keys(ys).map(function (key) {
             return $$.d3.max(ys[key]);
         }));
@@ -2444,11 +2441,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 values: data.map(function (d, i) {
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
-                        value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null,
-
+                        
                         // ===== START OPAL EXTENSION =====
                         // introducing ribbonYs, which is a pair of y values at the same x value: a high and a low
-                        ribbonYvalues = isNaN(d[id]) ? d[id] : undefined, //FIXME: isNaN could be a string or anything - should be specified
+                        fnIsValidRibbonValue = function (val) {
+                            var isValidHigh = typeof val === 'object' && val.hasOwnProperty('high') && !isNaN(val.high) ;
+                            var isValidLow = typeof val === 'object' && val.hasOwnProperty('low') && !isNaN(val.low);
+                            return isValidHigh && isValidLow;
+                        },
+                        value = d[id] !== null && !isNaN(d[id]) && (!$$.isRibbonType(d))? +d[id] : null,
+                        ribbonYvalues = fnIsValidRibbonValue(d[id]) && ($$.isRibbonType(d))? d[id] : undefined,
                         x;
                         
                     // use x as categories if custom x and categorized
@@ -3500,12 +3502,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 // ===== START OPAL EXTENSION =====
                 // in case of the ribbon type, the null defined sequence in the beginning needs to be cut off
                 if($$.isRibbonType(d)) {
-                    var sliceStart = 0;
-                    for(var i=0; i<values.length; i++){
+                    var sliceStart = 0, valuesLength = values.length();
+                    for(var i=0; i<valuesLength; i++){
                         if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null)
                             sliceStart++;
                         else break;
                     }
+                    // var sliceStart = values.reduce(function (currentSliceStart, val) {
+                    //     return val.ribbonYs.low === null && val.ribbonYs.high === null && currentSliceStart === 0
+                    //         ? currentSliceStart++
+                    //         : currentSliceStart;
+                    // }, 0);
                     values = values.slice(sliceStart, (values.length));
                 }
                 // ===== END OPAL EXTENSION =====

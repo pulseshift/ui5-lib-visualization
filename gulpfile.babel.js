@@ -25,9 +25,9 @@ import prettydata from 'gulp-pretty-data'
 import imagemin from 'gulp-imagemin'
 import cleanCSS from 'gulp-clean-css'
 import less from 'gulp-less'
-// // import tap from 'gulp-tap'
+import tap from 'gulp-tap'
 import sourcemaps from 'gulp-sourcemaps'
-// import ui5preload from 'gulp-ui5-preload'
+import ui5preload from 'gulp-ui5-preload'
 // import ui5Bust from 'ui5-cache-buster'
 // import { ui5Download, ui5Build } from 'ui5-lib-util'
 import LessAutoprefix from 'less-plugin-autoprefix'
@@ -120,8 +120,8 @@ function logStats(done) {
   //   !oSource.isArchive && oSource.isPrebuild ? '(remote)' : ''
   // const sUI5Details = !oSource.isPrebuild ? '(custom build)' : sOnlineUI5State
 
-  const iApps = (pkg.ui5.apps || []).length
-  const iThemes = (pkg.ui5.themes || []).length
+  // const iApps = (pkg.ui5.apps || []).length
+  // const iThemes = (pkg.ui5.themes || []).length
   const iLibs = (pkg.ui5.libraries || []).length
 
   // print success message
@@ -133,8 +133,8 @@ function logStats(done) {
     // .print(`UI5 Version: ${sUI5Version} ${sUI5Details}`)
     .print(' ')
     .print('UI5 assets:')
-    .print(`\u{25FB}  ${iApps} app${iApps !== 1 ? 's' : ''}`)
-    .print(`\u{25FB}  ${iThemes} theme${iThemes !== 1 ? 's' : ''}`)
+    // .print(`\u{25FB}  ${iApps} app${iApps !== 1 ? 's' : ''}`)
+    // .print(`\u{25FB}  ${iThemes} theme${iThemes !== 1 ? 's' : ''}`)
     .print(`\u{25FB}  ${iLibs} librar${iLibs !== 1 ? 'ies' : 'y'}`)
     .print(' ')
   done()
@@ -150,6 +150,7 @@ const build = gulp.series(
   logStartDist,
   cleanDist,
   gulp.parallel(assetsDist, scriptsDist, stylesDist),
+  ui5LibPreloads,
   logStatsDist
 )
 
@@ -169,22 +170,22 @@ function logStatsDist(done) {
   //   !oSource.isArchive && oSource.isPrebuild ? '(remote)' : ''
   // const sUI5Details = !oSource.isPrebuild ? '(custom build)' : sOnlineUI5State
 
-  const iApps = (pkg.ui5.apps || []).length
-  const iThemes = (pkg.ui5.themes || []).length
+  // const iApps = (pkg.ui5.apps || []).length
+  // const iThemes = (pkg.ui5.themes || []).length
   const iLibs = (pkg.ui5.libraries || []).length
 
   // print success message
   spinner
     .succeed('Build successfull.')
     .print(' ')
-    .print(`Build entry: ${pkg.main}`)
-    .print(`Build output: ${path.relative(__dirname, DIST)}`)
+    // .print(`Build entry: ${pkg.main}`)
+    .print(`Build output: ${path.resolve(__dirname, DIST)}`)
     // .print(' ')
     // .print(`UI5 Version: ${sUI5Version} ${sUI5Details}`)
     .print(' ')
     .print('UI5 assets created:')
-    .print(`\u{25FB}  ${iApps} app${iApps !== 1 ? 's' : ''}`)
-    .print(`\u{25FB}  ${iThemes} theme${iThemes !== 1 ? 's' : ''}`)
+    // .print(`\u{25FB}  ${iApps} app${iApps !== 1 ? 's' : ''}`)
+    // .print(`\u{25FB}  ${iThemes} theme${iThemes !== 1 ? 's' : ''}`)
     .print(`\u{25FB}  ${iLibs} librar${iLibs !== 1 ? 'ies' : 'y'}`)
     .print(' ')
   done()
@@ -424,4 +425,55 @@ function stylesDist() {
       )
       .pipe(gulp.dest(DIST))
   )
+}
+
+/* ----------------------------------------------------------- *
+ * bundle app resources in library-preload.js file
+ * ----------------------------------------------------------- */
+
+// [production build]
+function ui5LibPreloads() {
+  // update spinner state
+  spinner.text = 'Bundling modules...'
+
+  const aPreloadPromise = pkg.ui5.libraries.map(oLibrary => {
+    const sDistLibraryPath = oLibrary.path.replace(new RegExp(`^${SRC}`), DIST)
+    return new Promise(function(resolve, reject) {
+      gulp
+        .src([
+          // bundle all library resources
+          `${sDistLibraryPath}/**/*.js`,
+          `${sDistLibraryPath}/**/*.json`,
+          // don't bundle debug or peload resources
+          `!${sDistLibraryPath}/**/*-dbg.js`,
+          `!${sDistLibraryPath}/**/*-preload.js`
+        ])
+        .pipe(
+          ui5preload({
+            base: sDistLibraryPath,
+            namespace: oLibrary.name,
+            // if set to true a library-preload.json file is emitted
+            isLibrary: true
+          })
+        )
+        // transform all library-preload.json files into library-preload.js (mandatory since OpenUI5 1.40)
+        .pipe(
+          gulpif(
+            '**/library-preload.json',
+            tap(oFile => {
+              const oJSONRaw = oFile.contents.toString('utf8')
+              oFile.contents = new Buffer(
+                `jQuery.sap.registerPreloadedModules(${oJSONRaw});`
+              )
+              return oFile
+            })
+          )
+        )
+        .pipe(gulpif('**/library-preload.json', rename({ extname: '.js' })))
+        .on('error', reject)
+        .pipe(gulp.dest(sDistLibraryPath))
+        .on('end', resolve)
+    })
+  })
+  return Promise.all(aPreloadPromise)
 }
