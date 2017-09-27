@@ -2,11 +2,17 @@
 *.DS_Store
 
 ### IDE (Atom/Webstorm/etc) ###
-.imdone/
+/.imdone/
 /.idea/
+/.settings/
+/.vscode/
 
-### debug files by build process ###
-*-dbg.js
+### Build Process ###
+/dist/
+/ui5/
+/.tmp/
+/.maps/
+/.download/
 
 ### Node ###
 node_modules/

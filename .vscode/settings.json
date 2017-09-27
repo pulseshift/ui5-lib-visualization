@@ -1,3 +1,18 @@
 {
-    "editor.formatOnSave": true
+  // Platzieren Sie Ihre Einstellungen in dieser Datei, um Standard- und Benutzereinstellungen zu überschreiben.
+  "javascript.validate.enable": false,
+  "prettier.singleQuote": true,
+  "prettier.jsxBracketSameLine": true,
+  "prettier.semi": false,
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.js": "javascriptreact"
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/dist": true,
+    "**/.tmp": true
+  }
 }

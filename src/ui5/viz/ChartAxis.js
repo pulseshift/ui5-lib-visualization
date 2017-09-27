@@ -6,8 +6,8 @@
  * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
  */
 sap.ui.define(
-  ['sap/ui/core/Control', './library'],
-  function(Control, library) {
+  ['sap/ui/core/Element', './library'],
+  function(Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxis</code>.
      *
@@ -17,7 +17,7 @@ sap.ui.define(
      * @class
      * The <code>ChartAxis</code> control: ChartAxis container for bar, line and other chart types. Based on C3.js..
      *
-     * @extends sap.ui.core.Control
+     * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
      * @version 1.0.0
@@ -27,7 +27,7 @@ sap.ui.define(
      * @public
      * @alias ui5.viz.ChartAxis
      */
-    return Control.extend('ui5.viz.ChartAxis', {
+    return Element.extend('ui5.viz.ChartAxis', {
       /* =========================================================== */
       /* meta data definition                                        */
       /* =========================================================== */
@@ -77,16 +77,26 @@ sap.ui.define(
           },
 
           /**
-           * Sets the minimal value of the axis.
+           * Sets the minimal value of the axis. (use index/position for category X-axis, too)
            * @since: 1.0.0
            */
           minValue: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
-           * Sets the maximal value of the axis.
+           * Sets the maximal value of the axis. (use index/position for category X-axis, too)
            * @since: 1.0.0
            */
           maxValue: { type: 'string', group: 'Appereance', defaultValue: null },
+
+          /**
+           * Sets visibility of the element.
+           * @since: 1.0.0
+           */
+          visible: {
+            type: 'boolean',
+            group: 'Appereance',
+            defaultValue: true
+          },
 
           /**
            * Sets the axis type
@@ -130,44 +140,22 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-       * @private
-       * @override
-       */
-      init() {},
-
-      /**
        * Constructor for a new <code>ui5.viz.Chart</code>.
        *
        * @param {string} [sId] Id for the new control, generated automatically if no id is given
        * @param {object} [mSettings] Initial settings for the new control
        */
       constructor() {
-        Control.prototype.constructor.apply(this, arguments)
+        Element.prototype.constructor.apply(this, arguments)
       },
 
       /**
-       * Method called before control gets rendered
+       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
        * @override
        */
-      onBeforeRendering() {},
-
-      /**
-       * Renderer function of control <code>ui5.viz.Chart</code>.
-       *
-       * @param {object} [oRm] Render Manager
-       * @param {object} [oControl] Current control (this)
-       */
-      renderer(oRm, oControl) {},
-
-      /**
-       * Method called after control gets rendered
-       * @private
-       * @override
-       */
-      onAfterRendering() {},
+      init() {},
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
@@ -206,7 +194,7 @@ sap.ui.define(
           this.getProperty('_axisType') === library.Axis.X
         ) {
           // important: update value, before fire event
-          Control.prototype.insertAggregation.call(
+          Element.prototype.insertAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -219,7 +207,7 @@ sap.ui.define(
           // inform observers about labels update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.insertAggregation.call(
+          Element.prototype.insertAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -247,7 +235,7 @@ sap.ui.define(
           this.getProperty('_axisType') === library.Axis.X
         ) {
           // important: update value, before fire event
-          Control.prototype.addAggregation.call(
+          Element.prototype.addAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -260,7 +248,7 @@ sap.ui.define(
           // inform observers about labels update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.addAggregation.call(
+          Element.prototype.addAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -287,7 +275,7 @@ sap.ui.define(
           this.getProperty('_axisType') === library.Axis.X
         ) {
           // important: update value, before fire event
-          Control.prototype.removeAggregation.call(
+          Element.prototype.removeAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -300,7 +288,7 @@ sap.ui.define(
           // inform observers about labels update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.removeAggregation.call(
+          Element.prototype.removeAggregation.call(
             this,
             sAggregationName,
             oObject,
@@ -326,7 +314,7 @@ sap.ui.define(
           this.getProperty('_axisType') === library.Axis.X
         ) {
           // important: update value, before fire event
-          Control.prototype.removeAllAggregation.call(
+          Element.prototype.removeAllAggregation.call(
             this,
             sAggregationName,
             true
@@ -335,7 +323,7 @@ sap.ui.define(
           // inform observers about labels update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.removeAllAggregation.call(
+          Element.prototype.removeAllAggregation.call(
             this,
             sAggregationName,
             bSuppressInvalidate
@@ -360,7 +348,7 @@ sap.ui.define(
           this.getProperty('_axisType') === library.Axis.X
         ) {
           // important: update value, before fire event
-          Control.prototype.destroyAggregation.call(
+          Element.prototype.destroyAggregation.call(
             this,
             sAggregationName,
             true
@@ -369,7 +357,7 @@ sap.ui.define(
           // inform observers about labels update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.destroyAggregation.call(
+          Element.prototype.destroyAggregation.call(
             this,
             sAggregationName,
             bSuppressInvalidate
@@ -392,12 +380,12 @@ sap.ui.define(
         // TODO: Check why change of 'minValue' or 'maxValue' are not working without rerender (simple examples are working)
         if (['title', 'showTitle', 'visible'].includes(sName)) {
           // important: update value, before fire event
-          Control.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
+          Element.prototype.setProperty.call(this, sName, vValue, true) // do not rerender
 
           // inform observers about data update
           this.fireAxisUpdate()
         } else {
-          Control.prototype.setProperty.call(
+          Element.prototype.setProperty.call(
             this,
             sName,
             vValue,

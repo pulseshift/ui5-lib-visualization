@@ -203,7 +203,7 @@ sap.ui.define(
           xAxisType: {
             type: 'ui5.viz.AxisType',
             group: 'Data',
-            defaultValue: library.AxisType.Default
+            defaultValue: library.AxisType.Category
           }
         },
         aggregations: {
@@ -416,6 +416,19 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
+       * Constructor for a new <code>ui5.viz.Chart</code>.
+       *
+       * @param {string} [sId] Id for the new control, generated automatically if no id is given
+       * @param {object} [mSettings] Initial settings for the new control
+       */
+      constructor() {
+        Control.prototype.constructor.apply(this, arguments)
+
+        // initialization phase finished, update routine is enabled again
+        this._getChartUpdateHandler().release()
+      },
+
+      /**
        * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
        * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
@@ -434,19 +447,6 @@ sap.ui.define(
         this._debounceUpdate = _.debounce(this._onDataUpdate, 10)
         this._debounceUpdateChartLines = _.debounce(this._updateChartLines, 50)
         this._debounceUpdateChartAreas = _.debounce(this._updateChartAreas, 50)
-      },
-
-      /**
-       * Constructor for a new <code>ui5.viz.Chart</code>.
-       *
-       * @param {string} [sId] Id for the new control, generated automatically if no id is given
-       * @param {object} [mSettings] Initial settings for the new control
-       */
-      constructor() {
-        Control.prototype.constructor.apply(this, arguments)
-
-        // initialization phase finished, update routine is enabled again
-        this._getChartUpdateHandler().release()
       },
 
       /**
@@ -501,8 +501,8 @@ sap.ui.define(
 
         // because properties can't be take into account during rendering, we must process all properties and aggregations manually here
 
-        // initialize c3 chart
-        this._chart = c3.generate({
+        // create c3js options
+        const options = {
           bindto: `#${this.getId()}`,
           size: {
             width: this.getWidth(),
@@ -556,11 +556,14 @@ sap.ui.define(
                         .getInstance({ style: 'long' })
                         .format(oDate)
                     }
+
                   // INDEX BASED LABELS
-                  case library.AxisType.Default:
+                  case library.AxisType.Indexed:
+                  // CATEGORY BASED LABELS
+                  case library.AxisType.Category:
                   default:
                     return iXIndex => {
-                      const oLabel = oXAxis.getLabels()[iXIndex]
+                      const oLabel = this.getXAxisLabelByIndex(iXIndex)
                       const sTitle =
                         oLabel.getTitle() === ''
                           ? oLabel.getValue()
@@ -577,7 +580,24 @@ sap.ui.define(
             x: 'x',
             columns: [
               // add x axis values first
-              ['x', ...oXAxis.getLabels().map(oLabel => oLabel.getValue())],
+              [
+                'x',
+                ...oXAxis.getLabels().map((oLabel, iIndex) => {
+                  // check if an index based formatter function must be used or a time based formatter
+                  switch (this.getXAxisType()) {
+                    // TIME BASED VALUES
+                    case library.AxisType.Time:
+                      return oLabel.getValue()
+                    // INDEX BASED LABELS
+                    case library.AxisType.Indexed:
+                      return parseInt(oLabel.getValue(), 10) || iIndex
+                    // CATEGORY BASED LABELS
+                    case library.AxisType.Category:
+                    default:
+                      return oLabel.getValue()
+                  }
+                })
+              ],
               // add series e.g. ['data1', 1, 4, 6, 8, 10, ...]
               ...aSeries.map(oSeries => {
                 // get all data points
@@ -599,16 +619,18 @@ sap.ui.define(
                         animation: oDataPoint.getHighlightAnimation()
                       })
                     }
-                  // ===== START OPAL EXTENSION =====
-                  //not working yet!
-                  //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
+                    // ===== START OPAL EXTENSION =====
+                    //not working yet!
+                    //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
 
-                  //workaround:
-                  //return isVisible ? oDataPoint.getValue() : null;
+                    //workaround:
+                    //return isVisible ? oDataPoint.getValue() : null;
 
-                  //original:
-                  return isVisible ? (parseInt(oDataPoint.getValue(), 10)) : null;
-                  // ===== END OPAL EXTENSION =====
+                    //original:
+                    return isVisible
+                      ? parseInt(oDataPoint.getValue(), 10)
+                      : null
+                    // ===== END OPAL EXTENSION =====
                   }) || []
 
                 // add key of data series
@@ -693,12 +715,14 @@ sap.ui.define(
                     })
           },
           color: {
-            pattern: this.getColors().map(oColor => oColor.getColor()).concat(
-              // retrieve custom color palette first if available
-              library.ColorPalette.custom
-                ? library.ColorPalette.custom
-                : library.ColorPalette.Material300
-            )
+            pattern: this.getColors()
+              .map(oColor => oColor.getColor())
+              .concat(
+                // retrieve custom color palette first if available
+                library.ColorPalette.custom
+                  ? library.ColorPalette.custom
+                  : library.ColorPalette.Material300
+              )
           },
           axis: {
             rotated: this.getSwitchAxisPosition(),
@@ -708,18 +732,37 @@ sap.ui.define(
                 switch (this.getXAxisType()) {
                   case library.AxisType.Time:
                     return 'timeseries'
-
-                  case library.AxisType.Default:
+                  case library.AxisType.Indexed:
+                    return 'indexed'
+                  case library.AxisType.Category:
                   default:
                     return 'category'
                 }
               })(),
-              max: oXAxis.getMaxValue() ? oXAxis.getMaxValue() : undefined,
-              min: oXAxis.getMinValue() ? oXAxis.getMinValue() : undefined,
+              categories:
+                this.getXAxisType() === library.AxisType.Category
+                  ? oXAxis.getLabels().map(oLabel => oLabel.getValue())
+                  : undefined,
+              max: this.getMaxValueByAxis(oXAxis),
+              min: this.getMinValueByAxis(oXAxis),
               tick: {
                 centered: false,
                 // count: 10, >> this value should be set automatically
                 // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
+                values:
+                  oXAxis.getLabels().length > 0
+                    ? oXAxis.getLabels().map((oLabel, iIndex) => {
+                        switch (this.getXAxisType()) {
+                          case library.AxisType.Time:
+                            return oLabel.getValue()
+                          case library.AxisType.Indexed:
+                            return parseInt(oLabel.getValue(), 10) || 0
+                          case library.AxisType.Category:
+                          default:
+                            return iIndex
+                        }
+                      })
+                    : null,
                 format: (() => {
                   // check if an index based formatter function must be used or a time based formatter
                   switch (this.getXAxisType()) {
@@ -730,12 +773,13 @@ sap.ui.define(
                           .getInstance({ pattern: 'MMM yyyy' })
                           .format(oDate)
                       }
-                    // INDEX BASED LABELS
-                    case library.AxisType.Default:
+                    // INDEXED BASED LABELS
+                    case library.AxisType.Indexed:
+                    // CATEGORY BASED LABELS
+                    case library.AxisType.Category:
                     default:
                       return iXIndex => {
-                        const oLabel =
-                          oXAxis.getLabels()[iXIndex] || new ChartAxisLabel()
+                        const oLabel = this.getXAxisLabelByIndex(iXIndex)
                         const sTitle =
                           oLabel.getTitle() === ''
                             ? oLabel.getValue()
@@ -758,31 +802,31 @@ sap.ui.define(
               show: oYAxis.getVisible(),
               // inner: false,
               // default: max = highest y axis value
-              max: oYAxis.getMaxValue()
-                ? oYAxis.getMaxValue()
-                : oYAxis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.max(
-                          pre === undefined ? -Infinity : pre,
-                          parseInt(curr.getValue(), 10)
-                        ),
-                      undefined
-                    ),
+              max:
+                this.getMaxValueByAxis(oYAxis) ||
+                oYAxis
+                  .getLabels()
+                  .reduce(
+                    (pre, curr) =>
+                      Math.max(
+                        pre === undefined ? -Infinity : pre,
+                        parseInt(curr.getValue(), 10) || undefined
+                      ),
+                    undefined
+                  ),
               // default: min = lowest y axis value
-              min: oYAxis.getMinValue()
-                ? oYAxis.getMinValue()
-                : oYAxis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.min(
-                          pre === undefined ? Infinity : pre,
-                          parseInt(curr.getValue(), 10)
-                        ),
-                      undefined
-                    ),
+              min:
+                this.getMinValueByAxis(oYAxis) ||
+                oYAxis
+                  .getLabels()
+                  .reduce(
+                    (pre, curr) =>
+                      Math.min(
+                        pre === undefined ? Infinity : pre,
+                        parseInt(curr.getValue(), 10) || undefined
+                      ),
+                    undefined
+                  ),
               // inverted: false,
               // center: 0,
               padding: {
@@ -791,30 +835,28 @@ sap.ui.define(
               },
               default: [
                 // identify min and max value to set default range
-                oYAxis.getMinValue()
-                  ? oYAxis.getMinValue()
-                  : oYAxis
-                      .getLabels()
-                      .reduce(
-                        (pre, curr) =>
-                          Math.min(
-                            pre === undefined ? Infinity : pre,
-                            parseInt(curr.getValue(), 10)
-                          ),
-                        undefined
-                      ),
-                oYAxis.getMaxValue()
-                  ? oYAxis.getMaxValue()
-                  : oYAxis
-                      .getLabels()
-                      .reduce(
-                        (pre, curr) =>
-                          Math.max(
-                            pre === undefined ? -Infinity : pre,
-                            parseInt(curr.getValue(), 10)
-                          ),
-                        undefined
-                      )
+                oYAxis.getMinValue() ||
+                  oYAxis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10) || undefined
+                        ),
+                      undefined
+                    ),
+                oYAxis.getMaxValue() ||
+                  oYAxis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10) || undefined
+                        ),
+                      undefined
+                    )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
@@ -822,12 +864,13 @@ sap.ui.define(
                   oYAxis.getLabels().length > 0
                     ? oYAxis
                         .getLabels()
-                        .map(oLabel => parseInt(oLabel.getValue(), 10))
+                        .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
                     : null,
                 format: iYValue => {
                   const oLabel = oYAxis
                     .getLabels()
                     .find(oLabel => parseInt(oLabel.getValue(), 10) === iYValue)
+
                   if (!oLabel) {
                     // if no label exist, show value
                     return iYValue
@@ -850,8 +893,8 @@ sap.ui.define(
             y2: {
               show: oY2Axis.getVisible(),
               // inner: false,
-              max: oY2Axis.getMaxValue() ? oY2Axis.getMaxValue() : undefined,
-              min: oY2Axis.getMinValue() ? oY2Axis.getMinValue() : undefined,
+              max: this.getMaxValueByAxis(oY2Axis),
+              min: this.getMinValueByAxis(oY2Axis),
               // inverted: false,
               // center: 0,
               padding: {
@@ -860,30 +903,28 @@ sap.ui.define(
               },
               default: [
                 // identify min and max value to set default range
-                oY2Axis.getMinValue()
-                  ? oY2Axis.getMinValue()
-                  : oY2Axis
-                      .getLabels()
-                      .reduce(
-                        (pre, curr) =>
-                          Math.min(
-                            pre === undefined ? Infinity : pre,
-                            parseInt(curr.getValue(), 10)
-                          ),
-                        undefined
-                      ),
-                oY2Axis.getMaxValue()
-                  ? oY2Axis.getMaxValue()
-                  : oY2Axis
-                      .getLabels()
-                      .reduce(
-                        (pre, curr) =>
-                          Math.max(
-                            pre === undefined ? -Infinity : pre,
-                            parseInt(curr.getValue(), 10)
-                          ),
-                        undefined
-                      )
+                oY2Axis.getMinValue() ||
+                  oY2Axis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10) || undefined
+                        ),
+                      undefined
+                    ),
+                oY2Axis.getMaxValue() ||
+                  oY2Axis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10) || undefined
+                        ),
+                      undefined
+                    )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
@@ -891,7 +932,7 @@ sap.ui.define(
                   oY2Axis.getLabels().length > 0
                     ? oY2Axis
                         .getLabels()
-                        .map(oLabel => parseInt(oLabel.getValue(), 10))
+                        .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
                     : null,
                 format: iY2Value => {
                   const oLabel = oY2Axis
@@ -965,7 +1006,12 @@ sap.ui.define(
           transition: {
             duration: 175
           }
-        })
+        }
+
+        console.log(options)
+
+        // initialize c3 chart
+        this._chart = c3.generate(options)
 
         // >>> continue styling
 
@@ -1274,30 +1320,6 @@ sap.ui.define(
         if (!oXAxis) {
           oXAxis = new ChartAxis()
           this.setAggregation('xAxis', oXAxis, true) // do not rerender
-        }
-
-        // get maximal axis ticks
-        iSeriesTicks = Math.max.apply(
-          Math,
-          this.getSeries().length === 0
-            ? [0]
-            : this.getSeries().map(oSeries => oSeries.getData().length)
-        )
-
-        // add missing ticks if required
-        iAxisTicks = oXAxis.getLabels().length
-
-        if (iAxisTicks < iSeriesTicks) {
-          iDeltaTicks = iSeriesTicks - iAxisTicks
-          for (let i = 0; i < iDeltaTicks; i++) {
-            // add label without fire update event
-            Control.prototype.addAggregation.call(
-              oXAxis,
-              'labels',
-              new ChartAxisLabel({ value: iAxisTicks + i }),
-              true
-            )
-          }
         }
 
         return oXAxis
@@ -1676,6 +1698,84 @@ sap.ui.define(
       /* public methods                                              */
       /* =========================================================== */
 
+      /**
+       * Get respective X axis label by index.
+       *
+       * @param {int} [iIndex] Index.
+       * @return {any} Value depending on axis type.
+       * @public
+       */
+      getXAxisLabelByIndex(iIndex) {
+        const oXAxis = this.getXAxis()
+        const sXAxisType = this.getXAxisType()
+        const aLabels = oXAxis.getLabels()
+
+        // on an indexed axis, the label index is representing the labels value and not its position index
+        const oLabel =
+          sXAxisType === library.AxisType.Indexed
+            ? aLabels.find(oLabel => parseInt(oLabel.getValue(), 10) === iIndex)
+            : aLabels[iIndex]
+
+        // return an invisible label if no label was found
+        return oLabel || new ChartAxisLabel({ visible: false })
+      },
+
+      /**
+       * Getter for property <code>minValue</code> of an axis.
+       *
+       * @param {ui5.viz.ChartAxis} [oAxis] Axis.
+       * @return {any} Value depending on axis type.
+       * @public
+       */
+      getMinValueByAxis(oAxis) {
+        const sXAxisType = this.getXAxisType()
+        const sAxisType = oAxis.getProperty('_axisType')
+        const isXAxis = sAxisType === library.Axis.X
+        const sMinValue = oAxis.getMinValue() || undefined
+
+        if (isXAxis) {
+          switch (this.getXAxisType()) {
+            case library.AxisType.Time:
+              return sMinValue
+            case library.AxisType.Indexed:
+            case library.AxisType.Category:
+            default:
+              return parseInt(sMinValue, 10) || undefined
+          }
+        }
+
+        // fallback for Y and Y2 axis
+        return parseInt(sMinValue, 10) || undefined
+      },
+
+      /**
+       * Getter for property <code>maxValue</code> of an axis.
+       *
+       * @param {ui5.viz.ChartAxis} [oAxis] Axis.
+       * @return {any} Value depending on axis type.
+       * @public
+       */
+      getMaxValueByAxis(oAxis) {
+        const sXAxisType = this.getXAxisType()
+        const sAxisType = oAxis.getProperty('_axisType')
+        const isXAxis = sAxisType === library.Axis.X
+        const sMaxValue = oAxis.getMaxValue() || undefined
+
+        if (isXAxis) {
+          switch (this.getXAxisType()) {
+            case library.AxisType.Time:
+              return sMaxValue
+            case library.AxisType.Indexed:
+            case library.AxisType.Category:
+            default:
+              return parseInt(sMaxValue, 10) || undefined
+          }
+        }
+
+        // fallback for Y and Y2 axis
+        return parseInt(sMaxValue, 10) || undefined
+      },
+
       /* =========================================================== */
       /* private methods                                             */
       /* =========================================================== */
@@ -1807,7 +1907,9 @@ sap.ui.define(
                     animation: oDataPoint.getHighlightAnimation()
                   })
                 }
-                return isVisible ? parseInt(oDataPoint.getValue(), 10) : null
+                return isVisible
+                  ? parseInt(oDataPoint.getValue(), 10) || null
+                  : null
               })
             ])
           ],
@@ -1850,7 +1952,7 @@ sap.ui.define(
               : aSeries.reduce((oTypes, oSeries) => {
                   // return a map with the structure: { @seriesKey: @seriesColor, ... }
                   if (oSeries.getColor()) {
-                    oTypes[oSeries.getKey()] = oSeries.getColor();
+                    oTypes[oSeries.getKey()] = oSeries.getColor()
                   }
                   return oTypes
                 }, {})
@@ -1912,36 +2014,36 @@ sap.ui.define(
         // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
         this._chart.axis.range({
           min: {
-            X: oXAxis.getMinValue() ? oXAxis.getMinValue() : undefined,
-            y: oYAxis.getMinValue()
-              ? oYAxis.getMinValue()
-              : oYAxis
-                  .getLabels()
-                  .reduce(
-                    (pre, curr) =>
-                      Math.min(
-                        pre === undefined ? Infinity : pre,
-                        parseInt(curr.getValue(), 10)
-                      ),
-                    undefined
-                  ),
-            y2: oY2Axis.getMinValue() ? oY2Axis.getMinValue() : undefined
+            X: this.getMinValueByAxis(oXAxis),
+            y:
+              this.getMinValueByAxis(oYAxis) ||
+              oYAxis
+                .getLabels()
+                .reduce(
+                  (pre, curr) =>
+                    Math.min(
+                      pre === undefined ? Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
+                ),
+            y2: this.getMinValueByAxis(oY2Axis)
           },
           max: {
-            x: oXAxis.getMaxValue() ? oXAxis.getMaxValue() : undefined,
-            y: oYAxis.getMaxValue()
-              ? oYAxis.getMaxValue()
-              : oYAxis
-                  .getLabels()
-                  .reduce(
-                    (pre, curr) =>
-                      Math.max(
-                        pre === undefined ? -Infinity : pre,
-                        parseInt(curr.getValue(), 10)
-                      ),
-                    undefined
-                  ),
-            y2: oY2Axis.getMaxValue() ? oY2Axis.getMaxValue() : undefined
+            x: this.getMaxValueByAxis(oXAxis),
+            y:
+              this.getMaxValueByAxis(oYAxis) ||
+              oYAxis
+                .getLabels()
+                .reduce(
+                  (pre, curr) =>
+                    Math.max(
+                      pre === undefined ? -Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
+                ),
+            y2: this.getMaxValueByAxis(oY2Axis)
           }
         })
 
@@ -2312,10 +2414,13 @@ sap.ui.define(
 
         // create style element if not exist
         if (oLineStyle.empty()) {
-          oLineStyle = d3.select(`#${this.getId()} defs`).append('style').attr({
-            id: `${this.getId()}-line-style`,
-            type: 'text/css'
-          })
+          oLineStyle = d3
+            .select(`#${this.getId()} defs`)
+            .append('style')
+            .attr({
+              id: `${this.getId()}-line-style`,
+              type: 'text/css'
+            })
         }
 
         // get all chart lines  and concatenate color rules
@@ -2388,10 +2493,13 @@ sap.ui.define(
 
         // create style element if not exist
         if (oAreaStyle.empty()) {
-          oAreaStyle = d3.select(`#${this.getId()} defs`).append('style').attr({
-            id: `${this.getId()}-area-style`,
-            type: 'text/css'
-          })
+          oAreaStyle = d3
+            .select(`#${this.getId()} defs`)
+            .append('style')
+            .attr({
+              id: `${this.getId()}-area-style`,
+              type: 'text/css'
+            })
         }
 
         // get all chart areas and concatenate style rules
@@ -2506,8 +2614,13 @@ sap.ui.define(
       },
 
       // ===== START OPAL EXTENSION =====
-      _isRibbonType: function _isRibbonType(sSeriesType){
-        return sSeriesType ===  (library.ChartSeriesType.RibbonLine || library.ChartSeriesType.RibbonSpline || library.ChartSeriesType.RibbonStep);
+      _isRibbonType: function _isRibbonType(sSeriesType) {
+        return (
+          sSeriesType ===
+          (library.ChartSeriesType.RibbonLine ||
+            library.ChartSeriesType.RibbonSpline ||
+            library.ChartSeriesType.RibbonStep)
+        )
       },
       // ===== END OPAL EXTENSION =====
 
@@ -2528,31 +2641,35 @@ sap.ui.define(
         // get margin
         if (this.getDomRef()) {
           if (sSizeType === 'width') {
-            iMargin += parseInt(
-              getComputedStyle(this.getDomRef(), '').marginLeft.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
-            iMargin += parseInt(
-              getComputedStyle(this.getDomRef(), '').marginRight.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
+            iMargin +=
+              parseInt(
+                getComputedStyle(this.getDomRef(), '').marginLeft.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
+            iMargin +=
+              parseInt(
+                getComputedStyle(this.getDomRef(), '').marginRight.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
           } else {
-            iMargin += parseInt(
-              getComputedStyle(this.getDomRef(), '').marginTop.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
-            iMargin += parseInt(
-              getComputedStyle(this.getDomRef(), '').marginBottom.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
+            iMargin +=
+              parseInt(
+                getComputedStyle(this.getDomRef(), '').marginTop.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
+            iMargin +=
+              parseInt(
+                getComputedStyle(this.getDomRef(), '').marginBottom.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
           }
         }
 
@@ -2581,21 +2698,23 @@ sap.ui.define(
         switch (mCSS.unit) {
           case 'rem':
             // calculate pixel dependant on font size of root element
-            iCalculatedWidth = parseInt(
-              getComputedStyle(document.body, '').fontSize.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
+            iCalculatedWidth =
+              parseInt(
+                getComputedStyle(document.body, '').fontSize.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
             break
           case 'em':
             // calculate pixel dependant on font size of parent
-            iCalculatedWidth = parseInt(
-              getComputedStyle(this._getParentDomRef(), '').fontSize.match(
-                /(\d*(\.\d*)?)/,
-                10
-              )[1]
-            )
+            iCalculatedWidth =
+              parseInt(
+                getComputedStyle(this._getParentDomRef(), '').fontSize.match(
+                  /(\d*(\.\d*)?)/,
+                  10
+                )[1]
+              ) || 0
             break
           case 'px':
             // if width value is negative or not supposed, then we take the full browser width

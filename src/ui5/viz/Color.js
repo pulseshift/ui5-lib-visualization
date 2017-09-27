@@ -6,11 +6,8 @@
  * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
  */
 sap.ui.define(
-  [
-    'sap/ui/core/Control', 
-    './library'
-  ],
-  function(Control) {
+  ['sap/ui/core/Element', './library'],
+  function(Element) {
     /**
      * Constructor for a new <code>ui5.viz.Color</code>.
      *
@@ -20,7 +17,7 @@ sap.ui.define(
      * @class
      * The <code>Color</code> control: Color container for bar, line and other chart types. Based on C3.js..
      *
-     * @extends sap.ui.core.Control
+     * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
      * @version 1.0.0
@@ -30,7 +27,7 @@ sap.ui.define(
      * @public
      * @alias ui5.viz.Color
      */
-    return Control.extend('ui5.viz.Color', {
+    return Element.extend('ui5.viz.Color', {
       /* =========================================================== */
       /* meta data definition                                        */
       /* =========================================================== */
@@ -82,30 +79,8 @@ sap.ui.define(
        * @param {object} [mSettings] Initial settings for the new control
        */
       constructor() {
-        Control.prototype.constructor.apply(this, arguments)
+        Element.prototype.constructor.apply(this, arguments)
       }
-
-      /**
-       * Method called before control gets rendered
-       * @private
-       * @override
-       */
-      // onBeforeRendering() {},
-
-      /**
-       * Renderer function of control <code>ui5.viz.Chart</code>.
-       *
-       * @param {object} [oRm] Render Manager
-       * @param {object} [oControl] Current control (this)
-       */
-      // renderer(oRm, oControl) {},
-
-      /**
-       * Method called after control gets rendered
-       * @private
-       * @override
-       */
-      // onAfterRendering() {},
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
