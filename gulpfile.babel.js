@@ -428,7 +428,7 @@ function stylesDist() {
 }
 
 /* ----------------------------------------------------------- *
- * bundle app resources in library-preload.js file
+ * bundle library resources in library-preload.js file
  * ----------------------------------------------------------- */
 
 // [production build]
@@ -477,3 +477,58 @@ function ui5LibPreloads() {
   })
   return Promise.all(aPreloadPromise)
 }
+
+/* ----------------------------------------------------------- *
+ * bundle theme styles in library.css file
+ * ----------------------------------------------------------- */
+
+// [development build]
+function ui5ThemeBundle() {
+  const aThemeBundlePromise = pkg.ui5.libraries.map(oLibrary => {
+    const sDistLibraryPath = oLibrary.path.replace(new RegExp(`^${SRC}`), DIST)
+    return new Promise(function(resolve, reject) {
+      // 1. copy theme resources (assets) to DEV
+      gulp
+        .src([`${oLibrary.path}/**/*.less`], {
+          base: oLibrary.path,
+          // filter out unchanged files between runs
+          since: gulp.lastRun(ui5ThemeBundle)
+        })
+        // don't exit the running watcher task on errors
+        .pipe(plumber())
+        .pipe(gulp.dest(sDistLibraryPath))
+        .on('error', reject)
+        .on('end', resolve)
+    })
+      .then(() =>  new Promise((resolve, reject) => {
+          // 2. compile library.css
+          gulp
+            .src(
+              [
+                // build all available themes
+                `${sDistLibraryPath}/**/library.source.less`
+              ],
+              {
+                read: true
+              }
+            )
+            // don't exit the running watcher task on errors
+            .pipe(plumber())
+            .pipe(
+              tap(oFile => {
+                const sLibraryPath = path.dirname(oFile.path)
+                const oRaw = oFile.contents.toString('utf8')
+                ui5helper.compileUi5LessLib(sLibraryPath, oRaw, () => {})
+              })
+            )
+            .pipe(gulp.dest(sDistLibraryPath))
+            .on('error', reject)
+            .on('end', resolve)
+        })
+      })
+  )
+  return Promise.all(aThemeBundlePromise)
+}
+
+// [production build]
+function ui5ThemeBundleDist() {}
