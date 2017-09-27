@@ -1543,10 +1543,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-    // ===== START OPAL EXTENSION =====
-    // as the d3.min-function can only find the minimum in a 1 dim array we need custom functionality for the low
 
-            return $$.d3.min(Object.keys(ys).map(function (key) {
+        return $$.d3.min(Object.keys(ys).map(function (key) {
             return $$.d3.min(ys[key]);
         }));
     };
@@ -1593,8 +1591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-        // ===== START OPAL EXTENSION =====
-        // as the d3.max-function can only find the maximum in a 1 dim array we need custom functionality for the high
+        
         return $$.d3.max(Object.keys(ys).map(function (key) {
             return $$.d3.max(ys[key]);
         }));
@@ -2444,11 +2441,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 values: data.map(function (d, i) {
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
-                        value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null,
+                        value = d[id] !== null && !isNaN(d[id]) && (!$$.isRibbonType(d))? +d[id] : null,
 
                         // ===== START OPAL EXTENSION =====
                         // introducing ribbonYs, which is a pair of y values at the same x value: a high and a low
-                        ribbonYvalues = isNaN(d[id]) ? d[id] : undefined, //FIXME: isNaN could be a string or anything - should be specified
+                        ribbonYvalues = isNaN(d[id]) && ($$.isRibbonType(d))? d[id] : undefined, //FIXME: isNaN could be a string or anything - should be specified
                         x;
                         
                     // use x as categories if custom x and categorized
