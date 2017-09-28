@@ -51,7 +51,6 @@ Current todos/issues/idea backlog (unordered):
 - ChartArea attribute "style" is not working with data binding, yet
 - Add (real) full-screen mode to Chart control
 - Y-axis label is corupting Y-axis display, if value is 0
-- Missing build step: create library-preload.js
 - Missing build step: create library.css for all themes
 
 ### License
