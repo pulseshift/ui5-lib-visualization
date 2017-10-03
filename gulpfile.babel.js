@@ -1,3 +1,6 @@
+/* @flow */
+/* eslint-env node */
+
 /**
  *
  *  OpenUI5 Visualization Control Library
@@ -28,6 +31,7 @@ import less from 'gulp-less'
 import tap from 'gulp-tap'
 import sourcemaps from 'gulp-sourcemaps'
 import ui5preload from 'gulp-ui5-preload'
+import mainNpmFiles from 'gulp-main-npm-files'
 import { ui5CompileLessLib } from 'ui5-lib-util'
 import LessAutoprefix from 'less-plugin-autoprefix'
 import ora from 'ora'
@@ -63,18 +67,34 @@ const DEV = '.tmp'
 // path to ditribution direcory
 const DIST = 'dist'
 
+// read modules
+const aAssets = pkg.ui5.assets || []
+const aLibs = pkg.ui5.libraries || []
+const aModules = [].concat(aAssets).concat(aLibs)
+
 // paths used in our app
 const paths = {
   assets: {
-    src: [
-      `${SRC}/**/*.properties`,
-      `${SRC}/**/*.json`,
-      `${SRC}/**/*.{xml,html}`,
-      `${SRC}/**/*.{jpg,jpeg,png,svg,ico}`
-    ]
+    src: aModules
+      .reduce(
+        (aSrc, oModule) =>
+          aSrc.concat([
+            `${oModule.path}/**/*.properties`,
+            `${oModule.path}/**/*.json`,
+            `${oModule.path}/**/*.{xml,html}`,
+            `${oModule.path}/**/*.css`,
+            `${oModule.path}/**/*.{jpg,jpeg,png,svg,ico}`
+          ]),
+        []
+      )
+      // take into account .js files only for asset roots
+      .concat(aAssets.map(oAsset => `${oAsset.path}/**/*.js`))
   },
   scripts: {
-    src: [`${SRC}/**/*.js`]
+    src: aLibs.map(oModule => `${oModule.path}/**/*.js`)
+  },
+  libStyles: {
+    src: aLibs.map(oLibrary => `${oLibrary.path}/**/*.less`)
   }
 }
 
@@ -85,8 +105,8 @@ const paths = {
  */
 const start = gulp.series(
   logStart,
-  clean,
-  gulp.parallel(assets, scripts, ui5LibThemeBundle),
+  gulp.parallel(clean, loadDependencies),
+  gulp.parallel(assets, scripts, ui5LibStyles),
   logStats,
   watch
 )
@@ -100,7 +120,7 @@ function logStart(done) {
 
 // log start statistics and stop spinner
 function logStats(done) {
-  const iLibs = (pkg.ui5.libraries || []).length
+  const iLibs = (aLibs || []).length
 
   // print success message
   spinner
@@ -122,9 +142,9 @@ export default start
  */
 const build = gulp.series(
   logStartDist,
-  cleanDist,
-  gulp.parallel(assetsDist, scriptsDist, ui5LibThemeBundleDist),
-  gulp.parallel(ui5LibPreloads),
+  gulp.parallel(cleanDist, loadDependenciesDist),
+  gulp.parallel(assetsDist, scriptsDist, ui5LibStylesDist),
+  ui5LibPreloads,
   logStatsDist
 )
 
@@ -137,7 +157,7 @@ function logStartDist(done) {
 
 // log build statistics and stop spinner
 function logStatsDist(done) {
-  const iLibs = (pkg.ui5.libraries || []).length
+  const iLibs = (aLibs || []).length
 
   // print success message
   spinner
@@ -160,14 +180,15 @@ export { build }
 function watch() {
   const sSuccessMessage =
     '\u{1F64C}  (Server started, use Ctrl+C to stop and go back to the console...)'
-  const aWatchLibThemeSrc = pkg.ui5.libraries.map(
+  const aLibraries = pkg.ui5.libraries || []
+  const aWatchLibThemeSrc = aLibraries.map(
     oLibrary => `${oLibrary.path}/**/*.less`
   )
 
   // start watchers
   gulp.watch(paths.assets.src, gulp.series(assets, reload))
   gulp.watch(paths.scripts.src, gulp.series(scripts, reload))
-  gulp.watch(aWatchLibThemeSrc, gulp.series(ui5LibThemeBundle, reload))
+  gulp.watch(paths.libStyles.src, gulp.series(ui5LibStyles, reload))
 
   // start HTTP server
   server.init({
@@ -181,7 +202,6 @@ function watch() {
         '/ui5': './ui5'
       }
     }
-    // proxy: 'yourlocal.dev'
   })
 
   // log success message
@@ -238,60 +258,72 @@ function cleanDist() {
 
 // [development build]
 function assets() {
-  return (
-    gulp
-      .src(
-        paths.assets.src,
-        // select only files that have changed since the last run
-        { since: gulp.lastRun(assets) }
-      )
-      // don't exit the running watcher task on errors
-      .pipe(plumber())
-      // optimize size and quality of images
-      .pipe(
-        gulpif(
-          /.*\.(jpg|jpeg|png)$/,
-          imagemin({
-            progressive: true,
-            interlaced: true
-          })
+  return paths.assets.src.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(
+          paths.assets.src,
+          // filter out unchanged files between runs
+          { base: SRC, since: gulp.lastRun(assets) }
         )
-      )
-      .pipe(gulp.dest(DEV))
-  )
+        // don't exit the running watcher task on errors
+        .pipe(plumber())
+        // optimize size and quality of images
+        .pipe(
+          gulpif(
+            /.*\.(jpg|jpeg|png)$/,
+            imagemin({
+              progressive: true,
+              interlaced: true
+            })
+          )
+        )
+        .pipe(gulp.dest(DEV))
 }
 
 // [production build]
 function assetsDist() {
-  return (
-    gulp
-      .src(paths.assets.src)
-      // optimize size and quality of images
-      .pipe(
-        gulpif(
-          /.*\.(jpg|jpeg|png)$/,
-          imagemin({
-            progressive: true,
-            interlaced: true
-          })
+  return paths.assets.src.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(paths.assets.src, { base: SRC })
+        // optimize size and quality of images
+        .pipe(
+          gulpif(
+            /.*\.(jpg|jpeg|png)$/,
+            imagemin({
+              progressive: true,
+              interlaced: true
+            })
+          )
         )
-      )
-      // minify XML, SVG and JSON
-      .pipe(
-        gulpif(
-          /.*\.(xml|json|svg)$/,
-          prettydata({
-            type: 'minify',
-            extensions: {
-              svg: 'xml'
-            }
-          })
+        // minify XML, SVG and JSON
+        .pipe(
+          gulpif(
+            /.*\.(xml|json|svg)$/,
+            prettydata({
+              type: 'minify',
+              extensions: {
+                svg: 'xml'
+              }
+            })
+          )
         )
-      )
-      // minify HTML
-      .pipe(gulpif(/.*\.html$/, htmlmin()))
-      .pipe(gulp.dest(DIST))
-  )
+        // minify HTML
+        .pipe(gulpif(/.*\.html$/, htmlmin()))
+        // minify CSS
+        .pipe(
+          gulpif(
+            /.*\.css$/,
+            cleanCSS({
+              inline: ['none'],
+              level: 2
+            })
+          )
+        )
+        // minify JS
+        .pipe(gulpif(/.*\.js$/, uglify()))
+        .pipe(gulp.dest(DIST))
 }
 
 /* ----------------------------------------------------------- *
@@ -300,44 +332,44 @@ function assetsDist() {
 
 // [development build]
 function scripts() {
-  return (
-    gulp
-      .src(
-        paths.scripts.src,
-        // select only files that have changed since the last run
-        { since: gulp.lastRun(scripts) }
-      )
-      // don't exit the running watcher task on errors
-      .pipe(plumber())
-      .pipe(sourcemaps.init())
-      // babel will run with the settings defined in `.babelrc` file
-      .pipe(babel())
-      .pipe(sourcemaps.write('../.maps'))
-      .pipe(gulp.dest(DEV))
-  )
+  return paths.scripts.src.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(
+          paths.scripts.src,
+          // filter out unchanged files between runs
+          { base: SRC, since: gulp.lastRun(scripts) }
+        )
+        // don't exit the running watcher task on errors
+        .pipe(plumber())
+        .pipe(sourcemaps.init())
+        // babel will run with the settings defined in `.babelrc` file
+        .pipe(babel())
+        .pipe(sourcemaps.write('../.maps'))
+        .pipe(gulp.dest(DEV))
 }
 
 // [production build]
 function scriptsDist() {
-  return (
-    gulp
-      .src(paths.scripts.src)
-      // babel will run with the settings defined in `.babelrc` file
-      .pipe(babel())
-      // save non-minified copies with debug duffix
-      .pipe(rename({ suffix: '-dbg' }))
-      .pipe(gulp.dest(DIST))
-      // process copies without suffix
-      .pipe(
-        rename(oFile => {
-          oFile.basename = oFile.basename.replace(/-dbg$/, '')
-          return oFile
-        })
-      )
-      // minify scripts
-      .pipe(uglify())
-      .pipe(gulp.dest(DIST))
-  )
+  return paths.scripts.src.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(paths.scripts.src, { base: SRC })
+        // babel will run with the settings defined in `.babelrc` file
+        .pipe(babel())
+        // save non-minified copies with debug duffix
+        .pipe(rename({ suffix: '-dbg' }))
+        .pipe(gulp.dest(DIST))
+        // process copies without suffix
+        .pipe(
+          rename(oFile => {
+            oFile.basename = oFile.basename.replace(/-dbg$/, '')
+            return oFile
+          })
+        )
+        // minify scripts
+        .pipe(uglify())
+        .pipe(gulp.dest(DIST))
 }
 
 /* ----------------------------------------------------------- *
@@ -346,10 +378,8 @@ function scriptsDist() {
 
 // [production build]
 function ui5LibPreloads() {
-  // update spinner state
-  spinner.text = 'Bundling modules...'
-
-  const aPreloadPromise = pkg.ui5.libraries.map(oLibrary => {
+  const aLibraries = pkg.ui5.libraries || []
+  const aPreloadPromise = aLibraries.map(oLibrary => {
     const sDistLibraryPath = oLibrary.path.replace(new RegExp(`^${SRC}`), DIST)
     return new Promise(function(resolve, reject) {
       gulp
@@ -396,63 +426,61 @@ function ui5LibPreloads() {
  * ----------------------------------------------------------- */
 
 // [development build]
-function ui5LibThemeBundle() {
+function ui5LibStyles() {
+  const aLibraries = pkg.ui5.libraries || []
   const mapPathToDev = sPath => sPath.replace(new RegExp(`^${SRC}`), DEV)
-  const aSelectThemeLessFiles = pkg.ui5.libraries.map(
-    oLibrary => `${oLibrary.path}/**/*.less`
-  )
-  const aSelectLibrarySources = pkg.ui5.libraries.map(
+  const aSelectLibrarySources = aLibraries.map(
     oLibrary => `${mapPathToDev(oLibrary.path)}/**/library.source.less`
   )
 
-  return new Promise((resolve, reject) => {
-    // 1. copy theme resources (assets) to DEV
-    gulp
-      .src(aSelectThemeLessFiles, {
-        base: SRC,
-        // filter out unchanged files between runs
-        since: gulp.lastRun(ui5LibThemeBundle)
-      })
-      // don't exit the running watcher task on errors
-      .pipe(plumber())
-      .pipe(gulp.dest(DEV))
-      .on('error', reject)
-      .on('end', resolve)
-  }).then(
-    () =>
-      new Promise((resolve, reject) => {
-        // 2. compile library.css
+  return paths.libStyles.src.length === 0
+    ? Promise.resolve()
+    : new Promise((resolve, reject) => {
+        // 1. copy theme resources (assets) to DEV
         gulp
-          .src(aSelectLibrarySources, {
-            base: DEV,
-            read: true,
+          .src(paths.libStyles.src, {
+            base: SRC,
             // filter out unchanged files between runs
-            since: gulp.lastRun(ui5LibThemeBundle)
+            since: gulp.lastRun(ui5LibStyles)
           })
           // don't exit the running watcher task on errors
           .pipe(plumber())
-          .pipe(
-            tap(oFile => {
-              ui5CompileLessLib(oFile)
-            })
-          )
           .pipe(gulp.dest(DEV))
           .on('error', reject)
           .on('end', resolve)
-      })
-  )
+      }).then(
+        () =>
+          new Promise((resolve, reject) => {
+            // 2. compile library.css
+            gulp
+              .src(aSelectLibrarySources, {
+                base: DEV,
+                read: true,
+                // filter out unchanged files between runs
+                since: gulp.lastRun(ui5LibStyles)
+              })
+              // don't exit the running watcher task on errors
+              .pipe(plumber())
+              .pipe(
+                tap(oFile => {
+                  ui5CompileLessLib(oFile)
+                })
+              )
+              .pipe(gulp.dest(DEV))
+              .on('error', reject)
+              .on('end', resolve)
+          })
+      )
 }
 
 // [production build]
-function ui5LibThemeBundleDist() {
+function ui5LibStylesDist() {
+  const aLibraries = pkg.ui5.libraries || []
   const mapPathToDist = sPath => sPath.replace(new RegExp(`^${SRC}`), DIST)
-  const aSelectThemeLessFiles = pkg.ui5.libraries.map(
-    oLibrary => `${oLibrary.path}/**/*.less`
-  )
-  const aSelectLibrarySources = pkg.ui5.libraries.map(
+  const aSelectLibrarySources = aLibraries.map(
     oLibrary => `${mapPathToDist(oLibrary.path)}/**/library.source.less`
   )
-  const aSelectLibraryBundles = pkg.ui5.libraries.reduce(
+  const aSelectLibraryBundles = aLibraries.reduce(
     (aBundles, oLibrary) =>
       aBundles.concat([
         `${mapPathToDist(oLibrary.path)}/**/library.css`,
@@ -461,59 +489,103 @@ function ui5LibThemeBundleDist() {
     []
   )
 
-  return new Promise((resolve, reject) => {
-    // 1. copy theme resources (assets) to DEV
-    gulp
-      .src(aSelectThemeLessFiles, {
-        base: SRC,
-        // select only files that have changed since the last run
-        since: gulp.lastRun(ui5LibThemeBundleDist)
+  return paths.libStyles.src.length === 0
+    ? Promise.resolve()
+    : new Promise((resolve, reject) => {
+        // 1. copy theme resources (assets) to DEV
+        gulp
+          .src(paths.libStyles.src, {
+            base: SRC
+          })
+          .pipe(gulp.dest(DIST))
+          .on('error', reject)
+          .on('end', resolve)
       })
-      .pipe(gulp.dest(DIST))
-      .on('error', reject)
-      .on('end', resolve)
-  })
-    .then(
-      () =>
-        new Promise((resolve, reject) => {
-          // 2. compile library.css
-          gulp
-            .src(aSelectLibrarySources, {
-              read: true,
-              base: DIST,
-              // select only files that have changed since the last run
-              since: gulp.lastRun(ui5LibThemeBundleDist)
+        .then(
+          () =>
+            new Promise((resolve, reject) => {
+              // 2. compile library.css
+              gulp
+                .src(aSelectLibrarySources, {
+                  read: true,
+                  base: DIST
+                })
+                .pipe(
+                  tap(oFile => {
+                    ui5CompileLessLib(oFile)
+                  })
+                )
+                .pipe(gulp.dest(DIST))
+                .on('error', reject)
+                .on('end', resolve)
             })
-            .pipe(
-              tap(oFile => {
-                ui5CompileLessLib(oFile)
-              })
-            )
-            .pipe(gulp.dest(DIST))
-            .on('error', reject)
-            .on('end', resolve)
-        })
-    )
-    .then(
-      () =>
-        new Promise((resolve, reject) =>
-          // 3. minify css after creation
-          gulp
-            .src(aSelectLibraryBundles, {
-              base: DIST,
-              // select only files that have changed since the last run
-              since: gulp.lastRun(ui5LibThemeBundleDist)
-            })
-            // minify CSS
-            .pipe(
-              cleanCSS({
-                inline: ['none'],
-                level: 2
-              })
-            )
-            .pipe(gulp.dest(DIST))
-            .on('end', resolve)
-            .on('error', reject)
         )
-    )
+        .then(
+          () =>
+            new Promise((resolve, reject) =>
+              // 3. minify css after creation
+              gulp
+                .src(aSelectLibraryBundles, {
+                  base: DIST
+                })
+                // minify CSS
+                .pipe(
+                  cleanCSS({
+                    inline: ['none'],
+                    level: 2
+                  })
+                )
+                .pipe(gulp.dest(DIST))
+                .on('end', resolve)
+                .on('error', reject)
+            )
+        )
+}
+
+/* ----------------------------------------------------------- *
+ * load dependencies
+ * ----------------------------------------------------------- */
+
+// [development build]
+function loadDependencies() {
+  const aDependencies = mainNpmFiles()
+  const sVendorPath = pkg.ui5.vendor
+
+  return aDependencies.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(aDependencies, { base: path.resolve(__dirname, 'node_modules') })
+        // babel will run with the settings defined in `.babelrc` file
+        .pipe(babel())
+        // save dependency based on module name
+        .pipe(
+          rename(oPath => {
+            oPath.basename = oPath.dirname.split('/')[0]
+            oPath.dirname = '.'
+          })
+        )
+        .pipe(gulp.dest(sVendorPath))
+}
+
+// [production build]
+function loadDependenciesDist() {
+  const aDependencies = mainNpmFiles()
+  const sVendorPath = pkg.ui5.vendor
+
+  return aDependencies.length === 0
+    ? Promise.resolve()
+    : gulp
+        .src(aDependencies, { base: path.resolve(__dirname, 'node_modules') })
+        // babel will run with the settings defined in `.babelrc` file
+        .pipe(babel())
+        // save dependency based on module name
+        .pipe(
+          rename(oPath => {
+            oPath.basename = oPath.dirname.split('/')[0]
+            oPath.dirname = '.'
+          })
+        )
+        // minify scripts
+        .pipe(uglify())
+        .pipe(gulp.dest(sVendorPath))
 }
