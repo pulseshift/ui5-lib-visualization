@@ -22,6 +22,8 @@ yarn start
 
 The app should open in your browser automatically, otherwise open: `http://localhost:3000`
 
+Info: To get a more detailed logging, just use `yarn start:verbose` instead.
+
 ## Distribution
 
 Start build:
@@ -29,6 +31,10 @@ _Will create a `dist` directory in your project root._
 ```
 yarn build
 ```
+
+Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000`
+
+Info: To get a more detailed logging, just use `yarn build:verbose` instead.
 
 ### Contributing & Troubleshooting
 
