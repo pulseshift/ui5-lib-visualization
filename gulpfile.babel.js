@@ -27,16 +27,19 @@ import htmlmin from 'gulp-htmlmin'
 import prettydata from 'gulp-pretty-data'
 import imagemin from 'gulp-imagemin'
 import cleanCSS from 'gulp-clean-css'
-import less from 'gulp-less'
 import tap from 'gulp-tap'
 import sourcemaps from 'gulp-sourcemaps'
 import ui5preload from 'gulp-ui5-preload'
 import mainNpmFiles from 'gulp-main-npm-files'
 import { ui5CompileLessLib } from 'ui5-lib-util'
-import LessAutoprefix from 'less-plugin-autoprefix'
+import browserify from 'browserify'
+import source from 'vinyl-source-stream'
+import buffer from 'vinyl-buffer'
+import babelify from 'babelify'
 import ora from 'ora'
 import del from 'del'
 import path from 'path'
+import fs from 'fs'
 import commander from 'commander'
 import server from 'browser-sync'
 
@@ -180,10 +183,6 @@ export { build }
 function watch() {
   const sSuccessMessage =
     '\u{1F64C}  (Server started, use Ctrl+C to stop and go back to the console...)'
-  const aLibraries = pkg.ui5.libraries || []
-  const aWatchLibThemeSrc = aLibraries.map(
-    oLibrary => `${oLibrary.path}/**/*.less`
-  )
 
   // start watchers
   gulp.watch(paths.assets.src, gulp.series(assets, reload))
@@ -546,25 +545,65 @@ function ui5LibStylesDist() {
  * load dependencies
  * ----------------------------------------------------------- */
 
+// [helper function]
+function getExposedModuleName(sModule) {
+  switch (sModule) {
+    case 'lodash':
+      return '_'
+    case 'velocity-animate':
+      return 'velocity'
+    default:
+      return sModule.replace('-', '_')
+  }
+}
+
 // [development build]
 function loadDependencies() {
   const aDependencies = mainNpmFiles()
   const sVendorPath = pkg.ui5.vendor
 
-  return aDependencies.length === 0
-    ? Promise.resolve()
-    : gulp
-        .src(aDependencies, { base: path.resolve(__dirname, 'node_modules') })
-        // babel will run with the settings defined in `.babelrc` file
-        .pipe(babel())
-        // save dependency based on module name
-        .pipe(
-          rename(oPath => {
-            oPath.basename = oPath.dirname.split('/')[0]
-            oPath.dirname = '.'
+  const aEntryBuilds = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sModuleName = sEntry.split('/node_modules/')[1].split('/')[0]
+        return (
+          browserify({
+            entries: sEntry,
+            standalone: getExposedModuleName(sModuleName)
           })
+            // babel will run with the settings defined in `.babelrc` file
+            .transform(babelify)
+            .bundle()
+            .pipe(source('module.js'))
+            .pipe(buffer())
+            // save dependency based on module name (axios -> axios.js)
+            .pipe(
+              rename(oPath => {
+                oPath.basename = sModuleName
+              })
+            )
+            .pipe(gulp.dest(sVendorPath))
+            .on('end', resolve)
+            .on('error', reject)
         )
-        .pipe(gulp.dest(sVendorPath))
+      })
+  )
+
+  const aStyleCopy = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sStylesheetName = sEntry.replace(/\.js$/, '.css')
+        return fs.existsSync(path.resolve(__dirname, sStylesheetName))
+          ? gulp
+              .src([sStylesheetName])
+              .pipe(gulp.dest(sVendorPath))
+              .on('end', resolve)
+              .on('error', reject)
+          : resolve()
+      })
+  )
+
+  return Promise.all([].concat(aEntryBuilds).concat(aStyleCopy))
 }
 
 // [production build]
@@ -572,20 +611,55 @@ function loadDependenciesDist() {
   const aDependencies = mainNpmFiles()
   const sVendorPath = pkg.ui5.vendor
 
-  return aDependencies.length === 0
-    ? Promise.resolve()
-    : gulp
-        .src(aDependencies, { base: path.resolve(__dirname, 'node_modules') })
-        // babel will run with the settings defined in `.babelrc` file
-        .pipe(babel())
-        // save dependency based on module name
-        .pipe(
-          rename(oPath => {
-            oPath.basename = oPath.dirname.split('/')[0]
-            oPath.dirname = '.'
+  const aEntryBuilds = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sModuleName = sEntry.split('/node_modules/')[1].split('/')[0]
+        return (
+          browserify({
+            entries: sEntry,
+            standalone: getExposedModuleName(sModuleName)
           })
+            // babel will run with the settings defined in `.babelrc` file
+            .transform(babelify)
+            .bundle()
+            .pipe(source('module.js'))
+            .pipe(buffer())
+            // save dependency based on module name (axios -> axios.js)
+            .pipe(
+              rename(oPath => {
+                oPath.basename = sModuleName
+              })
+            )
+            // minify scripts
+            .pipe(uglify())
+            .pipe(gulp.dest(sVendorPath))
+            .on('end', resolve)
+            .on('error', reject)
         )
-        // minify scripts
-        .pipe(uglify())
-        .pipe(gulp.dest(sVendorPath))
+      })
+  )
+
+  const aStyleCopy = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sStylesheetName = sEntry.replace(/\.js$/, '.css')
+        return fs.existsSync(path.resolve(__dirname, sStylesheetName))
+          ? gulp
+              .src([sStylesheetName])
+              // minify CSS
+              .pipe(
+                cleanCSS({
+                  inline: ['none'],
+                  level: 2
+                })
+              )
+              .pipe(gulp.dest(sVendorPath))
+              .on('end', resolve)
+              .on('error', reject)
+          : resolve()
+      })
+  )
+
+  return Promise.all([].concat(aEntryBuilds).concat(aStyleCopy))
 }
