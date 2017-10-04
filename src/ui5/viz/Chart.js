@@ -1345,7 +1345,7 @@ sap.ui.define(
 
       /**
        * Getter for aggregation <code>y2Axis</code>.
-       *        
+       *
        * @return {ui5.viz.ChartAxis} return y2 axis
        * @public
        */
@@ -2604,6 +2604,8 @@ sap.ui.define(
           case library.ChartSeriesType.AreaSpline:
           case library.ChartSeriesType.AreaStep:
           case library.ChartSeriesType.RibbonLine:
+          case library.ChartSeriesType.RibbonSpline:
+          case library.ChartSeriesType.RibbonStep:
             bTypeValid = true
             break
           default:
