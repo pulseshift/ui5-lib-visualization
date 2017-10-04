@@ -315,7 +315,8 @@ function assetsDist() {
           gulpif(
             /.*\.css$/,
             cleanCSS({
-              inline: ['none'],
+              // do not resolve inline imports of assets
+              inline: false,
               level: 2
             })
           )
@@ -530,7 +531,6 @@ function ui5LibStylesDist() {
                 // minify CSS
                 .pipe(
                   cleanCSS({
-                    inline: ['none'],
                     level: 2
                   })
                 )
@@ -650,7 +650,6 @@ function loadDependenciesDist() {
               // minify CSS
               .pipe(
                 cleanCSS({
-                  inline: ['none'],
                   level: 2
                 })
               )
