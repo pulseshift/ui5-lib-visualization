@@ -13,6 +13,8 @@
 /.tmp/
 /.maps/
 /.download/
+/src/vendor-beta/
+
 
 ### Node ###
 node_modules/

@@ -321,6 +321,8 @@ function assetsDist() {
             })
           )
         )
+        // babel will run with the settings defined in `.babelrc` file
+        .pipe(gulpif(/.*\.js$/, babel()))
         // minify JS
         .pipe(gulpif(/.*\.js$/, uglify()))
         .pipe(gulp.dest(DIST))
