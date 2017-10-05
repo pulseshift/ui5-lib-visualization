@@ -66,6 +66,41 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               }
             ],
             type: 'ui5.viz.ChartSeriesType.RibbonLine'
+          },
+
+          {
+            name: 'Confidence interval 2',
+            dataPoints: [
+              {
+                low: null,
+                high: null
+              },
+              {
+                low: 10,
+                high: 180
+              },
+              {
+                low: 150,
+                high: 300
+              },
+              {
+                low: 200,
+                high: 350
+              },
+              {
+                low: 300,
+                high: 470
+              },
+              {
+                low: 250,
+                high: 400
+              },
+              {
+                low: 380,
+                high: 500
+              }
+            ],
+            type: 'ui5.viz.ChartSeriesType.RibbonLine'
           }
         ]
       })
