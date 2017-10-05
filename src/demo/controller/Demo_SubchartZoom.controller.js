@@ -10,6 +10,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
+        showSubchart: true,
+        zoomEnabled: true,
         xAxis: [
           {
             labels: [
