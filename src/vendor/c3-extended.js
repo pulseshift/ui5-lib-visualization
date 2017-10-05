@@ -1591,7 +1591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 }
             }
         }
-        
+
         return $$.d3.max(Object.keys(ys).map(function (key) {
             return $$.d3.max(ys[key]);
         }));
@@ -2441,7 +2441,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 values: data.map(function (d, i) {
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
-                        
+
                         // ===== START OPAL EXTENSION =====
                         // introducing ribbonYs, which is a pair of y values at the same x value: a high and a low
                         fnIsValidRibbonValue = function (val) {
@@ -2449,10 +2449,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                             var isValidLow = typeof val === 'object' && val.hasOwnProperty('low') && !isNaN(val.low);
                             return isValidHigh && isValidLow;
                         },
-                        value = d[id] !== null && !isNaN(d[id]) && (!$$.isRibbonType(d))? +d[id] : null,
-                        ribbonYvalues = fnIsValidRibbonValue(d[id]) && ($$.isRibbonType(d))? d[id] : undefined,
+
+                        //add value if valid and no ribbon type
+                        value = d[id] !== null && !isNaN(d[id]) && (!$$.isRibbonType(id))? +d[id] : null,
+                        //add y value pair if valid and ribbon type
+                        ribbonYvalues = fnIsValidRibbonValue(d[id]) && ($$.isRibbonType(id))? d[id] : undefined,
+
                         x;
-                        
+
                     // use x as categories if custom x and categorized
                     if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
@@ -3474,7 +3478,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             value1 = function value1(d, i) {
                 if($$.isRibbonType(d))
                     return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.ribbonYs.high);
-                else 
+                else
                     return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
             // ===== END OPAL EXTENSION =====
         };
@@ -3502,7 +3506,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 // ===== START OPAL EXTENSION =====
                 // in case of the ribbon type, the null defined sequence in the beginning needs to be cut off
                 if($$.isRibbonType(d)) {
-                    var sliceStart = 0, valuesLength = values.length();
+                    var sliceStart = 0, valuesLength = values.length;
                     for(var i=0; i<valuesLength; i++){
                         if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null)
                             sliceStart++;
@@ -3516,7 +3520,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     values = values.slice(sliceStart, (values.length));
                 }
                 // ===== END OPAL EXTENSION =====
-                
+
                 path = area.interpolate($$.getInterpolate(d))(values);
             } else {
                 if (values[0]) {

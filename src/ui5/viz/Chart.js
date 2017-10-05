@@ -14,7 +14,7 @@ sap.ui.define(
 
     // libs
     'sap/ui/thirdparty/d3',
-    'vendor/c3',
+    'vendor/c3-extended',
     'vendor/lodash'
   ],
   function(Control, ChartAxis, ChartAxisLabel, library) {
@@ -624,12 +624,12 @@ sap.ui.define(
                     //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
 
                     //workaround:
-                    //return isVisible ? oDataPoint.getValue() : null;
+                    return isVisible ? oDataPoint.getValue() : null;
 
                     //original:
-                    return isVisible
+                    /*return isVisible
                       ? parseInt(oDataPoint.getValue(), 10)
-                      : null
+                      : null*/
                     // ===== END OPAL EXTENSION =====
                   }) || []
 
@@ -1345,7 +1345,7 @@ sap.ui.define(
 
       /**
        * Getter for aggregation <code>y2Axis</code>.
-       *        
+       *
        * @return {ui5.viz.ChartAxis} return y2 axis
        * @public
        */
@@ -2604,6 +2604,8 @@ sap.ui.define(
           case library.ChartSeriesType.AreaSpline:
           case library.ChartSeriesType.AreaStep:
           case library.ChartSeriesType.RibbonLine:
+          case library.ChartSeriesType.RibbonSpline:
+          case library.ChartSeriesType.RibbonStep:
             bTypeValid = true
             break
           default:
