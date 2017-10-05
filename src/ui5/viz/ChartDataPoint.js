@@ -48,6 +48,12 @@ sap.ui.define(
             defaultValue: library.DataPointAnimation.None
           },
 
+          type: {
+            type: 'ui5.viz.ChartDataPointType',
+            group: 'Appearance',
+            defaultValue: library.ChartDataPointType.SingleValue
+          },
+
           /* === Data === */
 
           /**
@@ -62,6 +68,20 @@ sap.ui.define(
            * @since: 1.0.0
            */
           value: { type: 'any', group: 'Data', defaultValue: null },
+
+          /**
+           * Sets the high value the data point should represent in case of ribbon type
+           * Hint: To support null as value, the type must be "any"
+           * @since: 1.0.0
+           */
+          high: { type: 'any', group: 'Data', defaultValue: undefined },
+
+          /**
+           * Sets the low value the data point should represent in case of ribbon type
+           * Hint: To support null as value, the type must be "any"
+           * @since: 1.0.0
+           */
+          low: { type: 'any', group: 'Data', defaultValue: undefined },
 
           /**
            * Sets visibility of the element.
@@ -139,7 +159,7 @@ sap.ui.define(
        */
       setProperty(sName, vValue, bSuppressInvalidation) {
         if (
-          ['value', 'label', 'visible', 'highlightAnimation'].includes(sName)
+          ['value', 'high', 'low', 'label', 'visible', 'highlightAnimation'].includes(sName)
         ) {
           // important: update value, before fire event
           Element.prototype.setProperty.call(this, sName, vValue, true)
@@ -158,14 +178,8 @@ sap.ui.define(
         return this
       }
 
-      /* =========================================================== */
-      /* public methods                                              */
-      /* =========================================================== */
-
-      /* =========================================================== */
-      /* private methods                                             */
-      /* =========================================================== */
-    })
-  },
-  /* bExport= */ true
+      getValueOrValuePair() {
+        //if singlevalue -> return value
+        //if valuePair -> return object
+      }
 )

@@ -44,7 +44,7 @@ sap.ui.define(
           type: {
             type: 'ui5.viz.ChartSeriesType',
             group: 'Appearance',
-            defaultValue: library.ChartSeriesType.Line
+            defaultValue: library.ChartSeriesType.RibbonSpline
           },
 
           /**
