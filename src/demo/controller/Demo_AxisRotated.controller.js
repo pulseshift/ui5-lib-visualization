@@ -13,24 +13,24 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         xAxis: [
           {
             labels: [
-              'Thurday',
-              'Thursday night',
-              'Friday',
-              'Friday night',
-              'Saturday',
-              'Saturday night'
+              'Verena',
+              'Adrian',
+              'Leonie',
+              'Matthias',
+              'Sonja',
+              'Johannes'
             ]
           }
         ],
         yAxis: [
           {
-            title: 'Bonfires in the village 🔥'
+            title: 'Completed km in the race 👟'
           }
         ],
         series: [
           {
-            dataPoints: [0, 1, 0, 5, 1, 6],
-            type: 'ui5.viz.ChartSeriesType.Bar'
+            dataPoints: [9, 12, 10, 8, 11, 9],
+            type: 'step'
           }
         ]
       })

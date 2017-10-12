@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
           {
             name: 'Oak City 🌳',
             dataPoints: [0, 1, 3, 10, 9, 1],
-            type: 'ui5.viz.ChartSeriesType.AreaStep'
+            type: 'area-step'
           }
         ]
       })
@@ -41,7 +41,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
           name: 'Pine Village 🌲',
-          dataPoints: [0, 2, 8, 14, 14, 2]
+          dataPoints: [0, 2, 8, 14, 14, 2],
+          type: 'area-step'
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)

@@ -7,34 +7,34 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         title: 'Additional Y axis chart',
         width: '100%',
         height: '300px',
-        type: 'spline',
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
         xAxis: [
           {
-            title: 'Finds in the village 🏡',
             labels: ['January', 'Febuary', 'March', 'April', 'May', 'June']
+          }
+        ],
+        y2Axis: [
+          {
+            title: 'My y2Axis'
           }
         ],
         series: [
           {
-            name: 'Snow angels ❄️',
-            dataPoints: [33, 31, 11, 0, 0, 0],
-            type: 'ui5.viz.ChartSeriesType.Spline'
+            name: 'Animal 1 population',
+            dataPoints: [11000, 10000, 11500, 11000, 12000, 13000],
+            type: 'line',
+            yAxis: 'ui5.viz.Axis.Y'
+          },
+          {
+            name: 'Animal 2 Population',
+            dataPoints: [1000, 1200, 1100, 900, 1050, 1100],
+            type: 'line',
+            yAxis: 'ui5.viz.Axis.Y2'
           }
         ]
       })
-
-      setTimeout(() => {
-        var oModel = this.getView().getModel('store') //'this' would be the window
-        var aSeries = oModel.getProperty('/series/')
-        var aNewSeries = aSeries.concat({
-          name: 'Ripe cherry trees 🍒',
-          dataPoints: [0, 0, 0, 1, 24, 28]
-        })
-        oModel.setProperty('/series/', aNewSeries)
-      }, 3000)
 
       this.getView().setModel(oModel, 'store')
     }

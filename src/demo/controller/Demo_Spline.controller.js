@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
           {
             name: 'Snow angels ❄️',
             dataPoints: [33, 31, 11, 0, 0, 0],
-            type: 'ui5.viz.ChartSeriesType.Spline'
+            type: 'spline'
           }
         ]
       })
@@ -31,7 +31,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var aSeries = oModel.getProperty('/series/')
         var aNewSeries = aSeries.concat({
           name: 'Ripe cherry trees 🍒',
-          dataPoints: [0, 0, 0, 1, 24, 28]
+          dataPoints: [0, 0, 0, 1, 24, 28],
+          type: 'spline'
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
