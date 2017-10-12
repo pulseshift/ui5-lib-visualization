@@ -217,6 +217,7 @@ export function testDist() {
     port: 3000,
     server: {
       baseDir: `./${DIST}`,
+      index: 'demo/index.html',
       routes: {
         '/ui5': './ui5'
       }
