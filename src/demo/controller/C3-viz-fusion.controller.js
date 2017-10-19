@@ -22,54 +22,6 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         ],
         series: [
           {
-            name: 'Confidence interval',
-            type: 'ribbon-line',
-            color: '#71c7ec',
-            dataPoints: [
-              {
-                low: null,
-                high: null
-              },
-              {
-                low: null,
-                high: null
-              },
-              {
-                low: null,
-                high: null
-              },
-              {
-                low: null,
-                high: null
-              },
-              {
-                low: 10,
-                high: 180
-              },
-              {
-                low: 100,
-                high: 300
-              },
-              {
-                low: 20,
-                high: 150
-              },
-              {
-                low: 300,
-                high: 470
-              },
-              {
-                low: 100,
-                high: 220
-              },
-              {
-                low: 190,
-                high: 280
-              }
-            ]
-          },
-
-          {
             name: 'Measurement',
             dataPoints: [100, 90, 150, 100, 120, 180, 90],
             type: 'line',
@@ -82,6 +34,63 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
             type: 'line',
             lineStyle: 'dotted',
             color: '#189ad3'
+          },
+          {
+            name: 'Confidence interval',
+            type: 'ribbon-line',
+            color: '#71c7ec',
+            dataPoints: [
+              {
+                type: 'value-pair',
+                low: null,
+                high: null
+              },
+              {
+                type: 'value-pair',
+                low: null,
+                high: null
+              },
+              {
+                type: 'value-pair',
+                low: null,
+                high: null
+              },
+              {
+                type: 'value-pair',
+                low: null,
+                high: null
+              },
+              {
+                type: 'value-pair',
+                low: 10,
+                high: 180
+              },
+              {
+                type: 'value-pair',
+                low: 100,
+                high: 300
+              },
+              {
+                type: 'value-pair',
+                low: 20,
+                high: 150
+              },
+              {
+                type: 'value-pair',
+                low: 300,
+                high: 470
+              },
+              {
+                type: 'value-pair',
+                low: 100,
+                high: 220
+              },
+              {
+                type: 'value-pair',
+                low: 190,
+                high: 280
+              }
+            ]
           }
         ]
       })

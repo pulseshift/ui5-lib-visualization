@@ -606,8 +606,10 @@ sap.ui.define(
                     // check if data point should be highlighted
                     let isVisible =
                       oDataPoint.getVisible() &&
-                      oDataPoint.getValue() !== 'null' &&
-                      oDataPoint.getValue()
+                      oDataPoint.getValueOrValuePair() !== 'null' &&
+                      oDataPoint.getValueOrValuePair() !== 'undefined' &&
+                      oDataPoint.getValueOrValuePair() !== null &&
+                      oDataPoint.getValueOrValuePair() !== undefined
                     if (
                       isVisible &&
                       oDataPoint.getHighlightAnimation() !==
@@ -624,7 +626,7 @@ sap.ui.define(
                     //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
 
                     //workaround:
-                    return isVisible ? oDataPoint.getValue() : null;
+                    return isVisible ? oDataPoint.getValueOrValuePair() : null;
 
                     //original:
                     /*return isVisible
@@ -1894,8 +1896,8 @@ sap.ui.define(
                 // check if data point should be highlighted
                 let isVisible =
                   oDataPoint.getVisible() &&
-                  oDataPoint.getValue() !== 'null' &&
-                  oDataPoint.getValue()
+                  oDataPoint.getValueOrValuePair() !== 'null' &&
+                  oDataPoint.getValueOrValuePair()
                 if (
                   isVisible &&
                   oDataPoint.getHighlightAnimation() !==
@@ -1908,7 +1910,7 @@ sap.ui.define(
                   })
                 }
                 return isVisible
-                  ? parseInt(oDataPoint.getValue(), 10) || null
+                  ? parseInt(oDataPoint.getValueOrValuePair(), 10) || null
                   : null
               })
             ])
