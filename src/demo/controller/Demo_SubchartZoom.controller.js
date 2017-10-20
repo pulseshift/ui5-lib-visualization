@@ -73,7 +73,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               67,
               12
             ],
-            type: 'ui5.viz.ChartSeriesType.Line'
+            type: 'line'
           }
         ]
       })

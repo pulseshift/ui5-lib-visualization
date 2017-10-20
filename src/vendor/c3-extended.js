@@ -2453,7 +2453,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                         //add value if valid and no ribbon type
                         value = d[id] !== null && !isNaN(d[id]) && (!$$.isRibbonType(id))? +d[id] : null,
                         //add y value pair if valid and ribbon type
-                        ribbonYvalues = fnIsValidRibbonValue(d[id]) && ($$.isRibbonType(id))? d[id] : undefined,
+                        ribbonYvalues = !($$.isRibbonType(id))? undefined : fnIsValidRibbonValue(d[id]) ? d[id] : undefined,
 
                         x;
 

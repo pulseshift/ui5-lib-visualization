@@ -23,6 +23,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         series: [
           {
             name: 'Confidence interval',
+            type: 'ribbon-line',
+            color: '#71c7ec',
             dataPoints: [
               {
                 low: null,
@@ -37,8 +39,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
                 high: null
               },
               {
-                low: 30,
-                high: 160
+                low: null,
+                high: null
               },
               {
                 low: 10,
@@ -64,8 +66,22 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
                 low: 190,
                 high: 280
               }
-            ],
-            type: 'ui5.viz.ChartSeriesType.RibbonLine'
+            ]
+          },
+
+          {
+            name: 'Measurement',
+            dataPoints: [100, 90, 150, 100, 120, 180, 90],
+            type: 'line',
+            color: '#005073'
+          },
+
+          {
+            name: 'Prognose',
+            dataPoints: [null, null, null, null, 100, 210, 110, 340, 160, 230],
+            type: 'line',
+            lineStyle: 'dotted',
+            color: '#189ad3'
           }
         ]
       })
