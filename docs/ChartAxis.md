@@ -27,6 +27,8 @@ All aggregations have one getter and several mutating methods depending on their
 ## Events
 All events return to the event callback handler [sap.ui.base.Event](https://openui5.hana.ondemand.com/#/api/sap.ui.base.Event). ([read which event methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
 
+<br/>
+
 
 ## Methods
 * <a href="#insertAggregation">insertAggregation</a> Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
@@ -35,6 +37,8 @@ All events return to the event callback handler [sap.ui.base.Event](https://open
 * <a href="#removeAllAggregation">removeAllAggregation</a> Removes all objects from the 0..n-aggregation named sAggregationName.
 * <a href="#destroyAggregation">destroyAggregation</a> Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
 * <a href="#setProperty">setProperty</a> Overwrites the method in order to check on supported properties.
+
+<br/>
 
 <a name="insertAggregation"></a>
 
@@ -50,6 +54,8 @@ insertAggregation(sAggregationName?, oObject?, iIndex?, bSuppressInvalidate?)
 * `iIndex` (`int`) the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
 * `bSuppressInvalidate` (`boolean`) if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="addAggregation"></a>
 
 ### `addAggregation`
@@ -62,6 +68,8 @@ addAggregation(sAggregationName, oObject, bSuppressInvalidate)
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `oObject` () {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+
+<br/>
 
 <a name="removeAggregation"></a>
 
@@ -76,6 +84,8 @@ removeAggregation(sAggregationName, oObject, bSuppressInvalidate)
 * `oObject` () {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="removeAllAggregation"></a>
 
 ### `removeAllAggregation`
@@ -87,6 +97,8 @@ removeAllAggregation(sAggregationName, bSuppressInvalidate)
 ```
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+
+<br/>
 
 <a name="destroyAggregation"></a>
 
@@ -100,6 +112,8 @@ destroyAggregation(sAggregationName, bSuppressInvalidate)
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="setProperty"></a>
 
 ### `setProperty`
@@ -112,4 +126,6 @@ setProperty(sName?, vValue?, bSuppressInvalidation?)
 * `sName` (`string`) Property name to be set
 * `vValue` (`any`) Property value to be set
 * `bSuppressInvalidation` (`boolean`) Whether invalidation to be suppressed
+
+<br/>
 

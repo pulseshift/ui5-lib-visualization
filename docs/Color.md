@@ -20,6 +20,10 @@ All aggregations have one getter and several mutating methods depending on their
 ## Events
 All events return to the event callback handler [sap.ui.base.Event](https://openui5.hana.ondemand.com/#/api/sap.ui.base.Event). ([read which event methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
 
+<br/>
+
 
 ## Methods
+
+<br/>
 
