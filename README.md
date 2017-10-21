@@ -22,7 +22,20 @@ yarn start
 
 The app should open in your browser automatically, otherwise open: `http://localhost:3000`
 
-Info: To get a more detailed logging, just use `yarn start:verbose` instead.
+Info: To get a more detailed logging, use `yarn start:verbose` instead.
+
+## Usage
+
+Real live samples are beeing published, soon. Till then, please enjoy our first `beta` version of our automatcally created markdown API documentation:
+* [ui5.viz.Chart](./docs/Chart.md)
+* [ui5.viz.ChartSeries](./docs/ChartSeries.md)
+* [ui5.viz.ChartDataPoint](./docs/ChartDataPoint.md)
+* [ui5.viz.ChartAxis](./docs/ChartAxis.md)
+* [ui5.viz.ChartAxisLabel](./docs/ChartAxisLabel.md)
+* [ui5.viz.ChartLine](./docs/ChartLine.md)
+* [ui5.viz.ChartArea](./docs/ChartArea.md)
+* [ui5.viz.Color](./docs/Color.md)
+
 
 ## Distribution
 
@@ -34,7 +47,7 @@ yarn build
 
 Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000`
 
-Info: To get a more detailed logging, just use `yarn build:verbose` instead.
+Info: To get a more detailed logging, use `yarn build:verbose` instead.
 
 ### Contributing & Troubleshooting
 
@@ -42,14 +55,9 @@ Contributions, questions and comments are all welcome and encouraged.
 
 Check our [current issues](https://github.com/pulseshift/ui5-lib-visualization/issues) or, if you have something in mind how to make it better, [create your own issue](https://github.com/pulseshift/ui5-lib-visualization/issues/new). We would be happy to discuss how they can be solved.
 
-### License
-
-This project is licensed under the MIT license.
-Copyright 2017 [PulseShift GmbH](https://pulseshift.com/en/index.html)
-
 ### Outlook
 
-Here is a brief overview on what we are working right know and what will follow, soon. We are interested to hear your opinion on what should follow next.
+Here is a brief overview on what we are working on right know and what will follow, soon. We are interested to hear your opinion on what should follow next.
 
 Current todos/issues/idea backlog (unordered):
 - Add check to setKey of ChartSeries and disallow "x" as key (because it is preserved)
@@ -62,4 +70,4 @@ Current todos/issues/idea backlog (unordered):
 ### License
 
 This project is licensed under the MIT license.
-Copyright 2017 [PulseShift GmbH](https://pulseshift.com/en/index.html)
+Copyright 2017 [PulseShift GmbH](https://pulseshift.com)

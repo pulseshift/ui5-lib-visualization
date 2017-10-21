@@ -159,11 +159,13 @@ sap.ui.define(
         events: {
           /**
            * Series was updated
+           * @event seriesDataUpdate
            */
           seriesDataUpdate: {
             parameters: {
               /**
                * Chart update event code.
+               * @event seriesDataUpdate
                */
               code: { type: 'ui5.viz.ChartUpdateCode' }
             }
