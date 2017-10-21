@@ -1,9 +1,35 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 20. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This chart control was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart
+ *   width="100%"
+ *   height="300px"
+ *   showTooltip="true"
+ *   groupedTooltip="true"
+ *   showLegend="true"
+ *   xAxisType="Indexed">
+ *   <series>
+ *     <ChartSeries type="spline" name="Frankfurt">
+ *       <data>
+ *         <ChartDataPoint value="5" />
+ *       </data>
+ *     </ChartSeries>
+ *   </series>
+ *   <xAxis>
+ *     <ChartAxis title="Divisions" />
+ *   </xAxis>
+ *   <yAxis>
+ *     <ChartAxis title="Revenue" />
+ *   </yAxis>
+ * </Chart>
  */
 sap.ui.define(
   [
@@ -49,6 +75,7 @@ sap.ui.define(
 
           /**
            * Shows or hides data series and legend
+           * @type {boolean}
            * @since: 1.0.0
            */
           dataVisible: {
@@ -257,8 +284,11 @@ sap.ui.define(
         events: {
           /**
            * Data was updated
+           * @event chartDataUpdate
            */
-          chartDataUpdate: {}
+          chartDataUpdate: {
+            parameters: {}
+          }
         }
       },
 
@@ -469,6 +499,7 @@ sap.ui.define(
        *
        * @param {object} [oRm] Render Manager
        * @param {object} [oControl] Current control (this)
+       * @override
        */
       renderer(oRm, oControl) {
         // start render wrapper div
@@ -624,7 +655,7 @@ sap.ui.define(
                     //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
 
                     //workaround:
-                    return isVisible ? oDataPoint.getValue() : null;
+                    return isVisible ? oDataPoint.getValue() : null
 
                     //original:
                     /*return isVisible
@@ -1751,7 +1782,7 @@ sap.ui.define(
       /**
        * Getter for property <code>maxValue</code> of an axis.
        *
-       * @param {ui5.viz.ChartAxis} [oAxis] Axis.
+       * @param {ui5.viz.ChartAxis} [oAxis] - Axis (default: <code>undefined</code>).
        * @return {any} Value depending on axis type.
        * @public
        */

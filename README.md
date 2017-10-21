@@ -24,6 +24,19 @@ The app should open in your browser automatically, otherwise open: `http://local
 
 Info: To get a more detailed logging, use `yarn start:verbose` instead.
 
+## Usage
+
+Real live samples are beeing published, soon. Till then, please enjoy our first `beta` version of our automatcally created markdown API documentation:
+* [ui5.viz.Chart](./docs/Chart.md)
+* [ui5.viz.ChartSeries](./docs/ChartSeries.md)
+* [ui5.viz.ChartDataPoint](./docs/ChartDataPoint.md)
+* [ui5.viz.ChartAxis](./docs/ChartAxis.md)
+* [ui5.viz.ChartAxisLabel](./docs/ChartAxisLabel.md)
+* [ui5.viz.ChartLine](./docs/ChartLine.md)
+* [ui5.viz.ChartArea](./docs/ChartArea.md)
+* [ui5.viz.Color](./docs/Color.md)
+
+
 ## Distribution
 
 Start build:
