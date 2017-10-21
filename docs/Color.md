@@ -31,6 +31,7 @@ This chart control was designed to work best in XML views and in combination wit
 
 ## Properties
 All properties have corresponding getters and setters. ([read which property methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
+
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | `dataVisible` | `boolean` | `true` | Shows or hides data series and legend |
@@ -102,6 +103,7 @@ All properties have corresponding getters and setters. ([read which property met
 
 ## Aggregations
 All aggregations have one getter and several mutating methods depending on their cardinality. ([read which aggregation methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
+
 | Name | Cardinality | Type | Description |
 | --- | --- | --- | --- |
 | `xAxis` | `0..1` | `ui5.viz.ChartAxis` | Chart axis (if no chart axis is supposed here, a default x axis is generated) |
