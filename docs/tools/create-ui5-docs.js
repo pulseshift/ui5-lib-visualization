@@ -28,16 +28,12 @@ const templateHbs = fs.readFileSync(
 )
 
 // read files
-const dir = path.resolve(__dirname, '../../src/ui5/viz/')
+const dir = path.resolve(__dirname, '../../src/ui5/viz')
 const files = fs.readdirSync(dir)
 
 // create a markdown doc for each file
-files
-  .filter(
-    file =>
-      !fs.statSync(`${dir}/${file}`).isDirectory() && file !== 'library.js'
-  )
-  .forEach(file => {
+files.forEach(file => {
+  if (!fs.statSync(`${dir}/${file}`).isDirectory() && file !== 'library.js') {
     // read comments
     const code = fs.readFileSync(`${dir}/${file}`, 'utf-8')
     const doxComments = dox.parseComments(code, {
@@ -48,6 +44,7 @@ files
 
     // transform comments with template
     const templateData = getTemplateData(comments)
+    console.log(templateData.samples.length)
     const compiledMarkdown = handlebars.compile(templateHbs, {
       noEscape: true
     })(templateData)
@@ -57,7 +54,8 @@ files
       path.resolve(__dirname, `../${file.replace(/.js$/, '.md')}`),
       compiledMarkdown
     )
-  })
+  }
+})
 
 // transform comments to have easier access to tags and method parameters
 function postprocessDox(comments) {

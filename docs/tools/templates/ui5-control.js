@@ -1,3 +1,6 @@
+/* @flow */
+/* eslint-env node */
+
 /**
  * A control template consists of the following parts:
  * 1. main information
@@ -7,14 +10,14 @@
  * 5. events
  * 6. methods
  */
-const defaultTemplateData = {
+const getDefaultTemplateData = () => ({
   main: {},
   samples: [],
   properties: [],
   aggregations: [],
   events: [],
   methods: []
-}
+})
 
 // define block types
 const blockTypes = [
@@ -220,7 +223,7 @@ const getTemplateData = comments =>
             ),
           templateData
         ),
-    defaultTemplateData
+    getDefaultTemplateData()
   )
 
 export { getTemplateData }
