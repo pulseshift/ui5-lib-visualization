@@ -44,7 +44,6 @@ files.forEach(file => {
 
     // transform comments with template
     const templateData = getTemplateData(comments)
-    console.log(templateData.samples.length)
     const compiledMarkdown = handlebars.compile(templateHbs, {
       noEscape: true
     })(templateData)

@@ -32,9 +32,13 @@ All aggregations have one getter and several mutating methods depending on their
 ## Events
 All events return to the event callback handler [sap.ui.base.Event](https://openui5.hana.ondemand.com/#/api/sap.ui.base.Event). ([read which event methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
 
+<br/>
+
 
 ## Methods
 * <a href="#setProperty">setProperty</a> Overwrites the method in order to check on supported properties.
+
+<br/>
 
 <a name="setProperty"></a>
 
@@ -48,4 +52,6 @@ setProperty(sName, vValue, bSuppressInvalidation)
 * `sName` () {string} Property name to be set
 * `vValue` () {boolean | string | object} Property value to be set
 * `bSuppressInvalidation` () {boolean} Whether invalidation to be suppressed
+
+<br/>
 

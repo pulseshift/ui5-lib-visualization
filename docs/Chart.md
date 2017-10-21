@@ -67,10 +67,14 @@ All aggregations have one getter and several mutating methods depending on their
 All events return to the event callback handler [sap.ui.base.Event](https://openui5.hana.ondemand.com/#/api/sap.ui.base.Event). ([read which event methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
 * <a href="#chartDataUpdate">chartDataUpdate</a> Data was updated
 
+<br/>
+
 <a name="chartDataUpdate"></a>
 
 ### `chartDataUpdate`
 Data was updated 
+
+<br/>
 
 
 ## Methods
@@ -105,6 +109,8 @@ Data was updated
 * <a href="#getMinValueByAxis">getMinValueByAxis</a> Getter for property <code>minValue</code> of an axis.
 * <a href="#getMaxValueByAxis">getMaxValueByAxis</a> Getter for property <code>maxValue</code> of an axis.
 
+<br/>
+
 <a name="setDataVisible"></a>
 
 ### `setDataVisible`
@@ -115,6 +121,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setDataVisible(bDataVisible)
 ```
 * `bDataVisible` (`boolean`) Expects a boolean
+
+<br/>
 
 <a name="setWidth"></a>
 
@@ -127,6 +135,8 @@ setWidth(sWidth)
 ```
 * `sWidth` () {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
 
+<br/>
+
 <a name="setHeight"></a>
 
 ### `setHeight`
@@ -138,6 +148,8 @@ setHeight(sHeight)
 ```
 * `sHeight` () {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
 
+<br/>
+
 <a name="getWidth"></a>
 
 ### `getWidth`
@@ -148,6 +160,8 @@ Returns: `number` Returns calculated size in pixel value based on sap.ui.core.CS
 getWidth()
 ```
 
+<br/>
+
 <a name="getHeigth"></a>
 
 ### `getHeigth`
@@ -157,6 +171,8 @@ Returns: `number` Returns calculated size in pixel value based on sap.ui.core.CS
 ```js
 getHeigth()
 ```
+
+<br/>
 
 <a name="setShowSubchart"></a>
 
@@ -169,6 +185,8 @@ setShowSubchart(bShowSubchart)
 ```
 * `bShowSubchart` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setMicroMode"></a>
 
 ### `setMicroMode`
@@ -179,6 +197,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setMicroMode(bMicroMode)
 ```
 * `bMicroMode` () {boolean} Expects a boolean
+
+<br/>
 
 <a name="setZoomEnabled"></a>
 
@@ -191,6 +211,8 @@ setZoomEnabled(bZoomEnabled)
 ```
 * `bZoomEnabled` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setClipZoomOverflow"></a>
 
 ### `setClipZoomOverflow`
@@ -201,6 +223,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setClipZoomOverflow(bClipZoomOverflow)
 ```
 * `bClipZoomOverflow` () {boolean} Expects a boolean
+
+<br/>
 
 <a name="setShowDataPoints"></a>
 
@@ -213,6 +237,8 @@ setShowDataPoints(bShowDataPoints)
 ```
 * `bShowDataPoints` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setBackgroundColor"></a>
 
 ### `setBackgroundColor`
@@ -223,6 +249,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setBackgroundColor(sBackgroundColor)
 ```
 * `sBackgroundColor` () {boolean} Expects a boolean
+
+<br/>
 
 <a name="setLegendPosition"></a>
 
@@ -235,6 +263,8 @@ setLegendPosition(sLegendPosition)
 ```
 * `sLegendPosition` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setShowLegend"></a>
 
 ### `setShowLegend`
@@ -245,6 +275,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setShowLegend(bShowLegend)
 ```
 * `bShowLegend` () {boolean} Expects a boolean
+
+<br/>
 
 <a name="setShowTooltip"></a>
 
@@ -257,6 +289,8 @@ setShowTooltip(bShowTooltip)
 ```
 * `bShowTooltip` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setGroupedTooltip"></a>
 
 ### `setGroupedTooltip`
@@ -267,6 +301,8 @@ Returns: `ui5.viz.Chart` <code>this</code> to allow method chaining
 setGroupedTooltip(bGroupedTooltip)
 ```
 * `bGroupedTooltip` () {boolean} Expects a boolean
+
+<br/>
 
 <a name="setSwitchAxisPosition"></a>
 
@@ -279,6 +315,8 @@ setSwitchAxisPosition(bSwitchAxisPosition)
 ```
 * `bSwitchAxisPosition` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="setXAxisType"></a>
 
 ### `setXAxisType`
@@ -290,6 +328,8 @@ setXAxisType(bXAxisType)
 ```
 * `bXAxisType` () {boolean} Expects a boolean
 
+<br/>
+
 <a name="getXAxis"></a>
 
 ### `getXAxis`
@@ -299,6 +339,8 @@ Returns: `ui5.viz.ChartAxis` return x axis
 ```js
 getXAxis()
 ```
+
+<br/>
 
 <a name="getYAxis"></a>
 
@@ -310,6 +352,8 @@ Returns: `ui5.viz.ChartAxis` return y axis
 getYAxis()
 ```
 
+<br/>
+
 <a name="getY2Axis"></a>
 
 ### `getY2Axis`
@@ -319,6 +363,8 @@ Returns: `ui5.viz.ChartAxis` return y2 axis
 ```js
 getY2Axis()
 ```
+
+<br/>
 
 <a name="setAggregation"></a>
 
@@ -332,6 +378,8 @@ setAggregation(sAggregationName, oObject, bSuppressInvalidate)
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be set.
 * `oObject` () {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+
+<br/>
 
 <a name="insertAggregation"></a>
 
@@ -347,6 +395,8 @@ insertAggregation(sAggregationName, oObject, iIndex, bSuppressInvalidate)
 * `iIndex` () {int} the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="addAggregation"></a>
 
 ### `addAggregation`
@@ -359,6 +409,8 @@ addAggregation(sAggregationName, oObject, bSuppressInvalidate)
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `oObject` () {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+
+<br/>
 
 <a name="removeAggregation"></a>
 
@@ -373,6 +425,8 @@ removeAggregation(sAggregationName, oObject, bSuppressInvalidate)
 * `oObject` () {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="removeAllAggregation"></a>
 
 ### `removeAllAggregation`
@@ -384,6 +438,8 @@ removeAllAggregation(sAggregationName, bSuppressInvalidate)
 ```
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+
+<br/>
 
 <a name="destroyAggregation"></a>
 
@@ -397,6 +453,8 @@ destroyAggregation(sAggregationName, bSuppressInvalidate)
 * `sAggregationName` () {string} the string identifying the aggregation the managed object oObject should be inserted into.
 * `bSuppressInvalidate` () {boolean} if true, this ManagedObject as well as the added child are not marked as changed
 
+<br/>
+
 <a name="setModel"></a>
 
 ### `setModel`
@@ -409,6 +467,8 @@ setModel(oModel?, sName?)
 * `oModel` (`sap.ui.model.Model`) The model to be set or null or undefined.
 * `sName` (`string`) The name of the model or undefined.
 
+<br/>
+
 <a name="getXAxisLabelByIndex"></a>
 
 ### `getXAxisLabelByIndex`
@@ -419,6 +479,8 @@ Returns: `any` Value depending on axis type.
 getXAxisLabelByIndex(iIndex?)
 ```
 * `iIndex` (`int`) Index.
+
+<br/>
 
 <a name="getMinValueByAxis"></a>
 
@@ -431,6 +493,8 @@ getMinValueByAxis(oAxis?)
 ```
 * `oAxis` (`ui5.viz.ChartAxis`) Axis.
 
+<br/>
+
 <a name="getMaxValueByAxis"></a>
 
 ### `getMaxValueByAxis`
@@ -441,4 +505,6 @@ Returns: `any` Value depending on axis type.
 getMaxValueByAxis(oAxis?)
 ```
 * `oAxis` (`ui5.viz.ChartAxis`) - Axis (default: <code>undefined</code>).
+
+<br/>
 

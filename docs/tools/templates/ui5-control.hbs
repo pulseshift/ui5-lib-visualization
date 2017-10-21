@@ -43,6 +43,8 @@ All events return to the event callback handler [sap.ui.base.Event](https://open
 * <a href="#{{this.name}}">{{this.name}}</a> {{sentence this.description}}
 {{/each}}
 
+<br/>
+
 {{!-- print event details --}}
 {{#each events  as |event|}}
 <a name="{{event.name}}"></a>
@@ -53,6 +55,8 @@ All events return to the event callback handler [sap.ui.base.Event](https://open
 * `{{param.name}}` (`{{param.type}}`) {{sentence param.description}}
 {{/each}}
 
+<br/>
+
 {{/each}}
 
 {{!-- print methods --}}
@@ -61,6 +65,8 @@ All events return to the event callback handler [sap.ui.base.Event](https://open
 {{#each methods}}
 * <a href="#{{this.name}}">{{this.name}}</a> {{sentence this.description}}
 {{/each}}
+
+<br/>
 
 {{!-- print method details --}}
 {{#each methods  as |method|}}
@@ -76,5 +82,7 @@ Returns: {{#if method.return}}{{#each method.return.types as |type|}}`{{type}}`{
 {{#each method.parameters as |param|}}
 * `{{param.name}}` ({{#each param.types as |type|}}`{{type}}`{{/each}}{{#if method.optional}}, optional{{/if}}) {{sentence param.description}}
 {{/each}}
+
+<br/>
 
 {{/each}}
