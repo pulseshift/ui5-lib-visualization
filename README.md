@@ -1,4 +1,6 @@
 # Custom OpenUI5 Data Vizualization library
+[![Build Status](https://travis-ci.org/pulseshift/ui5-lib-visualization.svg?branch=master)](https://travis-ci.org/pulseshift/ui5-lib-visualization)
+
 This library provides an OpenUI5 API that acts as a wrapper for D3-based charting library C3.js. It offers a more detailed and attractive design than native OpenUI5 controls.
 
 ## Quickstart Development
