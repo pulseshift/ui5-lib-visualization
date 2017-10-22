@@ -5,15 +5,18 @@ import path from 'path'
 import fs from 'fs-es6-promise'
 import dox from 'dox'
 import handlebars from 'handlebars'
-import { getTemplateData } from './templates/ui5-control.js'
+import {
+  getDefaultTemplateData,
+  getTemplateBlocks
+} from './templates/ui5-control.js'
 
 // register handlebars helper function
 handlebars.registerHelper('sentence', function(str) {
+  const firstChar = str.charAt(0).toUpperCase()
   str = str.replace(/\n/g, ' ')
   str = str.replace(/^\s*/, '')
   str = str.replace(/\s$/, '')
   str = str.replace(/\.$/g, '')
-  const firstChar = str.charAt(0).toUpperCase()
   return `${firstChar}${str.slice(1)}.`
 })
 handlebars.registerHelper('code', function(str) {
@@ -29,6 +32,7 @@ handlebars.registerHelper('code', function(str) {
 // TODO: parse path from args
 createDocs(path.resolve(__dirname, '../../src/ui5/viz'))
 
+// create ui5 markdown documentation for all files found in directory
 async function createDocs(dir) {
   try {
     // read ui5 control handlebars template
@@ -53,7 +57,7 @@ async function createDocs(dir) {
         const comments = postprocessDox(doxComments)
 
         // transform comments with template
-        const templateData = getTemplateData(comments)
+        const templateData = getTemplateData(comments, getTemplateBlocks())
         const compiledMarkdown = handlebars.compile(templateHbs, {
           noEscape: true
         })(templateData)
@@ -69,6 +73,22 @@ async function createDocs(dir) {
     // promise was rejected and we can handle errors with try/catch!
     console.error(e) // eslint-disable-line no-console
   }
+}
+
+// transform comments to template data
+function getTemplateData(comments, templateBlocks) {
+  let templateData = getDefaultTemplateData()
+  for (let comment of comments) {
+    // mutate template data for each block type that is using the comment
+    templateData = templateBlocks
+      .filter(block => block.is(comment))
+      .reduce(
+        (templateData, block) =>
+          block.mutateTemplate(templateData, block.transform(comment)),
+        templateData
+      )
+  }
+  return templateData
 }
 
 // transform comments to have easier access to tags and method parameters
