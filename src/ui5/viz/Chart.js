@@ -56,8 +56,6 @@ sap.ui.define(
      * @extends sap.ui.core.Control
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -75,8 +73,6 @@ sap.ui.define(
 
           /**
            * Shows or hides data series and legend
-           * @type {boolean}
-           * @since: 1.0.0
            */
           dataVisible: {
             type: 'boolean',
@@ -86,7 +82,6 @@ sap.ui.define(
 
           /**
            * A CSS size property defining the width of the chart
-           * @since: 1.0.0
            */
           width: {
             type: 'sap.ui.core.CSSSize',
@@ -96,7 +91,6 @@ sap.ui.define(
 
           /**
            * A CSS size property defining the hright of the chart
-           * @since: 1.0.0
            */
           height: {
             type: 'sap.ui.core.CSSSize',
@@ -107,7 +101,6 @@ sap.ui.define(
           /**
            * Shows a subchart for naviagtion
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           showSubchart: {
             type: 'boolean',
@@ -118,7 +111,6 @@ sap.ui.define(
           /**
            * Enables the chart to be displayed an a small scale
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           microMode: {
             type: 'boolean',
@@ -128,7 +120,6 @@ sap.ui.define(
 
           /**
            * Enables zoom functionality (inactive if subchart is used)
-           * @since: 1.0.0
            */
           zoomEnabled: {
             type: 'boolean',
@@ -138,7 +129,6 @@ sap.ui.define(
 
           /**
            * If true, elements outside of the chart area (happend during zooming) is hidden
-           * @since: 1.0.0
            */
           clipZoomOverflow: {
             type: 'boolean',
@@ -148,7 +138,6 @@ sap.ui.define(
 
           /**
            * If false, data points on lines or splines are hidden
-           * @since: 1.0.0
            */
           showDataPoints: {
             type: 'boolean',
@@ -158,7 +147,6 @@ sap.ui.define(
 
           /**
            * Sets the background color of the chart
-           * @since: 1.0.0
            */
           backgroundColor: {
             type: 'sap.ui.core.CSSColor',
@@ -169,7 +157,6 @@ sap.ui.define(
           /**
            * Sets the legend position
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           legendPosition: {
             type: 'ui5.viz.ChartLegendPosition',
@@ -179,7 +166,6 @@ sap.ui.define(
 
           /**
            * Sets tthe legend visibility
-           * @since: 1.0.0
            */
           showLegend: {
             type: 'boolean',
@@ -190,7 +176,6 @@ sap.ui.define(
           /**
            * Enables tooltips on chart data elements
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           showTooltip: {
             type: 'boolean',
@@ -201,7 +186,6 @@ sap.ui.define(
           /**
            * Sets the tooltip behaviour, whether it should show tooltip for grouped or single data points
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           groupedTooltip: {
             type: 'boolean',
@@ -212,7 +196,6 @@ sap.ui.define(
           /**
            * Switches x (by default horizontally) and y (by default vertically) axis
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           switchAxisPosition: {
             type: 'boolean',
@@ -225,7 +208,6 @@ sap.ui.define(
           /**
            * Set type of x axis
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           xAxisType: {
             type: 'ui5.viz.AxisType',
@@ -236,46 +218,39 @@ sap.ui.define(
         aggregations: {
           /**
            * Chart axis (if no chart axis is supposed here, a default x axis is generated)
-           * @since: 1.0.0
            */
           xAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Chart axis (if no chart axis is supposed here, a default y axis is generated)
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           yAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Chart axis (if no chart axis is provided, axis is not visible axis is generated)
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           y2Axis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Custom color for series, if not supposed, default theme colors are used
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
-          colors: { type: 'ps.core.Color', multiple: true },
+          colors: { type: 'ui5.viz.Color', multiple: true },
 
           /**
            * Set of lines to be displayed on the chart grid
-           * @since: 1.0.0
            */
           lines: { type: 'ui5.viz.ChartLine', multiple: true },
 
           /**
            * Set of areas to be displayed on the chart grid
-           * @since: 1.0.0
            */
           areas: { type: 'ui5.viz.ChartArea', multiple: true },
 
           /**
            * Defines the data series on our chart grid
-           * @since: 1.0.0
            */
           series: { type: 'ui5.viz.ChartSeries', multiple: true }
         },
@@ -298,15 +273,15 @@ sap.ui.define(
 
       /**
        * Reference to c3 chart instance
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _chart: null,
 
       /**
        * Object to prevent update data event
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _haltCount: 0,
       _initChartUpdateHandler() {
@@ -336,8 +311,8 @@ sap.ui.define(
 
       /**
        * Number range object to set a unique key to series
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _seriesNumberCount: 0,
       _initNumberRangeCreator() {
@@ -1110,9 +1085,10 @@ sap.ui.define(
       /**
        * Setter for property <code>dataVisible</code>.
        *
-       * @param {boolean} bDataVisible Expects a boolean
+       * @param {boolean} [bDataVisible] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setDataVisible(bDataVisible) {
         if (this._chart) bDataVisible ? this._chart.show() : this._chart.hide()
@@ -1122,9 +1098,10 @@ sap.ui.define(
       /**
        * Setter for property <code>width</code>.
        *
-       * @param sWidth {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
+       * @param {sap.ui.core.CSSSize} [sWidth] Expects a sap.ui.core.CSSSize element
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setWidth(sWidth) {
         this.setProperty('width', sWidth, true) // do not rerender
@@ -1135,9 +1112,10 @@ sap.ui.define(
       /**
        * Setter for property <code>height</code>.
        *
-       * @param sHeight {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
+       * @param {sap.ui.core.CSSSize} [sHeight] Expects a sap.ui.core.CSSSize element
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setHeight(sHeight) {
         this.setProperty('height', sHeight, true) // do not rerender
@@ -1152,6 +1130,7 @@ sap.ui.define(
        *
        * @return {number} Returns calculated size in pixel value based on sap.ui.core.CSSSize element
        * @public
+       * @override
        */
       getWidth() {
         return this._getComputedSize(this.getProperty('width'), 'width')
@@ -1162,6 +1141,7 @@ sap.ui.define(
        *
        * @return {number} Returns calculated size in pixel value based on sap.ui.core.CSSSize element
        * @public
+       * @override
        */
       getHeigth() {
         return this._getComputedSize(this.getProperty('height'), 'height')
@@ -1170,9 +1150,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showSubchart</code>.
        *
-       * @param bShowSubchart {boolean} Expects a boolean
+       * @param {boolean} [bShowSubchart] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowSubchart(bShowSubchart) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1183,9 +1164,10 @@ sap.ui.define(
       /**
        * Setter for property <code>microMode</code>.
        *
-       * @param bMicroMode {boolean} Expects a boolean
+       * @param {boolean} [bMicroMode] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setMicroMode(bMicroMode) {
         if (bMicroMode) {
@@ -1202,9 +1184,10 @@ sap.ui.define(
       /**
        * Setter for property <code>zoomEnabled</code>.
        *
-       * @param bZoomEnabled {boolean} Expects a boolean
+       * @param {boolean} [bZoomEnabled] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setZoomEnabled(bZoomEnabled) {
         if (this._chart) this._chart.zoom.enable(bZoomEnabled)
@@ -1214,9 +1197,10 @@ sap.ui.define(
       /**
        * Setter for property <code>clipZoomOverflow</code>.
        *
-       * @param bClipZoomOverflow {boolean} Expects a boolean
+       * @param {boolean} [bClipZoomOverflow] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setClipZoomOverflow(bClipZoomOverflow) {
         if (bClipZoomOverflow) {
@@ -1230,9 +1214,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showDataPoints</code>.
        *
-       * @param bShowDataPoints {boolean} Expects a boolean
+       * @param {boolean} [bShowDataPoints] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowDataPoints(bShowDataPoints) {
         if (bShowDataPoints) {
@@ -1246,9 +1231,10 @@ sap.ui.define(
       /**
        * Setter for property <code>backgroundColor</code>.
        *
-       * @param sBackgroundColor {boolean} Expects a boolean
+       * @param {boolean} [sBackgroundColor] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setBackgroundColor(sBackgroundColor) {
         if (this.getDomRef())
@@ -1259,9 +1245,10 @@ sap.ui.define(
       /**
        * Setter for property <code>legendPosition</code>.
        *
-       * @param sLegendPosition {boolean} Expects a boolean
+       * @param {boolean} [sLegendPosition] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setLegendPosition(sLegendPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1273,9 +1260,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showLegend</code>.
        *
-       * @param bShowLegend {boolean} Expects a boolean
+       * @param {boolean} [bShowLegend] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowLegend(bShowLegend) {
         if (this._chart)
@@ -1286,9 +1274,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showTooltip</code>.
        *
-       * @param bShowTooltip {boolean} Expects a boolean
+       * @param {boolean} [bShowTooltip] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowTooltip(bShowTooltip) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1299,9 +1288,10 @@ sap.ui.define(
       /**
        * Setter for property <code>groupedTooltip</code>.
        *
-       * @param bGroupedTooltip {boolean} Expects a boolean
+       * @param {boolean} [bGroupedTooltip] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setGroupedTooltip(bGroupedTooltip) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1312,9 +1302,10 @@ sap.ui.define(
       /**
        * Setter for property <code>switchAxisPosition</code>.
        *
-       * @param bSwitchAxisPosition {boolean} Expects a boolean
+       * @param {boolean} [bSwitchAxisPosition] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setSwitchAxisPosition(bSwitchAxisPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1329,9 +1320,10 @@ sap.ui.define(
       /**
        * Setter for property <code>xAxisType</code>.
        *
-       * @param bXAxisType {boolean} Expects a boolean
+       * @param {boolean} [bXAxisType] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setXAxisType(bXAxisType) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1343,6 +1335,7 @@ sap.ui.define(
        *
        * @return {ui5.viz.ChartAxis} return x axis
        * @public
+       * @override
        */
       getXAxis() {
         let iSeriesTicks, iAxisTicks, iDeltaTicks, oXAxis
@@ -1361,6 +1354,7 @@ sap.ui.define(
        *
        * @return {ui5.viz.ChartAxis} return y axis
        * @public
+       * @override
        */
       getYAxis() {
         let oYAxis
@@ -1379,6 +1373,7 @@ sap.ui.define(
        *
        * @return {ui5.viz.ChartAxis} return y2 axis
        * @public
+       * @override
        */
       getY2Axis() {
         let oY2Axis
@@ -1397,11 +1392,12 @@ sap.ui.define(
       /**
        * Sets a new object in the named 0..1 aggregation of this ManagedObject and marks this ManagedObject as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be set.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be set.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       setAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (oObject) {
@@ -1451,12 +1447,13 @@ sap.ui.define(
       /**
        * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param iIndex {int} the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {int} [iIndex] the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       insertAggregation(
         sAggregationName,
@@ -1518,11 +1515,12 @@ sap.ui.define(
       /**
        * Adds some entity oObject to the aggregation identified by sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       addAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         // set initial unique key if not happened, yet
@@ -1577,11 +1575,12 @@ sap.ui.define(
       /**
        * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1622,10 +1621,11 @@ sap.ui.define(
       /**
        * Removes all objects from the 0..n-aggregation named sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAllAggregation(sAggregationName, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1664,10 +1664,11 @@ sap.ui.define(
       /**
        * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       destroyAggregation(sAggregationName, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1710,6 +1711,7 @@ sap.ui.define(
        * @param {string} [sName] The name of the model or undefined.
        * @returns {ui5.viz.ChartSeries} This instance for chaining.
        * @public
+       * @override
        */
       setModel(oModel, sName) {
         // to improve performance, we disable chart update until the complete model was assigned
@@ -2601,7 +2603,7 @@ sap.ui.define(
       /**
        * Check if a style is valid for shapes
        *
-       * @param sSeriesType {string} style to be validated
+       * @param {string} [sSeriesType] style to be validated
        * @return {boolean} returns true if style is valid for shape tzpe
        * @private
        */
@@ -2621,7 +2623,7 @@ sap.ui.define(
       /**
        * Check if a style is valid for lines
        *
-       * @param sSeriesType {string} style to be validated
+       * @param {string} [sSeriesType] style to be validated
        * @return {boolean} returns true if style is valid for shape tzpe
        * @private
        */
@@ -2647,6 +2649,7 @@ sap.ui.define(
       },
 
       // ===== START OPAL EXTENSION =====
+      // TODO: jsdoc missing!
       _isRibbonType: function _isRibbonType(sSeriesType) {
         return (
           sSeriesType ===

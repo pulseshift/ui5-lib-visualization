@@ -1,9 +1,17 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 20. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
@@ -20,8 +28,6 @@ sap.ui.define(
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -39,7 +45,6 @@ sap.ui.define(
 
           /**
            * Shows or hides series and legend
-           * @since: 1.0.0
            */
           type: {
             type: 'ui5.viz.ChartSeriesType',
@@ -49,13 +54,11 @@ sap.ui.define(
 
           /**
            * Name of the series
-           * @since: 1.0.0
            */
           name: { type: 'string', group: 'Appearance', defaultValue: null },
 
           /**
            * Sets a custom color for the series, overwriting the default color palette
-           * @since: 1.0.0
            */
           color: {
             type: 'sap.ui.core.CSSColor',
@@ -65,7 +68,6 @@ sap.ui.define(
 
           /**
            * Sets visibility of labels
-           * @since: 1.0.0
            */
           showLabels: {
             type: 'boolean',
@@ -75,7 +77,6 @@ sap.ui.define(
 
           /**
            * Sets style of series lines (supported types: line, spline, step, area, area-spline, area-step)
-           * @since: 1.0.0
            */
           lineStyle: {
             type: 'ui5.viz.LineStyle',
@@ -85,7 +86,6 @@ sap.ui.define(
 
           /**
            * Sets style of series shape (supported types: bar)
-           * @since: 1.0.0
            */
           shapeStyle: {
             type: 'ui5.viz.ShapeStyle',
@@ -95,7 +95,6 @@ sap.ui.define(
 
           /**
            * Sets speed of animated dashes / dots (none, slow, medium, fast)
-           * @since: 1.0.0
            */
           lineAnimationSpeed: {
             type: 'ui5.viz.AnimationSpeed',
@@ -105,7 +104,6 @@ sap.ui.define(
 
           /**
            * Sets if line animation should run forwards or backwards
-           * @since: 1.0.0
            */
           lineAnimationForwards: {
             type: 'boolean',
@@ -115,13 +113,11 @@ sap.ui.define(
 
           /**
            * ChartSeries with the same group key are displayed as a cluster (e.g. stacked bar)
-           * @since: 1.0.0
            */
           groupKey: { type: 'string', group: 'Appearance', defaultValue: null },
 
           /**
            * Sets the referenced y axis the ChartSeriesData value property is related to
-           * @since: 1.0.0
            */
           yAxis: {
             type: 'ui5.viz.Axis',
@@ -131,7 +127,6 @@ sap.ui.define(
 
           /**
            * Sets visibility of the element.
-           * @since: 1.0.0
            */
           visible: {
             type: 'boolean',
@@ -143,14 +138,12 @@ sap.ui.define(
 
           /**
            * Unique key for the series
-           * @since: 1.0.0
            */
           key: { type: 'string', group: 'Data', defaultValue: null }
         },
         aggregations: {
           /**
            * Defines the data points of our series
-           * @since: 1.0.0
            */
           data: { type: 'ui5.viz.ChartDataPoint', multiple: true }
         },
@@ -173,11 +166,13 @@ sap.ui.define(
 
           /**
            * Series visibility have changed
+           * @event seriesVisibilityChange
            */
           seriesVisibilityChange: {
             parameters: {
               /**
                * Reference to respective series.
+               * @event seriesVisibilityChange
                */
               chartSeries: { type: 'ui5.viz.ChartSeries' }
             }
@@ -235,12 +230,13 @@ sap.ui.define(
       /**
        * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param iIndex {int} the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {int} [iIndex] the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       insertAggregation(
         sAggregationName,
@@ -284,11 +280,12 @@ sap.ui.define(
       /**
        * Adds some entity oObject to the aggregation identified by sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       addAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
@@ -326,11 +323,12 @@ sap.ui.define(
       /**
        * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
@@ -368,10 +366,11 @@ sap.ui.define(
       /**
        * Removes all objects from the 0..n-aggregation named sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAllAggregation(sAggregationName, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
@@ -400,10 +399,11 @@ sap.ui.define(
       /**
        * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       destroyAggregation(sAggregationName, bSuppressInvalidate) {
         if (sAggregationName === 'data') {
@@ -432,11 +432,12 @@ sap.ui.define(
       /**
        * Overwrites the method in order to check on supported properties.
        *
-       * @param sName {string} Property name to be set
-       * @param vValue {boolean | string | object} Property value to be set
-       * @param bSuppressInvalidation {boolean} Whether invalidation to be suppressed
+       * @param {string} [sName] Property name to be set
+       * @param {boolean|string|object} [vValue] Property value to be set
+       * @param {boolean} [bSuppressInvalidation] Whether invalidation to be suppressed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       setProperty(sName, vValue, bSuppressInvalidation) {
         if (

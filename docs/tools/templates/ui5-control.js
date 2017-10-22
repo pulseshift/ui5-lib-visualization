@@ -64,6 +64,7 @@ const blockTypes = [
   {
     type: 'PROPERTY',
     is: comment =>
+      comment.isPrivate === false &&
       comment.isEvent === false &&
       comment.tags.event === undefined &&
       comment.ctx &&
@@ -92,6 +93,7 @@ const blockTypes = [
   {
     type: 'AGGREGATION',
     is: comment =>
+      comment.isPrivate === false &&
       comment.isEvent === false &&
       comment.tags.event === undefined &&
       comment.ctx &&

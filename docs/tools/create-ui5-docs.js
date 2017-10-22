@@ -9,13 +9,18 @@ import { getTemplateData } from './templates/ui5-control.js'
 
 // register handlebars helper function
 handlebars.registerHelper('sentence', function(str) {
-  str = str.replace('\n', ' ')
-  return str
+  str = str.replace(/\n/g, ' ')
+  str = str.replace(/^\s*/, '')
+  str = str.replace(/\s$/, '')
+  str = str.replace(/\.$/g, '')
+  const firstChar = str.charAt(0).toUpperCase()
+  return `${firstChar}${str.slice(1)}.`
 })
 handlebars.registerHelper('code', function(str) {
   str = str.replace('<code>', '')
   str = str.replace('</code>', '')
   str = str.replace(/\s/g, '')
+  str = str.replace(/['"`´]/g, '')
   return str.indexOf('sap.') === 0
     ? `[${str}](https://openui5.hana.ondemand.com/#/api/${str})`
     : `\`${str}\``

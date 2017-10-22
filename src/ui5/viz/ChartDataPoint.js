@@ -1,9 +1,17 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 20. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
   /**
@@ -18,13 +26,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
      * @alias ui5.viz.ChartDataPoint
-         */
+     */
   return Element.extend('ui5.viz.ChartDataPoint', {
     /* =========================================================== */
     /* meta data definition                                        */
@@ -36,16 +42,18 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         /* === Appearance === */
 
         /**
-           * Sets the representation of value as formatted text
-           * Hint: Not available for chart types Bar, Step and AreaStep, yet.
-           * @since: 1.0.0
-           */
+         * Sets the representation of value as formatted text
+         * Hint: Not available for chart types Bar, Step and AreaStep, yet.
+         */
         highlightAnimation: {
           type: 'ui5.viz.DataPointAnimation',
           group: 'Appearance',
           defaultValue: library.DataPointAnimation.None
         },
 
+        /**
+         * Sets the type of the data point.
+         */
         type: {
           type: 'ui5.viz.ChartDataPointType',
           group: 'Appearance',
@@ -55,36 +63,31 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         /* === Data === */
 
         /**
-           * Sets the representation of value as formatted text
-           * @since: 1.0.0
-           */
+         * Sets the representation of value as formatted text
+         */
         label: { type: 'string', group: 'Data', defaultValue: null },
 
         /**
-           * Sets the value the data point should represent
-           * Hint: To support null as value, the type must be "any"
-           * @since: 1.0.0
-           */
+         * Sets the value the data point should represent
+         * Hint: To support null as value, the type must be "any"
+         */
         value: { type: 'any', group: 'Data', defaultValue: null },
 
         /**
-           * Sets the high value the data point should represent in case of ribbon type
-           * Hint: To support null as value, the type must be "any"
-           * @since: 1.0.0
-           */
+         * Sets the high value the data point should represent in case of ribbon type
+         * Hint: To support null as value, the type must be "any"
+         */
         high: { type: 'any', group: 'Data', defaultValue: undefined },
 
         /**
-           * Sets the low value the data point should represent in case of ribbon type
-           * Hint: To support null as value, the type must be "any"
-           * @since: 1.0.0
-           */
+         * Sets the low value the data point should represent in case of ribbon type
+         * Hint: To support null as value, the type must be "any"
+         */
         low: { type: 'any', group: 'Data', defaultValue: undefined },
 
         /**
-           * Sets visibility of the element.
-           * @since: 1.0.0
-           */
+         * Sets visibility of the element.
+         */
         visible: {
           type: 'boolean',
           group: 'Appereance',
@@ -95,8 +98,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
       associations: {},
       events: {
         /**
-           * Data was updated
-           */
+         * Data was updated
+         * @event dataPointUpdate
+         */
         dataPointUpdate: {}
       }
     },
@@ -114,29 +118,29 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
     /* =========================================================== */
 
     /**
-       * Constructor for a new <code>ui5.viz.Chart</code>.
-       *
-       * @param {string} [sId] Id for the new control, generated automatically if no id is given
-       * @param {object} [mSettings] Initial settings for the new control
-       */
+     * Constructor for a new <code>ui5.viz.Chart</code>.
+     *
+     * @param {string} [sId] Id for the new control, generated automatically if no id is given
+     * @param {object} [mSettings] Initial settings for the new control
+     */
     constructor() {
       Element.prototype.constructor.apply(this, arguments)
     },
 
     /**
-       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-       * @private
-       * @override
-       */
+     * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+     * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
+     * @private
+     * @override
+     */
     init() {},
 
     /**
-       * The exit() method is used to clean up resources and to deregister event handlers.
-       * If the exit() method is implemented, SAPUI5 core invokes the method for each control instance when it is destroyed.
-       * @private
-       * @override
-       */
+     * The exit() method is used to clean up resources and to deregister event handlers.
+     * If the exit() method is implemented, SAPUI5 core invokes the method for each control instance when it is destroyed.
+     * @private
+     * @override
+     */
     exit() {
       // inform observers about control destroy
       this.fireDataPointUpdate()
@@ -147,14 +151,15 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
     /* =========================================================== */
 
     /**
-       * Overwrites the method in order to check on supported properties.
-       *
-       * @param sName {string} Property name to be set
-       * @param vValue {boolean | string | object} Property value to be set
-       * @param bSuppressInvalidation {boolean} Whether invalidation to be suppressed
-       * @return {ui5.viz.ChartDataPoint} This instance for chaining
-       * @public
-       */
+     * Overwrites the method in order to check on supported properties.
+     *
+     * @param {string} [sName] Property name to be set
+     * @param {boolean|string|object} [vValue] Property value to be set
+     * @param {boolean} [bSuppressInvalidation] Whether invalidation to be suppressed
+     * @return {ui5.viz.ChartDataPoint} This instance for chaining
+     * @public
+     * @override
+     */
     setProperty(sName, vValue, bSuppressInvalidation) {
       if (
         [
@@ -183,6 +188,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
       return this
     },
 
+    // TODO: jsdoc missing!
     getValueOrValuePair() {
       //if singlevalue -> return value
       //if valuePair -> return object
