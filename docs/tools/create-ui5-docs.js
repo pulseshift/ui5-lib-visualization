@@ -2,7 +2,7 @@
 /* eslint-env node */
 
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-es6-promise'
 import dox from 'dox'
 import handlebars from 'handlebars'
 import { getTemplateData } from './templates/ui5-control.js'
@@ -21,40 +21,50 @@ handlebars.registerHelper('code', function(str) {
     : `\`${str}\``
 })
 
-// read ui5 control handlebars template
-const templateHbs = fs.readFileSync(
-  path.resolve(__dirname, './templates/ui5-control.hbs'),
-  'utf-8'
-)
+// TODO: parse path from args
+createDocs(path.resolve(__dirname, '../../src/ui5/viz'))
 
-// read files
-const dir = path.resolve(__dirname, '../../src/ui5/viz')
-const files = fs.readdirSync(dir)
-
-// create a markdown doc for each file
-files.forEach(file => {
-  if (!fs.statSync(`${dir}/${file}`).isDirectory() && file !== 'library.js') {
-    // read comments
-    const code = fs.readFileSync(`${dir}/${file}`, 'utf-8')
-    const doxComments = dox.parseComments(code, {
-      raw: true,
-      skipSingleStar: true
-    })
-    const comments = postprocessDox(doxComments)
-
-    // transform comments with template
-    const templateData = getTemplateData(comments)
-    const compiledMarkdown = handlebars.compile(templateHbs, {
-      noEscape: true
-    })(templateData)
-
-    // write final markdown document
-    fs.writeFileSync(
-      path.resolve(__dirname, `../${file.replace(/.js$/, '.md')}`),
-      compiledMarkdown
+async function createDocs(dir) {
+  try {
+    // read ui5 control handlebars template
+    const templateHbs = await fs.readFile(
+      path.resolve(__dirname, './templates/ui5-control.hbs'),
+      'utf-8'
     )
+
+    // read files
+    const files = await fs.readdir(dir)
+
+    // create a markdown doc for each file
+    for (let file of files) {
+      const fileStat = await fs.stat(`${dir}/${file}`)
+      if (!fileStat.isDirectory() && file !== 'library.js') {
+        // read comments
+        const code = await fs.readFile(`${dir}/${file}`, 'utf-8')
+        const doxComments = dox.parseComments(code, {
+          raw: true,
+          skipSingleStar: true
+        })
+        const comments = postprocessDox(doxComments)
+
+        // transform comments with template
+        const templateData = getTemplateData(comments)
+        const compiledMarkdown = handlebars.compile(templateHbs, {
+          noEscape: true
+        })(templateData)
+
+        // write final markdown document
+        await fs.writeFile(
+          path.resolve(__dirname, `../${file.replace(/.js$/, '.md')}`),
+          compiledMarkdown
+        )
+      }
+    }
+  } catch (e) {
+    // promise was rejected and we can handle errors with try/catch!
+    console.error(e) // eslint-disable-line no-console
   }
-})
+}
 
 // transform comments to have easier access to tags and method parameters
 function postprocessDox(comments) {
