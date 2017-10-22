@@ -1,9 +1,17 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
@@ -20,8 +28,6 @@ sap.ui.define(
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -39,19 +45,16 @@ sap.ui.define(
 
           /**
            * Sets the ttitleext of the ChartArea
-           * @since: 1.0.0
            */
           title: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets the position of the title
-           * @since: ?
            */
           // titlePosition: { type: "ui5.viz.ChartTitlePosition", group: "Appereance", defaultValue: library.ChartTitlePosition.Start },
 
           /**
            * Sets the style of the shape
-           * @since: 1.0.0
            */
           style: {
             type: 'ui5.viz.ShapeStyle',
@@ -61,7 +64,6 @@ sap.ui.define(
 
           /**
            * Sets a custom color for the area
-           * @since: 1.0.0
            */
           color: {
             type: 'sap.ui.core.CSSColor',
@@ -71,7 +73,6 @@ sap.ui.define(
 
           /**
            * Sets the referenced y axis the line value property is related to
-           * @since: 1.0.0
            */
           axis: {
             type: 'ui5.viz.Axis',
@@ -81,7 +82,6 @@ sap.ui.define(
 
           /**
            * Sets visibility of the element.
-           * @since: 1.0.0
            */
           visible: {
             type: 'boolean',
@@ -93,13 +93,11 @@ sap.ui.define(
 
           /**
            * Sets value that is matching a start position on the assigned axis
-           * @since: 1.0.0
            */
           startValue: { type: 'string', group: 'Data', defaultValue: null },
 
           /**
            * Sets value that is matching a end position on the assigned axis
-           * @since: 1.0.0
            */
           endValue: { type: 'string', group: 'Data', defaultValue: null }
         },
@@ -108,11 +106,13 @@ sap.ui.define(
         events: {
           /**
            * Line was updated
+           * @event areaUpdate
            */
           areaUpdate: {
             parameters: {
               /**
                * Chart update event code.
+               * @event areaUpdate
                */
               code: { type: 'ui5.viz.ChartUpdateCode' }
             }
@@ -170,11 +170,12 @@ sap.ui.define(
       /**
        * Overwrites the method in order to check on supported properties.
        *
-       * @param sName {string} Property name to be set
-       * @param vValue {boolean | string | object} Property value to be set
-       * @param bSuppressInvalidation {boolean} Whether invalidation to be suppressed
+       * @param {string} [sName] Property name to be set
+       * @param {boolean|string|object} [vValue] Property value to be set
+       * @param {boolean} [bSuppressInvalidation] Whether invalidation to be suppressed
        * @return {ui5.viz.ChartDataPoint} This instance for chaining
        * @public
+       * @override
        */
       setProperty(sName, vValue, bSuppressInvalidation) {
         if (

@@ -1,12 +1,6 @@
 /* @flow */
 
 /**
- * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern on 12.07.2016.
- */
-
-/**
  * Initialization Code and shared classes of library ui5.viz.
  */
 sap.ui.define(
