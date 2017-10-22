@@ -210,20 +210,19 @@ const blockTypes = [
 ]
 
 // transform comments to template data
-const getTemplateData = comments =>
-  comments.reduce(
-    (templateData, comment) =>
-      blockTypes
-        .filter(blockType => blockType.is(comment))
-        .reduce(
-          (templateData, blockType) =>
-            blockType.mutateTemplate(
-              templateData,
-              blockType.transform(comment)
-            ),
-          templateData
-        ),
-    getDefaultTemplateData()
-  )
+const getTemplateData = comments => {
+  let templateData = getDefaultTemplateData()
+  for (let comment of comments) {
+    // mutate template data for each block type that is using the comment
+    templateData = blockTypes
+      .filter(blockType => blockType.is(comment))
+      .reduce(
+        (templateData, blockType) =>
+          blockType.mutateTemplate(templateData, blockType.transform(comment)),
+        templateData
+      )
+  }
+  return templateData
+}
 
 export { getTemplateData }
