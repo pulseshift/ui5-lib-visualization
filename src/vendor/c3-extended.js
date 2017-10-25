@@ -3486,7 +3486,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
         if (!config.line_connectNull) {
             area = area.defined(function (d) {
-                return d.ribbonYs !== null; //FIXME: check difference value/ribbonYs
+              if($$.isRibbonType(d)){
+                return d.ribbonYs !== null;
+              }
+                else{
+                return d.value !== null;
+                }
             });
         }
 
