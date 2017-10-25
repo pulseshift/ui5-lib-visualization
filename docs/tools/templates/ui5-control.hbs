@@ -1,0 +1,102 @@
+{{!-- print main information --}}
+# {{code main.name}}
+{{main.description}}
+
+{{#if main.extends}}
+**Extends**: [{{main.extends}}](https://openui5.hana.ondemand.com/#/api/{{main.extends}}) This module inherits all methods and attributes from the extended module and from all other modules in the inheritence hierarchy.
+{{/if}}
+
+{{!-- print samples --}}
+{{#each samples}}
+## {{this.name}}
+{{this.description}}
+```{{this.codeType}}
+{{this.code}}
+```
+{{/each}}
+
+{{!-- print properties --}}
+## Properties
+{{#if properties}}
+All properties have corresponding getters and setters. ([read which property methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+{{else}}
+There are no public properties defined for `{{main.name}}`.
+{{/if}}
+{{#each properties}}
+| {{code this.name}} | {{code this.type}} | {{code this.default}} | {{sentence this.description}} |
+{{/each}}
+
+{{!-- print aggregations --}}
+## Aggregations
+{{#if aggregations}}
+All aggregations have one getter and several mutating methods depending on their cardinality. ([read which aggregation methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
+
+| Name | Cardinality | Type | Description |
+| --- | --- | --- | --- |
+{{else}}
+There are no public aggregations defined for `{{main.name}}`.
+{{/if}}
+{{#each aggregations}}
+| {{code this.name}} | {{code this.cardinality}} | {{code this.type}} | {{sentence this.description}} |
+{{/each}}
+
+{{!-- print events --}}
+## Events
+{{#if events}}
+All events return to the event callback handler [sap.ui.base.Event](https://openui5.hana.ondemand.com/#/api/sap.ui.base.Event). ([read which event methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))
+{{/if}}
+{{!-- print event overview --}}
+{{#each events}}
+* <a href="#{{this.name}}">{{this.name}}</a> {{sentence this.description}}
+{{else}}
+There are no public events defined for `{{main.name}}`.
+{{/each}}
+
+<br/>
+
+{{!-- print event details --}}
+{{#each events  as |event|}}
+<a name="{{event.name}}"></a>
+
+### `{{event.name}}`
+{{sentence event.description}} {{#if event.parameters}}Providing parameters:{{/if}}
+{{#each event.parameters as |param|}}
+* `{{param.name}}` (`{{param.type}}`) {{sentence param.description}}
+{{/each}}
+
+<br/>
+
+{{/each}}
+
+{{!-- print methods --}}
+## Methods
+{{!-- print method overview --}}
+{{#each methods}}
+* <a href="#{{this.name}}">{{this.name}}</a> {{sentence this.description}}
+{{else}}
+There are no public methods defined for `{{main.name}}`.
+{{/each}}
+
+<br/>
+
+{{!-- print method details --}}
+{{#each methods  as |method|}}
+<a name="{{method.name}}"></a>
+
+### `{{method.name}}`
+{{sentence method.description}}
+
+Returns: {{#if method.return}}{{#each method.return.types as |type|}}`{{type}}`{{/each}} {{sentence method.return.description}}{{else}}`undefined`{{/if}}
+```js
+{{method.definition}}
+```
+{{#each method.parameters as |param|}}
+* `{{param.name}}` ({{#each param.types as |type|}}`{{type}}`{{/each}}{{#if method.optional}}, optional{{/if}}) {{sentence param.description}}
+{{/each}}
+
+<br/>
+
+{{/each}}

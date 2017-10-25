@@ -1,9 +1,17 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
@@ -20,8 +28,6 @@ sap.ui.define(
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -39,25 +45,21 @@ sap.ui.define(
 
           /**
            * Sets axis value
-           * @since: 1.0.0
            */
           value: { type: 'any', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets axis label title
-           * @since: 1.0.0
            */
           title: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets axis label icon
-           * @since: ?
            */
           // icon: { type: "sap.ui.core.URI", group: "Appereance", defaultValue: false }
 
           /**
            * Sets visibility of the element.
-           * @since: 1.0.0
            */
           visible: {
             type: 'boolean',
@@ -70,6 +72,7 @@ sap.ui.define(
         events: {
           /**
            * Data was updated
+           * @event axisLabelUpdate
            */
           axisLabelUpdate: {}
         }
@@ -123,11 +126,12 @@ sap.ui.define(
       /**
        * Overwrites the method in order to check on supported properties.
        *
-       * @param sName {string} Property name to be set
-       * @param vValue {boolean | string | object} Property value to be set
-       * @param bSuppressInvalidation {boolean} Whether invalidation to be suppressed
+       * @param {string} [sName] Property name to be set
+       * @param {boolean|string|object} [vValue] Property value to be set
+       * @param {boolean} [bSuppressInvalidation] Whether invalidation to be suppressed
        * @return {ui5.viz.ChartDataPoint} This instance for chaining
        * @public
+       * @override
        */
       setProperty(sName, vValue, bSuppressInvalidation) {
         // to be compatible with chart type category, we must convert all values to string
