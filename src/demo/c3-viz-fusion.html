@@ -47,7 +47,8 @@
                 <viz:ChartSeries color="{store>color}" lineStyle="{store>lineStyle}" type="{store>type}"
                   name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
                   <viz:data>
-                    <viz:ChartDataPoint value="{store>}" />
+                    <viz:ChartDataPoint value="{store>}" high="{store>high}" low="{store>low}" type="{store>type}"
+                    />
                   </viz:data>
                 </viz:ChartSeries>
               </viz:series>

@@ -77,13 +77,13 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
          * Sets the high value the data point should represent in case of ribbon type
          * Hint: To support null as value, the type must be "any"
          */
-        high: { type: 'any', group: 'Data', defaultValue: undefined },
+        high: { type: 'any', group: 'Data', defaultValue: null },
 
         /**
          * Sets the low value the data point should represent in case of ribbon type
          * Hint: To support null as value, the type must be "any"
          */
-        low: { type: 'any', group: 'Data', defaultValue: undefined },
+        low: { type: 'any', group: 'Data', defaultValue: null },
 
         /**
          * Sets visibility of the element.
@@ -188,10 +188,79 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
       return this
     },
 
-    // TODO: jsdoc missing!
+    /**
+     * Overwrites getter in order to make sure it is a valid value. Visible can be false due to different reasons.
+     * @public
+     */
+    getVisible() {
+      var v = undefined
+      if (this.getType() === library.ChartDataPointType.SingleValue) {
+        var v = this.getValue()
+        return (
+          this.getProperty('visible') &&
+          v !== 'null' &&
+          v !== 'undefined' &&
+          v !== null &&
+          v !== undefined
+        )
+      } else {
+        var h = this.getHigh()
+        var l = this.getLow()
+        return (
+          this.getProperty('visible') &&
+          h !== 'null' &&
+          h !== 'undefined' &&
+          h !== null &&
+          h !== undefined &&
+          l !== 'null' &&
+          l !== 'undefined' &&
+          l !== null &&
+          l !== undefined
+        )
+      }
+    },
+
+    /**
+     * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
+     * @public
+     */
+    getValue() {
+      var v = this.getProperty('value')
+      return !isNaN(v) && v !== null ? parseInt(v, 10) : null
+    },
+
+    /**
+     * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
+     * @public
+     */
+    getHigh() {
+      var h = this.getProperty('high')
+      return !isNaN(h) && h !== null ? parseInt(h, 10) : null
+    },
+
+    /**
+     * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
+     * @public
+     */
+    getLow() {
+      var l = this.getProperty('low')
+      return !isNaN(l) && l !== null ? parseInt(l, 10) : null
+    },
+
+    // FIXME: add jsdoc
     getValueOrValuePair() {
-      //if singlevalue -> return value
-      //if valuePair -> return object
+      const isVisible = this.getVisible()
+      if (this.getType() === library.ChartDataPointType.SingleValue) {
+        return isVisible ? this.getValue() : null
+      } else {
+        var highValue = this.getHigh()
+        var lowValue = this.getLow()
+        var result = {
+          high: highValue,
+          low: lowValue
+        }
+        return isVisible ? result : { high: null, low: null }
+      }
     }
   })
 })

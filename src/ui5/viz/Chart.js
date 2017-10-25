@@ -610,10 +610,7 @@ sap.ui.define(
                 let aData =
                   oSeries.getData().map((oDataPoint, iIndex) => {
                     // check if data point should be highlighted
-                    let isVisible =
-                      oDataPoint.getVisible() &&
-                      oDataPoint.getValue() !== 'null' &&
-                      oDataPoint.getValue()
+                    let isVisible = oDataPoint.getVisible()
                     if (
                       isVisible &&
                       oDataPoint.getHighlightAnimation() !==
@@ -625,18 +622,7 @@ sap.ui.define(
                         animation: oDataPoint.getHighlightAnimation()
                       })
                     }
-                    // ===== START OPAL EXTENSION =====
-                    //not working yet!
-                    //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
-
-                    //workaround:
-                    return isVisible ? oDataPoint.getValue() : null
-
-                    //original:
-                    /*return isVisible
-                      ? parseInt(oDataPoint.getValue(), 10)
-                      : null*/
-                    // ===== END OPAL EXTENSION =====
+                    return oDataPoint.getValueOrValuePair()
                   }) || []
 
                 // add key of data series
@@ -1925,10 +1911,7 @@ sap.ui.define(
               // get data points (e.g. [1, 4, 6, 8, 10, ...])
               ...oSeries.getData().map((oDataPoint, iIndex) => {
                 // check if data point should be highlighted
-                let isVisible =
-                  oDataPoint.getVisible() &&
-                  oDataPoint.getValue() !== 'null' &&
-                  oDataPoint.getValue()
+                let isVisible = oDataPoint.getVisible()
                 if (
                   isVisible &&
                   oDataPoint.getHighlightAnimation() !==
@@ -1940,9 +1923,7 @@ sap.ui.define(
                     animation: oDataPoint.getHighlightAnimation()
                   })
                 }
-                return isVisible
-                  ? parseInt(oDataPoint.getValue(), 10) || null
-                  : null
+                return oDataPoint.getValueOrValuePair()
               })
             ])
           ],
