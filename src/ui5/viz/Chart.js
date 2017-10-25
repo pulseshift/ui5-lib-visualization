@@ -604,12 +604,7 @@ sap.ui.define(
                 let aData =
                   oSeries.getData().map((oDataPoint, iIndex) => {
                     // check if data point should be highlighted
-                    let isVisible =
-                      oDataPoint.getVisible() &&
-                      oDataPoint.getValueOrValuePair() !== 'null' &&
-                      oDataPoint.getValueOrValuePair() !== 'undefined' &&
-                      oDataPoint.getValueOrValuePair() !== null &&
-                      oDataPoint.getValueOrValuePair() !== undefined
+                    let isVisible = oDataPoint.getVisible()
                     if (
                       isVisible &&
                       oDataPoint.getHighlightAnimation() !==
@@ -621,18 +616,8 @@ sap.ui.define(
                         animation: oDataPoint.getHighlightAnimation()
                       })
                     }
-                    // ===== START OPAL EXTENSION =====
-                    //not working yet!
-                    //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
+                    return oDataPoint.getValueOrValuePair()
 
-                    //workaround:
-                    return isVisible ? oDataPoint.getValueOrValuePair() : null;
-
-                    //original:
-                    /*return isVisible
-                      ? parseInt(oDataPoint.getValue(), 10)
-                      : null*/
-                    // ===== END OPAL EXTENSION =====
                   }) || []
 
                 // add key of data series
@@ -1894,10 +1879,7 @@ sap.ui.define(
               // get data points (e.g. [1, 4, 6, 8, 10, ...])
               ...oSeries.getData().map((oDataPoint, iIndex) => {
                 // check if data point should be highlighted
-                let isVisible =
-                  oDataPoint.getVisible() &&
-                  oDataPoint.getValueOrValuePair() !== 'null' &&
-                  oDataPoint.getValueOrValuePair()
+                let isVisible = oDataPoint.getVisible()
                 if (
                   isVisible &&
                   oDataPoint.getHighlightAnimation() !==
@@ -1909,9 +1891,7 @@ sap.ui.define(
                     animation: oDataPoint.getHighlightAnimation()
                   })
                 }
-                return isVisible
-                  ? parseInt(oDataPoint.getValueOrValuePair(), 10) || null
-                  : null
+                return oDataPoint.getValueOrValuePair()
               })
             ])
           ],
