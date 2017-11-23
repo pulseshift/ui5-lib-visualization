@@ -3511,18 +3511,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 // ===== START OPAL EXTENSION =====
                 // in case of the ribbon type, the null defined sequence in the beginning needs to be cut off
                 if($$.isRibbonType(d)) {
-                    var sliceStart = 0, valuesLength = values.length;
+                    var sliceStart = 0, valuesLength = values.length, sliceEnd = 0;
                     for(var i=0; i<valuesLength; i++){
                         if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null)
                             sliceStart++;
                         else break;
                     }
-                    // var sliceStart = values.reduce(function (currentSliceStart, val) {
-                    //     return val.ribbonYs.low === null && val.ribbonYs.high === null && currentSliceStart === 0
-                    //         ? currentSliceStart++
-                    //         : currentSliceStart;
-                    // }, 0);
-                    values = values.slice(sliceStart, (values.length));
+
+                    for(var i=valuesLength-1; i>0; i--){
+                      if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null)
+                          sliceEnd++;
+                      else break;
+                  }
+                    values = values.slice(sliceStart, (values.length-sliceEnd));
                 }
                 // ===== END OPAL EXTENSION =====
 

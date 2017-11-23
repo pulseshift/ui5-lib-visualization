@@ -1,10 +1,10 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
-  return Controller.extend('sap.ui.demo.db.controller.C3-viz-fusion', {
+  return Controller.extend('sap.ui.demo.db.controller.Hana-viz-fusion', {
     onInit() {
       var oModel = new sap.ui.model.json.JSONModel({
-        title: 'C3-ribbon-extension/viz fusion',
+        title: 'Hana viz fusion',
         width: '100%',
         height: '300px',
         showTooltip: true,
@@ -82,19 +82,24 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               },
               {
                 type: 'value-pair',
-                low: null,
-                high: null
+                low: 100,
+                high: 220
               },
               {
                 type: 'value-pair',
-                low: null,
-                high: null
+                low: 190,
+                high: 280
               }
             ]
           }
         ]
       })
       this.getView().setModel(oModel, 'store')
+
+      var oModel2 = new sap.ui.model.json.JSONModel()
+      oModel2.loadData(
+        'https://xsabd13c549.hana.ondemand.com/BASF/ui/services/Forecast_Result.xsodata/CalcView/?$format=json'
+      )
     }
   })
 })
