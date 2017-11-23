@@ -34,6 +34,7 @@
 sap.ui.define(
   [
     'sap/ui/core/Control',
+    'sap/ui/core/format/DateFormat',
     'ui5/viz/ChartAxis',
     'ui5/viz/ChartAxisLabel',
     './library',
@@ -43,7 +44,7 @@ sap.ui.define(
     'vendor/c3-extended',
     'vendor/lodash'
   ],
-  function(Control, ChartAxis, ChartAxisLabel, library) {
+  function(Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
     /**
      * Constructor for a new <code>ui5.viz.Chart</code>.
      *
@@ -558,9 +559,9 @@ sap.ui.define(
                   // TIME BASED LABELS
                   case library.AxisType.Time:
                     return oDate => {
-                      return sap.ui.core.format.DateFormat
-                        .getInstance({ style: 'long' })
-                        .format(oDate)
+                      return DateFormat.getInstance({ style: 'long' }).format(
+                        oDate
+                      )
                     }
 
                   // INDEX BASED LABELS
@@ -761,9 +762,9 @@ sap.ui.define(
                     // TIME BASED LABELS
                     case library.AxisType.Time:
                       return oDate => {
-                        return sap.ui.core.format.DateFormat
-                          .getInstance({ pattern: 'MMM yyyy' })
-                          .format(oDate)
+                        return DateFormat.getInstance({
+                          pattern: 'MMM yyyy'
+                        }).format(oDate)
                       }
                     // INDEXED BASED LABELS
                     case library.AxisType.Indexed:
@@ -1015,7 +1016,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-                `#${this.getId()} g.c3-circles-${oHighlightInfo.series} circle.c3-circle-${oHighlightInfo.point}`
+                `#${this.getId()} g.c3-circles-${
+                  oHighlightInfo.series
+                } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -1980,7 +1983,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-                `#${this.getId()} g.c3-circles-${oHighlightInfo.series} circle.c3-circle-${oHighlightInfo.point}`
+                `#${this.getId()} g.c3-circles-${
+                  oHighlightInfo.series
+                } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -2182,8 +2187,9 @@ sap.ui.define(
               text: oArea.getTitle(),
               // position: oArea.getTitlePosition(),
               // add three classes: general line class, line style class and line identifier
-              class: `${this.CSS_CLASS_AREA} ${this
-                .CSS_CLASS_AREA}-${oArea.getId()}`
+              class: `${this.CSS_CLASS_AREA} ${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()}`
             }
           })
 
@@ -2241,9 +2247,11 @@ sap.ui.define(
           position: oChartLine.getTitlePosition(),
           showSelector: oChartLine.getShowLineSelector() ? true : false,
           // add three classes: general line class, line style class and line identifier
-          class: `${this.CSS_CLASS_LINE} ${this
-            .CSS_CLASS_LINE}-${oChartLine.getStyle()} ${this
-            .CSS_CLASS_LINE}-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
+          class: `${this.CSS_CLASS_LINE} ${
+            this.CSS_CLASS_LINE
+          }-${oChartLine.getStyle()} ${
+            this.CSS_CLASS_LINE
+          }-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
         }
       },
 
@@ -2387,17 +2395,29 @@ sap.ui.define(
               // update svg pattern style
               oStrokeStyle.text(
                 `#${this.getId()} .c3-target-${oSeries.getKey()} .c3-shape {
-                                    stroke-dashoffset: ${oSeries.getLineAnimationForwards()
-                                      ? ''
-                                      : '-'}50rem;
+                                    stroke-dashoffset: ${
+                                      oSeries.getLineAnimationForwards()
+                                        ? ''
+                                        : '-'
+                                    }50rem;
                                     stroke-dasharray: ${sDashArray};
                                     stroke-linecap: round;
 
-                                    -webkit-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -moz-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -ms-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -o-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    -webkit-animation: ui5-viz-chart-dash-animation ${
+                                      iAnimationSpeed
+                                    }s 0s linear infinite forwards;
+                                    -moz-animation: ui5-viz-chart-dash-animation ${
+                                      iAnimationSpeed
+                                    }s 0s linear infinite forwards;
+                                    -ms-animation: ui5-viz-chart-dash-animation ${
+                                      iAnimationSpeed
+                                    }s 0s linear infinite forwards;
+                                    -o-animation: ui5-viz-chart-dash-animation ${
+                                      iAnimationSpeed
+                                    }s 0s linear infinite forwards;
+                                    animation: ui5-viz-chart-dash-animation ${
+                                      iAnimationSpeed
+                                    }s 0s linear infinite forwards;
                                 }`
               )
               break
@@ -2443,18 +2463,21 @@ sap.ui.define(
 
           if (sColor) {
             // update svg area style
-            sCSS += `#${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} line {
+            sCSS += `#${this.getId()} .${
+              this.CSS_CLASS_LINE
+            }-${oLine.getId()} line {
                                 stroke: ${sColor};
                             }
 
-                            #${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} circle {
+                            #${this.getId()} .${
+              this.CSS_CLASS_LINE
+            }-${oLine.getId()} circle {
                                 stroke: ${sColor};
                             }
 
-                            #${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} text {
+                            #${this.getId()} .${
+              this.CSS_CLASS_LINE
+            }-${oLine.getId()} text {
                                 fill: ${sColor};
                             }`
           }
@@ -2549,14 +2572,17 @@ sap.ui.define(
                                     fill: ${sColor};
                                     stroke: none;
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-stripe,
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} text.c3-region-text {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} rect.c3-region-stripe,
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-area {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} rect.c3-region-area {
                                     fill: url(#${this.getId()}-area-stripe-pattern-${oArea.getId()}) !important;
                                 }`
               break
@@ -2564,14 +2590,17 @@ sap.ui.define(
             case library.ShapeStyle.Default:
             default:
               // update svg area style
-              sCSS += `#${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-stripe,
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} text.c3-region-text {
+              sCSS += `#${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} rect.c3-region-stripe,
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-area {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+              }-${oArea.getId()} rect.c3-region-area {
                                     fill: ${sColor};
                                 }`
               break

@@ -3,9 +3,35 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/pulseshift/ui5-lib-visualization.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/pulseshift/ui5-lib-visualization.svg?branch=master)](https://travis-ci.org/pulseshift/ui5-lib-visualization)
 
-This library provides an OpenUI5 API that acts as a wrapper for D3-based charting library C3.js. It offers a more detailed and attractive design than native OpenUI5 controls.
+This library provides an OpenUI5 API that acts as a wrapper for D3-based charting library [C3.js](http://c3js.org/). It offers a more detailed and attractive API design than `sap.viz` chart controls, which interacts harmoniously especially in XML Views in combination with data binding.
 
-## Quickstart Development
+## Usage
+
+tbd: how to use this lib in your project...
+
+### Documentation
+
+Real live samples are beeing published, soon. Till then, please enjoy our first `beta` version of our automatcally created markdown API documentation:
+* [ui5.viz.Chart](./docs/Chart.md)
+* [ui5.viz.ChartSeries](./docs/ChartSeries.md)
+* [ui5.viz.ChartDataPoint](./docs/ChartDataPoint.md)
+* [ui5.viz.ChartAxis](./docs/ChartAxis.md)
+* [ui5.viz.ChartAxisLabel](./docs/ChartAxisLabel.md)
+* [ui5.viz.ChartLine](./docs/ChartLine.md)
+* [ui5.viz.ChartArea](./docs/ChartArea.md)
+* [ui5.viz.Color](./docs/Color.md)
+
+### Features
+
+tbd: brief overview about the main features...
+
+### Example
+
+```js
+// samples are coming soon
+```
+
+## Development
 
 [Download](https://github.com/pulseshift/ui5-lib-visualization/archive/master.zip) or clone this repository:
 ```
@@ -27,19 +53,6 @@ yarn start
 The app should open in your browser automatically, otherwise open: `http://localhost:3000`
 
 Info: To get a more detailed logging, use `yarn start:verbose` instead.
-
-## Usage
-
-Real live samples are beeing published, soon. Till then, please enjoy our first `beta` version of our automatcally created markdown API documentation:
-* [ui5.viz.Chart](./docs/Chart.md)
-* [ui5.viz.ChartSeries](./docs/ChartSeries.md)
-* [ui5.viz.ChartDataPoint](./docs/ChartDataPoint.md)
-* [ui5.viz.ChartAxis](./docs/ChartAxis.md)
-* [ui5.viz.ChartAxisLabel](./docs/ChartAxisLabel.md)
-* [ui5.viz.ChartLine](./docs/ChartLine.md)
-* [ui5.viz.ChartArea](./docs/ChartArea.md)
-* [ui5.viz.Color](./docs/Color.md)
-
 
 ## Distribution
 
