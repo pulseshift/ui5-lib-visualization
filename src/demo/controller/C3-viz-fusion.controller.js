@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.C3-viz-fusion', {
@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         series: [
           {
             name: 'Measurement',
-            dataPoints: [100, 90, 150, 100, 120, 180, 90],
+            dataPoints: [100, 90, 150, 100, 120, 180, 90, null, null, null],
             type: 'line',
             color: '#005073'
           },

@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  function (Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxis</code>.
      *
@@ -153,7 +153,7 @@ sap.ui.define(
        * @private
        * @override
        */
-      init() {},
+      init() { },
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
