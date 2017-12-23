@@ -83,7 +83,7 @@
     "ora": "^1.3.0",
     "ui5-lib-util": "alpha",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
     "c3": "https://github.com/pulseshift/c3#master",
