@@ -64,7 +64,7 @@
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-babel": "^7.0.0",
     "gulp-clean-css": "^3.9.0",
-    "gulp-htmlmin": "^3.0.0",
+    "gulp-htmlmin": "^4.0.0",
     "gulp-if": "^2.0.1",
     "gulp-imagemin": "^4.0.0",
     "gulp-install": "^1.1.0",
