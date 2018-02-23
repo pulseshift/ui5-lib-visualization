@@ -570,7 +570,7 @@ sap.ui.define(
                   // INDEX BASED LABELS
                   case library.AxisType.Indexed:
                   // CATEGORY BASED LABELS
-                  case library.AxisType.Category:
+                  case library.AxisType.Category: // eslint-disable-line no-fallthrough
                   default:
                     return iXIndex => {
                       const oLabel = this.getXAxisLabelByIndex(iXIndex)
@@ -772,7 +772,7 @@ sap.ui.define(
                     // INDEXED BASED LABELS
                     case library.AxisType.Indexed:
                     // CATEGORY BASED LABELS
-                    case library.AxisType.Category:
+                    case library.AxisType.Category: // eslint-disable-line no-fallthrough
                     default:
                       return iXIndex => {
                         const oLabel = this.getXAxisLabelByIndex(iXIndex)
@@ -1003,8 +1003,6 @@ sap.ui.define(
             duration: 175
           }
         }
-
-        console.log(options)
 
         // initialize c3 chart
         this._chart = c3.generate(options)
@@ -1330,7 +1328,7 @@ sap.ui.define(
        * @override
        */
       getXAxis() {
-        let iSeriesTicks, iAxisTicks, iDeltaTicks, oXAxis
+        let oXAxis
 
         oXAxis = this.getAggregation('xAxis')
         if (!oXAxis) {
@@ -1705,7 +1703,7 @@ sap.ui.define(
        * @public
        * @override
        */
-      setModel(oModel, sName) {
+      setModel(/* oModel, sName */) {
         // to improve performance, we disable chart update until the complete model was assigned
         this._getChartUpdateHandler().halt()
 
@@ -1759,7 +1757,7 @@ sap.ui.define(
         const sMinValue = oAxis.getMinValue() || undefined
 
         if (isXAxis) {
-          switch (this.getXAxisType()) {
+          switch (sXAxisType) {
             case library.AxisType.Time:
               return sMinValue
             case library.AxisType.Indexed:
@@ -1787,7 +1785,7 @@ sap.ui.define(
         const sMaxValue = oAxis.getMaxValue() || undefined
 
         if (isXAxis) {
-          switch (this.getXAxisType()) {
+          switch (sXAxisType) {
             case library.AxisType.Time:
               return sMaxValue
             case library.AxisType.Indexed:
@@ -2780,9 +2778,9 @@ sap.ui.define(
           // continue with 'auto:'
           case 'initial':
           // continue with 'auto:'
-          case 'inherit':
+          case 'inherit': // eslint-disable-line no-fallthrough
           // continue with 'auto:'
-          case 'auto':
+          case 'auto': // eslint-disable-line no-fallthrough
             // continue with 'auto:'
             iCalculatedWidth = this._getAvailableSize(sSizeType)
             break
@@ -2795,7 +2793,6 @@ sap.ui.define(
                 ' is not supported, yet. Fallback to "auto" (max. width).'
             )
             iCalculatedWidth = this._getAvailableSize(sSizeType)
-            break
         }
 
         return iCalculatedWidth
