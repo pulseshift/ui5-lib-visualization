@@ -8,18 +8,18 @@
 
   <title>Chart Test</title>
 
-  <script id="sap-ui-bootstrap" src="https://openui5.hana.ondemand.com/1.38.6/resources/sap-ui-core.js"
-    data-sap-ui-theme="sap_belize" data-sap-ui-theme-roots='{
+  <script id="sap-ui-bootstrap" src="https://openui5.hana.ondemand.com/1.38.6/resources/sap-ui-core.js" data-sap-ui-theme="sap_belize"
+    data-sap-ui-theme-roots='{
             "pulseshiftred1": "../../../../ui5-themes/pulseshiftred1/UI5"
-        }' data-sap-ui-libs="sap.m" data-sap-ui-bindingSyntax="complex" data-sap-ui-compactVersion="edge"
-    data-sap-ui-preload="async" data-sap-ui-resourceroots='{
+        }' data-sap-ui-libs="sap.m" data-sap-ui-bindingSyntax="complex" data-sap-ui-compactVersion="edge" data-sap-ui-preload="async"
+    data-sap-ui-resourceroots='{
             "ui5": "../ui5",
             "vendor": "../vendor",
             "sap.ui.demo.db" : "./"
         }' data-sap-ui-frameOptions="allow">
 
 
-  </script>
+        </script>
 
 
 
@@ -44,9 +44,11 @@
               height="{store>/height}" showTooltip="{store>/showTooltip}" groupedTooltip="{store>/groupedTooltip}"
               showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}">
               <viz:series>
-                <viz:ChartSeries type="ui5.viz.ChartSeriesType.RibbonLine" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
+                <viz:ChartSeries color="{store>color}" lineStyle="{store>lineStyle}" type="{store>type}"
+                  name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
                   <viz:data>
-                    <viz:ChartDataPoint value="{store>}" />
+                    <viz:ChartDataPoint value="{store>}" high="{store>high}" low="{store>low}" type="{store>type}"
+                    />
                   </viz:data>
                 </viz:ChartSeries>
               </viz:series>

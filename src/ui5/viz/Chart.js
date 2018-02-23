@@ -1,23 +1,50 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 20. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This chart control was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart
+ *   width="100%"
+ *   height="300px"
+ *   showTooltip="true"
+ *   groupedTooltip="true"
+ *   showLegend="true"
+ *   xAxisType="Indexed">
+ *   <series>
+ *     <ChartSeries type="spline" name="Frankfurt">
+ *       <data>
+ *         <ChartDataPoint value="5" />
+ *       </data>
+ *     </ChartSeries>
+ *   </series>
+ *   <xAxis>
+ *     <ChartAxis title="Divisions" />
+ *   </xAxis>
+ *   <yAxis>
+ *     <ChartAxis title="Revenue" />
+ *   </yAxis>
+ * </Chart>
  */
 sap.ui.define(
   [
     'sap/ui/core/Control',
+    'sap/ui/core/format/DateFormat',
     'ui5/viz/ChartAxis',
     'ui5/viz/ChartAxisLabel',
     './library',
 
     // libs
     'sap/ui/thirdparty/d3',
-    'vendor/c3',
+    'vendor/c3-extended',
     'vendor/lodash'
   ],
-  function(Control, ChartAxis, ChartAxisLabel, library) {
+  function (Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
     /**
      * Constructor for a new <code>ui5.viz.Chart</code>.
      *
@@ -30,8 +57,6 @@ sap.ui.define(
      * @extends sap.ui.core.Control
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -49,7 +74,6 @@ sap.ui.define(
 
           /**
            * Shows or hides data series and legend
-           * @since: 1.0.0
            */
           dataVisible: {
             type: 'boolean',
@@ -59,7 +83,6 @@ sap.ui.define(
 
           /**
            * A CSS size property defining the width of the chart
-           * @since: 1.0.0
            */
           width: {
             type: 'sap.ui.core.CSSSize',
@@ -69,7 +92,6 @@ sap.ui.define(
 
           /**
            * A CSS size property defining the hright of the chart
-           * @since: 1.0.0
            */
           height: {
             type: 'sap.ui.core.CSSSize',
@@ -80,7 +102,6 @@ sap.ui.define(
           /**
            * Shows a subchart for naviagtion
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           showSubchart: {
             type: 'boolean',
@@ -91,7 +112,6 @@ sap.ui.define(
           /**
            * Enables the chart to be displayed an a small scale
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           microMode: {
             type: 'boolean',
@@ -101,7 +121,6 @@ sap.ui.define(
 
           /**
            * Enables zoom functionality (inactive if subchart is used)
-           * @since: 1.0.0
            */
           zoomEnabled: {
             type: 'boolean',
@@ -111,7 +130,6 @@ sap.ui.define(
 
           /**
            * If true, elements outside of the chart area (happend during zooming) is hidden
-           * @since: 1.0.0
            */
           clipZoomOverflow: {
             type: 'boolean',
@@ -121,7 +139,6 @@ sap.ui.define(
 
           /**
            * If false, data points on lines or splines are hidden
-           * @since: 1.0.0
            */
           showDataPoints: {
             type: 'boolean',
@@ -131,7 +148,6 @@ sap.ui.define(
 
           /**
            * Sets the background color of the chart
-           * @since: 1.0.0
            */
           backgroundColor: {
             type: 'sap.ui.core.CSSColor',
@@ -142,7 +158,6 @@ sap.ui.define(
           /**
            * Sets the legend position
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           legendPosition: {
             type: 'ui5.viz.ChartLegendPosition',
@@ -152,7 +167,6 @@ sap.ui.define(
 
           /**
            * Sets tthe legend visibility
-           * @since: 1.0.0
            */
           showLegend: {
             type: 'boolean',
@@ -163,7 +177,6 @@ sap.ui.define(
           /**
            * Enables tooltips on chart data elements
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           showTooltip: {
             type: 'boolean',
@@ -174,7 +187,6 @@ sap.ui.define(
           /**
            * Sets the tooltip behaviour, whether it should show tooltip for grouped or single data points
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           groupedTooltip: {
             type: 'boolean',
@@ -185,7 +197,6 @@ sap.ui.define(
           /**
            * Switches x (by default horizontally) and y (by default vertically) axis
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           switchAxisPosition: {
             type: 'boolean',
@@ -198,7 +209,6 @@ sap.ui.define(
           /**
            * Set type of x axis
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           xAxisType: {
             type: 'ui5.viz.AxisType',
@@ -209,46 +219,39 @@ sap.ui.define(
         aggregations: {
           /**
            * Chart axis (if no chart axis is supposed here, a default x axis is generated)
-           * @since: 1.0.0
            */
           xAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Chart axis (if no chart axis is supposed here, a default y axis is generated)
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           yAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Chart axis (if no chart axis is provided, axis is not visible axis is generated)
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           y2Axis: { type: 'ui5.viz.ChartAxis', multiple: false },
 
           /**
            * Custom color for series, if not supposed, default theme colors are used
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
-          colors: { type: 'ps.core.Color', multiple: true },
+          colors: { type: 'ui5.viz.Color', multiple: true },
 
           /**
            * Set of lines to be displayed on the chart grid
-           * @since: 1.0.0
            */
           lines: { type: 'ui5.viz.ChartLine', multiple: true },
 
           /**
            * Set of areas to be displayed on the chart grid
-           * @since: 1.0.0
            */
           areas: { type: 'ui5.viz.ChartArea', multiple: true },
 
           /**
            * Defines the data series on our chart grid
-           * @since: 1.0.0
            */
           series: { type: 'ui5.viz.ChartSeries', multiple: true }
         },
@@ -257,8 +260,11 @@ sap.ui.define(
         events: {
           /**
            * Data was updated
+           * @event chartDataUpdate
            */
-          chartDataUpdate: {}
+          chartDataUpdate: {
+            parameters: {}
+          }
         }
       },
 
@@ -268,15 +274,15 @@ sap.ui.define(
 
       /**
        * Reference to c3 chart instance
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _chart: null,
 
       /**
        * Object to prevent update data event
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _haltCount: 0,
       _initChartUpdateHandler() {
@@ -306,8 +312,8 @@ sap.ui.define(
 
       /**
        * Number range object to set a unique key to series
+       * @private
        * @type {object}
-       * @since: 1.0.0
        */
       _seriesNumberCount: 0,
       _initNumberRangeCreator() {
@@ -469,6 +475,7 @@ sap.ui.define(
        *
        * @param {object} [oRm] Render Manager
        * @param {object} [oControl] Current control (this)
+       * @override
        */
       renderer(oRm, oControl) {
         // start render wrapper div
@@ -495,9 +502,12 @@ sap.ui.define(
           aHighlightedDataPoints = []
 
         // enable/disable axis depending on microMode is active or not
-        oXAxis.setProperty('visible', !this.getMicroMode(), true)
-        oYAxis.setProperty('visible', !this.getMicroMode(), true)
-        oY2Axis.setProperty('visible', !this.getMicroMode(), true)
+        if (this.getMicroMode()) {
+          const suppressRerender = true;
+          oXAxis.setProperty('visible', false, suppressRerender);
+          oYAxis.setProperty('visible', false, suppressRerender);
+          oY2Axis.setProperty('visible', false, suppressRerender);
+        }
 
         // because properties can't be take into account during rendering, we must process all properties and aggregations manually here
 
@@ -552,9 +562,9 @@ sap.ui.define(
                   // TIME BASED LABELS
                   case library.AxisType.Time:
                     return oDate => {
-                      return sap.ui.core.format.DateFormat
-                        .getInstance({ style: 'long' })
-                        .format(oDate)
+                      return DateFormat.getInstance({ style: 'long' }).format(
+                        oDate
+                      )
                     }
 
                   // INDEX BASED LABELS
@@ -604,14 +614,11 @@ sap.ui.define(
                 let aData =
                   oSeries.getData().map((oDataPoint, iIndex) => {
                     // check if data point should be highlighted
-                    let isVisible =
-                      oDataPoint.getVisible() &&
-                      oDataPoint.getValue() !== 'null' &&
-                      oDataPoint.getValue()
+                    let isVisible = oDataPoint.getVisible()
                     if (
                       isVisible &&
                       oDataPoint.getHighlightAnimation() !==
-                        library.DataPointAnimation.None
+                      library.DataPointAnimation.None
                     ) {
                       aHighlightedDataPoints.push({
                         series: oSeries.getKey(),
@@ -619,18 +626,7 @@ sap.ui.define(
                         animation: oDataPoint.getHighlightAnimation()
                       })
                     }
-                    // ===== START OPAL EXTENSION =====
-                    //not working yet!
-                    //return isVisible ? (_isRibbonType(oSeries.getType) ? oDataPoint.getValue() : parseInt(oDataPoint.getValue(), 10)) : null;
-
-                    //workaround:
-                    //return isVisible ? oDataPoint.getValue() : null;
-
-                    //original:
-                    return isVisible
-                      ? parseInt(oDataPoint.getValue(), 10)
-                      : null
-                    // ===== END OPAL EXTENSION =====
+                    return oDataPoint.getValueOrValuePair()
                   }) || []
 
                 // add key of data series
@@ -644,84 +640,84 @@ sap.ui.define(
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                    // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                    oTypes[oSeries.getKey()] = oSeries.getYAxis()
-                    return oTypes
-                  }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
+                  oTypes[oSeries.getKey()] = oSeries.getYAxis()
+                  return oTypes
+                }, {}),
             types:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                    // return a map with the structure: { @seriesKey: @seriesType, ... }
-                    oTypes[oSeries.getKey()] = oSeries.getType()
-                    return oTypes
-                  }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesType, ... }
+                  oTypes[oSeries.getKey()] = oSeries.getType()
+                  return oTypes
+                }, {}),
             names:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                    // return a map with the structure: { @seriesKey: @seriesName, ... }
-                    oTypes[oSeries.getKey()] =
-                      oSeries.getName() || oSeries.getKey()
-                    return oTypes
-                  }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesName, ... }
+                  oTypes[oSeries.getKey()] =
+                    oSeries.getName() || oSeries.getKey()
+                  return oTypes
+                }, {}),
             colors:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                    // return a map with the structure: { @seriesKey: @seriesColor, ... }
-                    if (oSeries.getColor()) {
-                      oTypes[oSeries.getKey()] = oSeries.getColor()
-                    }
-                    return oTypes
-                  }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesColor, ... }
+                  if (oSeries.getColor()) {
+                    oTypes[oSeries.getKey()] = oSeries.getColor()
+                  }
+                  return oTypes
+                }, {}),
             labels: {
               format:
                 aSeries.length === 0
                   ? []
                   : aSeries.reduce((oTypes, oSeries) => {
-                      // return a map with the structure: { @seriesKey: @seriesFormatFunction, ... }
-                      oTypes[oSeries.getKey()] = (value, seriesKey, index) => {
-                        const sLabel = oSeries.getData()[index]
-                          ? oSeries.getData()[index].getLabel()
-                          : null
-                        const sValidatedLabel = sLabel ? sLabel : value
-                        // if showLabels = true then display label or value
-                        return oSeries.getShowLabels() ? sValidatedLabel : null
-                      }
-                      return oTypes
-                    }, {})
+                    // return a map with the structure: { @seriesKey: @seriesFormatFunction, ... }
+                    oTypes[oSeries.getKey()] = (value, seriesKey, index) => {
+                      const sLabel = oSeries.getData()[index]
+                        ? oSeries.getData()[index].getLabel()
+                        : null
+                      const sValidatedLabel = sLabel ? sLabel : value
+                      // if showLabels = true then display label or value
+                      return oSeries.getShowLabels() ? sValidatedLabel : null
+                    }
+                    return oTypes
+                  }, {})
             },
             groups:
               aSeries.length === 0
                 ? []
                 : aSeries
-                    .reduce((aGroups, oSeries) => {
-                      // collect all group keys
-                      if (
-                        oSeries &&
-                        oSeries.getGroupKey() &&
-                        !aGroups.includes(oSeries.getGroupKey())
-                      ) {
-                        aGroups.push(oSeries.getGroupKey())
-                      }
-                      return aGroups
-                    }, [])
-                    .map(sGroupKey => {
-                      // return for each group key the list of respective series keys (['data1', 'data2'])
-                      return aSeries
-                        .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
-                        .map(oSeries => oSeries.getKey())
-                    })
+                  .reduce((aGroups, oSeries) => {
+                    // collect all group keys
+                    if (
+                      oSeries &&
+                      oSeries.getGroupKey() &&
+                      !aGroups.includes(oSeries.getGroupKey())
+                    ) {
+                      aGroups.push(oSeries.getGroupKey())
+                    }
+                    return aGroups
+                  }, [])
+                  .map(sGroupKey => {
+                    // return for each group key the list of respective series keys (['data1', 'data2'])
+                    return aSeries
+                      .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
+                      .map(oSeries => oSeries.getKey())
+                  })
           },
           color: {
             pattern: this.getColors()
               .map(oColor => oColor.getColor())
               .concat(
-                // retrieve custom color palette first if available
-                library.ColorPalette.custom
-                  ? library.ColorPalette.custom
-                  : library.ColorPalette.Material300
+              // retrieve custom color palette first if available
+              library.ColorPalette.custom
+                ? library.ColorPalette.custom
+                : library.ColorPalette.Material300
               )
           },
           axis: {
@@ -752,16 +748,16 @@ sap.ui.define(
                 values:
                   oXAxis.getLabels().length > 0
                     ? oXAxis.getLabels().map((oLabel, iIndex) => {
-                        switch (this.getXAxisType()) {
-                          case library.AxisType.Time:
-                            return oLabel.getValue()
-                          case library.AxisType.Indexed:
-                            return parseInt(oLabel.getValue(), 10) || 0
-                          case library.AxisType.Category:
-                          default:
-                            return iIndex
-                        }
-                      })
+                      switch (this.getXAxisType()) {
+                        case library.AxisType.Time:
+                          return oLabel.getValue()
+                        case library.AxisType.Indexed:
+                          return parseInt(oLabel.getValue(), 10) || 0
+                        case library.AxisType.Category:
+                        default:
+                          return iIndex
+                      }
+                    })
                     : null,
                 format: (() => {
                   // check if an index based formatter function must be used or a time based formatter
@@ -769,9 +765,9 @@ sap.ui.define(
                     // TIME BASED LABELS
                     case library.AxisType.Time:
                       return oDate => {
-                        return sap.ui.core.format.DateFormat
-                          .getInstance({ pattern: 'MMM yyyy' })
-                          .format(oDate)
+                        return DateFormat.getInstance({
+                          pattern: 'MMM yyyy'
+                        }).format(oDate)
                       }
                     // INDEXED BASED LABELS
                     case library.AxisType.Indexed:
@@ -807,12 +803,12 @@ sap.ui.define(
                 oYAxis
                   .getLabels()
                   .reduce(
-                    (pre, curr) =>
-                      Math.max(
-                        pre === undefined ? -Infinity : pre,
-                        parseInt(curr.getValue(), 10) || undefined
-                      ),
-                    undefined
+                  (pre, curr) =>
+                    Math.max(
+                      pre === undefined ? -Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
                   ),
               // default: min = lowest y axis value
               min:
@@ -820,12 +816,12 @@ sap.ui.define(
                 oYAxis
                   .getLabels()
                   .reduce(
-                    (pre, curr) =>
-                      Math.min(
-                        pre === undefined ? Infinity : pre,
-                        parseInt(curr.getValue(), 10) || undefined
-                      ),
-                    undefined
+                  (pre, curr) =>
+                    Math.min(
+                      pre === undefined ? Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
                   ),
               // inverted: false,
               // center: 0,
@@ -836,35 +832,35 @@ sap.ui.define(
               default: [
                 // identify min and max value to set default range
                 oYAxis.getMinValue() ||
-                  oYAxis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.min(
-                          pre === undefined ? Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
-                        ),
-                      undefined
+                oYAxis
+                  .getLabels()
+                  .reduce(
+                  (pre, curr) =>
+                    Math.min(
+                      pre === undefined ? Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
                     ),
+                  undefined
+                  ),
                 oYAxis.getMaxValue() ||
-                  oYAxis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.max(
-                          pre === undefined ? -Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
-                        ),
-                      undefined
-                    )
+                oYAxis
+                  .getLabels()
+                  .reduce(
+                  (pre, curr) =>
+                    Math.max(
+                      pre === undefined ? -Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
+                  )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
                   oYAxis.getLabels().length > 0
                     ? oYAxis
-                        .getLabels()
-                        .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
+                      .getLabels()
+                      .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
                     : null,
                 format: iYValue => {
                   const oLabel = oYAxis
@@ -904,41 +900,41 @@ sap.ui.define(
               default: [
                 // identify min and max value to set default range
                 oY2Axis.getMinValue() ||
-                  oY2Axis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.min(
-                          pre === undefined ? Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
-                        ),
-                      undefined
+                oY2Axis
+                  .getLabels()
+                  .reduce(
+                  (pre, curr) =>
+                    Math.min(
+                      pre === undefined ? Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
                     ),
+                  undefined
+                  ),
                 oY2Axis.getMaxValue() ||
-                  oY2Axis
-                    .getLabels()
-                    .reduce(
-                      (pre, curr) =>
-                        Math.max(
-                          pre === undefined ? -Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
-                        ),
-                      undefined
-                    )
+                oY2Axis
+                  .getLabels()
+                  .reduce(
+                  (pre, curr) =>
+                    Math.max(
+                      pre === undefined ? -Infinity : pre,
+                      parseInt(curr.getValue(), 10) || undefined
+                    ),
+                  undefined
+                  )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
                   oY2Axis.getLabels().length > 0
                     ? oY2Axis
-                        .getLabels()
-                        .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
+                      .getLabels()
+                      .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
                     : null,
                 format: iY2Value => {
                   const oLabel = oY2Axis
                     .getLabels()
                     .find(
-                      oLabel => parseInt(oLabel.getValue(), 10) === iY2Value
+                    oLabel => parseInt(oLabel.getValue(), 10) === iY2Value
                     )
                   if (!oLabel) {
                     // if no label exist, show value
@@ -965,8 +961,8 @@ sap.ui.define(
               show: oXAxis.getShowGridLines(),
               lines: this.getLines()
                 .filter(
-                  oLine =>
-                    oLine.getVisible() && oLine.getAxis() === library.Axis.X
+                oLine =>
+                  oLine.getVisible() && oLine.getAxis() === library.Axis.X
                 )
                 .map(oLine => {
                   return this._mapChartLineToC3Line(oLine)
@@ -976,8 +972,8 @@ sap.ui.define(
               show: oYAxis.getShowGridLines(),
               lines: this.getLines()
                 .filter(
-                  oLine =>
-                    oLine.getVisible() && oLine.getAxis() !== library.Axis.X
+                oLine =>
+                  oLine.getVisible() && oLine.getAxis() !== library.Axis.X
                 )
                 .map(oLine => {
                   return this._mapChartLineToC3Line(oLine)
@@ -1023,7 +1019,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-                `#${this.getId()} g.c3-circles-${oHighlightInfo.series} circle.c3-circle-${oHighlightInfo.point}`
+              `#${this.getId()} g.c3-circles-${
+              oHighlightInfo.series
+              } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -1070,7 +1068,7 @@ sap.ui.define(
        * @private
        * @override
        */
-      exit() {},
+      exit() { },
 
       /* =========================================================== */
       /* override methods                                            */
@@ -1079,9 +1077,10 @@ sap.ui.define(
       /**
        * Setter for property <code>dataVisible</code>.
        *
-       * @param {boolean} bDataVisible Expects a boolean
+       * @param {boolean} [bDataVisible] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setDataVisible(bDataVisible) {
         if (this._chart) bDataVisible ? this._chart.show() : this._chart.hide()
@@ -1091,9 +1090,10 @@ sap.ui.define(
       /**
        * Setter for property <code>width</code>.
        *
-       * @param sWidth {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
+       * @param {sap.ui.core.CSSSize} [sWidth] Expects a sap.ui.core.CSSSize element
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setWidth(sWidth) {
         this.setProperty('width', sWidth, true) // do not rerender
@@ -1104,9 +1104,10 @@ sap.ui.define(
       /**
        * Setter for property <code>height</code>.
        *
-       * @param sHeight {sap.ui.core.CSSSize} Expects a sap.ui.core.CSSSize element
+       * @param {sap.ui.core.CSSSize} [sHeight] Expects a sap.ui.core.CSSSize element
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setHeight(sHeight) {
         this.setProperty('height', sHeight, true) // do not rerender
@@ -1121,6 +1122,7 @@ sap.ui.define(
        *
        * @return {number} Returns calculated size in pixel value based on sap.ui.core.CSSSize element
        * @public
+       * @override
        */
       getWidth() {
         return this._getComputedSize(this.getProperty('width'), 'width')
@@ -1131,6 +1133,7 @@ sap.ui.define(
        *
        * @return {number} Returns calculated size in pixel value based on sap.ui.core.CSSSize element
        * @public
+       * @override
        */
       getHeigth() {
         return this._getComputedSize(this.getProperty('height'), 'height')
@@ -1139,9 +1142,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showSubchart</code>.
        *
-       * @param bShowSubchart {boolean} Expects a boolean
+       * @param {boolean} [bShowSubchart] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowSubchart(bShowSubchart) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1152,9 +1156,10 @@ sap.ui.define(
       /**
        * Setter for property <code>microMode</code>.
        *
-       * @param bMicroMode {boolean} Expects a boolean
+       * @param {boolean} [bMicroMode] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setMicroMode(bMicroMode) {
         if (bMicroMode) {
@@ -1171,9 +1176,10 @@ sap.ui.define(
       /**
        * Setter for property <code>zoomEnabled</code>.
        *
-       * @param bZoomEnabled {boolean} Expects a boolean
+       * @param {boolean} [bZoomEnabled] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setZoomEnabled(bZoomEnabled) {
         if (this._chart) this._chart.zoom.enable(bZoomEnabled)
@@ -1183,9 +1189,10 @@ sap.ui.define(
       /**
        * Setter for property <code>clipZoomOverflow</code>.
        *
-       * @param bClipZoomOverflow {boolean} Expects a boolean
+       * @param {boolean} [bClipZoomOverflow] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setClipZoomOverflow(bClipZoomOverflow) {
         if (bClipZoomOverflow) {
@@ -1199,9 +1206,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showDataPoints</code>.
        *
-       * @param bShowDataPoints {boolean} Expects a boolean
+       * @param {boolean} [bShowDataPoints] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowDataPoints(bShowDataPoints) {
         if (bShowDataPoints) {
@@ -1215,9 +1223,10 @@ sap.ui.define(
       /**
        * Setter for property <code>backgroundColor</code>.
        *
-       * @param sBackgroundColor {boolean} Expects a boolean
+       * @param {boolean} [sBackgroundColor] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setBackgroundColor(sBackgroundColor) {
         if (this.getDomRef())
@@ -1228,9 +1237,10 @@ sap.ui.define(
       /**
        * Setter for property <code>legendPosition</code>.
        *
-       * @param sLegendPosition {boolean} Expects a boolean
+       * @param {boolean} [sLegendPosition] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setLegendPosition(sLegendPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1242,9 +1252,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showLegend</code>.
        *
-       * @param bShowLegend {boolean} Expects a boolean
+       * @param {boolean} [bShowLegend] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowLegend(bShowLegend) {
         if (this._chart)
@@ -1255,9 +1266,10 @@ sap.ui.define(
       /**
        * Setter for property <code>showTooltip</code>.
        *
-       * @param bShowTooltip {boolean} Expects a boolean
+       * @param {boolean} [bShowTooltip] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setShowTooltip(bShowTooltip) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1268,9 +1280,10 @@ sap.ui.define(
       /**
        * Setter for property <code>groupedTooltip</code>.
        *
-       * @param bGroupedTooltip {boolean} Expects a boolean
+       * @param {boolean} [bGroupedTooltip] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setGroupedTooltip(bGroupedTooltip) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1281,9 +1294,10 @@ sap.ui.define(
       /**
        * Setter for property <code>switchAxisPosition</code>.
        *
-       * @param bSwitchAxisPosition {boolean} Expects a boolean
+       * @param {boolean} [bSwitchAxisPosition] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setSwitchAxisPosition(bSwitchAxisPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1298,9 +1312,10 @@ sap.ui.define(
       /**
        * Setter for property <code>xAxisType</code>.
        *
-       * @param bXAxisType {boolean} Expects a boolean
+       * @param {boolean} [bXAxisType] Expects a boolean
        * @return {ui5.viz.Chart} <code>this</code> to allow method chaining
        * @public
+       * @override
        */
       setXAxisType(bXAxisType) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
@@ -1312,6 +1327,7 @@ sap.ui.define(
        *
        * @return {ui5.viz.ChartAxis} return x axis
        * @public
+       * @override
        */
       getXAxis() {
         let iSeriesTicks, iAxisTicks, iDeltaTicks, oXAxis
@@ -1330,6 +1346,7 @@ sap.ui.define(
        *
        * @return {ui5.viz.ChartAxis} return y axis
        * @public
+       * @override
        */
       getYAxis() {
         let oYAxis
@@ -1345,9 +1362,10 @@ sap.ui.define(
 
       /**
        * Getter for aggregation <code>y2Axis</code>.
-       *        
+       *
        * @return {ui5.viz.ChartAxis} return y2 axis
        * @public
+       * @override
        */
       getY2Axis() {
         let oY2Axis
@@ -1366,11 +1384,12 @@ sap.ui.define(
       /**
        * Sets a new object in the named 0..1 aggregation of this ManagedObject and marks this ManagedObject as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be set.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be set.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       setAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (oObject) {
@@ -1420,12 +1439,13 @@ sap.ui.define(
       /**
        * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param iIndex {int} the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {int} [iIndex] the 0-based index the managed object should be inserted at; for a negative value iIndex, oObject is inserted at position 0; for a value greater than the current size of the aggregation, oObject is inserted at the last position
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       insertAggregation(
         sAggregationName,
@@ -1487,11 +1507,12 @@ sap.ui.define(
       /**
        * Adds some entity oObject to the aggregation identified by sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       addAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         // set initial unique key if not happened, yet
@@ -1546,11 +1567,12 @@ sap.ui.define(
       /**
        * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1591,10 +1613,11 @@ sap.ui.define(
       /**
        * Removes all objects from the 0..n-aggregation named sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAllAggregation(sAggregationName, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1633,10 +1656,11 @@ sap.ui.define(
       /**
        * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       destroyAggregation(sAggregationName, bSuppressInvalidate) {
         if (['series', 'lines', 'areas'].includes(sAggregationName)) {
@@ -1679,6 +1703,7 @@ sap.ui.define(
        * @param {string} [sName] The name of the model or undefined.
        * @returns {ui5.viz.ChartSeries} This instance for chaining.
        * @public
+       * @override
        */
       setModel(oModel, sName) {
         // to improve performance, we disable chart update until the complete model was assigned
@@ -1751,7 +1776,7 @@ sap.ui.define(
       /**
        * Getter for property <code>maxValue</code> of an axis.
        *
-       * @param {ui5.viz.ChartAxis} [oAxis] Axis.
+       * @param {ui5.viz.ChartAxis} [oAxis] - Axis (default: <code>undefined</code>).
        * @return {any} Value depending on axis type.
        * @public
        */
@@ -1892,14 +1917,11 @@ sap.ui.define(
               // get data points (e.g. [1, 4, 6, 8, 10, ...])
               ...oSeries.getData().map((oDataPoint, iIndex) => {
                 // check if data point should be highlighted
-                let isVisible =
-                  oDataPoint.getVisible() &&
-                  oDataPoint.getValue() !== 'null' &&
-                  oDataPoint.getValue()
+                let isVisible = oDataPoint.getVisible()
                 if (
                   isVisible &&
                   oDataPoint.getHighlightAnimation() !==
-                    library.DataPointAnimation.None
+                  library.DataPointAnimation.None
                 ) {
                   aHighlightedDataPoints.push({
                     series: oSeries.getKey(),
@@ -1907,9 +1929,7 @@ sap.ui.define(
                     animation: oDataPoint.getHighlightAnimation()
                   })
                 }
-                return isVisible
-                  ? parseInt(oDataPoint.getValue(), 10) || null
-                  : null
+                return oDataPoint.getValueOrValuePair()
               })
             ])
           ],
@@ -1919,43 +1939,43 @@ sap.ui.define(
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                  oTypes[oSeries.getKey()] = oSeries.getYAxis()
-                  return oTypes
-                }, {}),
+                // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
+                oTypes[oSeries.getKey()] = oSeries.getYAxis()
+                return oTypes
+              }, {}),
 
           // update series types
           types:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesType, ... }
-                  oTypes[oSeries.getKey()] = oSeries.getType()
-                  return oTypes
-                }, {}),
+                // return a map with the structure: { @seriesKey: @seriesType, ... }
+                oTypes[oSeries.getKey()] = oSeries.getType()
+                return oTypes
+              }, {}),
 
           // update series names
           names:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesName, ... }
-                  oTypes[oSeries.getKey()] =
-                    oSeries.getName() || oSeries.getKey()
-                  return oTypes
-                }, {}),
+                // return a map with the structure: { @seriesKey: @seriesName, ... }
+                oTypes[oSeries.getKey()] =
+                  oSeries.getName() || oSeries.getKey()
+                return oTypes
+              }, {}),
 
           // update series colors
           colors:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesColor, ... }
-                  if (oSeries.getColor()) {
-                    oTypes[oSeries.getKey()] = oSeries.getColor()
-                  }
-                  return oTypes
-                }, {})
+                // return a map with the structure: { @seriesKey: @seriesColor, ... }
+                if (oSeries.getColor()) {
+                  oTypes[oSeries.getKey()] = oSeries.getColor()
+                }
+                return oTypes
+              }, {})
         })
 
         // highlight data points
@@ -1966,7 +1986,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-                `#${this.getId()} g.c3-circles-${oHighlightInfo.series} circle.c3-circle-${oHighlightInfo.point}`
+              `#${this.getId()} g.c3-circles-${
+              oHighlightInfo.series
+              } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -1977,23 +1999,23 @@ sap.ui.define(
           aSeries.length === 0
             ? []
             : aSeries
-                .reduce((aGroups, oSeries) => {
-                  // collect all group keys
-                  if (
-                    oSeries &&
-                    oSeries.getGroupKey() &&
-                    !aGroups.includes(oSeries.getGroupKey())
-                  ) {
-                    aGroups.push(oSeries.getGroupKey())
-                  }
-                  return aGroups
-                }, [])
-                .map(sGroupKey => {
-                  // return for each group key the list of respective series keys (['data1', 'data2'])
-                  return aSeries
-                    .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
-                    .map(oSeries => oSeries.getKey())
-                })
+              .reduce((aGroups, oSeries) => {
+                // collect all group keys
+                if (
+                  oSeries &&
+                  oSeries.getGroupKey() &&
+                  !aGroups.includes(oSeries.getGroupKey())
+                ) {
+                  aGroups.push(oSeries.getGroupKey())
+                }
+                return aGroups
+              }, [])
+              .map(sGroupKey => {
+                // return for each group key the list of respective series keys (['data1', 'data2'])
+                return aSeries
+                  .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
+                  .map(oSeries => oSeries.getKey())
+              })
         )
 
         // update series styles
@@ -2020,12 +2042,12 @@ sap.ui.define(
               oYAxis
                 .getLabels()
                 .reduce(
-                  (pre, curr) =>
-                    Math.min(
-                      pre === undefined ? Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
+                (pre, curr) =>
+                  Math.min(
+                    pre === undefined ? Infinity : pre,
+                    parseInt(curr.getValue(), 10) || undefined
+                  ),
+                undefined
                 ),
             y2: this.getMinValueByAxis(oY2Axis)
           },
@@ -2036,12 +2058,12 @@ sap.ui.define(
               oYAxis
                 .getLabels()
                 .reduce(
-                  (pre, curr) =>
-                    Math.max(
-                      pre === undefined ? -Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
+                (pre, curr) =>
+                  Math.max(
+                    pre === undefined ? -Infinity : pre,
+                    parseInt(curr.getValue(), 10) || undefined
+                  ),
+                undefined
                 ),
             y2: this.getMaxValueByAxis(oY2Axis)
           }
@@ -2070,13 +2092,13 @@ sap.ui.define(
 
         const aNewXLines = this.getLines()
           .filter(
-            oLine => oLine.getVisible() && oLine.getAxis() === library.Axis.X
+          oLine => oLine.getVisible() && oLine.getAxis() === library.Axis.X
           )
           .map(oNewLine => this._mapChartLineToC3Line(oNewLine))
 
         const aNewYLines = this.getLines()
           .filter(
-            oLine => oLine.getVisible() && oLine.getAxis() !== library.Axis.X
+          oLine => oLine.getVisible() && oLine.getAxis() !== library.Axis.X
           )
           .map(oNewLine => this._mapChartLineToC3Line(oNewLine))
 
@@ -2168,8 +2190,9 @@ sap.ui.define(
               text: oArea.getTitle(),
               // position: oArea.getTitlePosition(),
               // add three classes: general line class, line style class and line identifier
-              class: `${this.CSS_CLASS_AREA} ${this
-                .CSS_CLASS_AREA}-${oArea.getId()}`
+              class: `${this.CSS_CLASS_AREA} ${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()}`
             }
           })
 
@@ -2227,9 +2250,11 @@ sap.ui.define(
           position: oChartLine.getTitlePosition(),
           showSelector: oChartLine.getShowLineSelector() ? true : false,
           // add three classes: general line class, line style class and line identifier
-          class: `${this.CSS_CLASS_LINE} ${this
-            .CSS_CLASS_LINE}-${oChartLine.getStyle()} ${this
-            .CSS_CLASS_LINE}-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
+          class: `${this.CSS_CLASS_LINE} ${
+            this.CSS_CLASS_LINE
+            }-${oChartLine.getStyle()} ${
+            this.CSS_CLASS_LINE
+            }-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
         }
       },
 
@@ -2373,17 +2398,29 @@ sap.ui.define(
               // update svg pattern style
               oStrokeStyle.text(
                 `#${this.getId()} .c3-target-${oSeries.getKey()} .c3-shape {
-                                    stroke-dashoffset: ${oSeries.getLineAnimationForwards()
-                                      ? ''
-                                      : '-'}50rem;
+                                    stroke-dashoffset: ${
+                oSeries.getLineAnimationForwards()
+                  ? ''
+                  : '-'
+                }50rem;
                                     stroke-dasharray: ${sDashArray};
                                     stroke-linecap: round;
 
-                                    -webkit-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -moz-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -ms-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -o-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    -webkit-animation: ui5-viz-chart-dash-animation ${
+                iAnimationSpeed
+                }s 0s linear infinite forwards;
+                                    -moz-animation: ui5-viz-chart-dash-animation ${
+                iAnimationSpeed
+                }s 0s linear infinite forwards;
+                                    -ms-animation: ui5-viz-chart-dash-animation ${
+                iAnimationSpeed
+                }s 0s linear infinite forwards;
+                                    -o-animation: ui5-viz-chart-dash-animation ${
+                iAnimationSpeed
+                }s 0s linear infinite forwards;
+                                    animation: ui5-viz-chart-dash-animation ${
+                iAnimationSpeed
+                }s 0s linear infinite forwards;
                                 }`
               )
               break
@@ -2429,26 +2466,29 @@ sap.ui.define(
 
           if (sColor) {
             // update svg area style
-            sCSS += `#${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} line {
+            sCSS += `#${this.getId()} .${
+              this.CSS_CLASS_LINE
+              }-${oLine.getId()} line {
                                 stroke: ${sColor};
                             }
 
-                            #${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} circle {
+                            #${this.getId()} .${
+              this.CSS_CLASS_LINE
+              }-${oLine.getId()} circle {
                                 stroke: ${sColor};
                             }
 
-                            #${this.getId()} .${this
-              .CSS_CLASS_LINE}-${oLine.getId()} text {
+                            #${this.getId()} .${
+              this.CSS_CLASS_LINE
+              }-${oLine.getId()} text {
                                 fill: ${sColor};
                             }`
           }
 
           // update line selector icon and selector press event
           let oLineHook = d3.select(
-              `#${this.getId()} .ui5-viz-chart-line-${oLine.getId()}`
-            ),
+            `#${this.getId()} .ui5-viz-chart-line-${oLine.getId()}`
+          ),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(
               oLine.getLineSelectorIcon()
             )
@@ -2463,7 +2503,7 @@ sap.ui.define(
             // set click event
             oLineHook
               .select('.c3-grid-lines-circle-hover')
-              .on('click', function() {
+              .on('click', function () {
                 oLine.fireSelectorPress({
                   line: oLine,
                   selectorDomRef: this.previousSibling // return circle instead of hover-circle
@@ -2473,7 +2513,7 @@ sap.ui.define(
             // unregister click event
             oLineHook
               .select('.c3-grid-lines-circle-hover')
-              .on('click', function() {})
+              .on('click', function () { })
           }
         })
 
@@ -2535,14 +2575,17 @@ sap.ui.define(
                                     fill: ${sColor};
                                     stroke: none;
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-stripe,
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} text.c3-region-text {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} rect.c3-region-stripe,
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-area {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} rect.c3-region-area {
                                     fill: url(#${this.getId()}-area-stripe-pattern-${oArea.getId()}) !important;
                                 }`
               break
@@ -2550,14 +2593,17 @@ sap.ui.define(
             case library.ShapeStyle.Default:
             default:
               // update svg area style
-              sCSS += `#${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-stripe,
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} text.c3-region-text {
+              sCSS += `#${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} rect.c3-region-stripe,
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
-                                #${this.getId()} .${this
-                .CSS_CLASS_AREA}-${oArea.getId()} rect.c3-region-area {
+                                #${this.getId()} .${
+                this.CSS_CLASS_AREA
+                }-${oArea.getId()} rect.c3-region-area {
                                     fill: ${sColor};
                                 }`
               break
@@ -2570,7 +2616,7 @@ sap.ui.define(
       /**
        * Check if a style is valid for shapes
        *
-       * @param sSeriesType {string} style to be validated
+       * @param {string} [sSeriesType] style to be validated
        * @return {boolean} returns true if style is valid for shape tzpe
        * @private
        */
@@ -2590,7 +2636,7 @@ sap.ui.define(
       /**
        * Check if a style is valid for lines
        *
-       * @param sSeriesType {string} style to be validated
+       * @param {string} [sSeriesType] style to be validated
        * @return {boolean} returns true if style is valid for shape tzpe
        * @private
        */
@@ -2604,6 +2650,8 @@ sap.ui.define(
           case library.ChartSeriesType.AreaSpline:
           case library.ChartSeriesType.AreaStep:
           case library.ChartSeriesType.RibbonLine:
+          case library.ChartSeriesType.RibbonSpline:
+          case library.ChartSeriesType.RibbonStep:
             bTypeValid = true
             break
           default:
@@ -2614,6 +2662,7 @@ sap.ui.define(
       },
 
       // ===== START OPAL EXTENSION =====
+      // TODO: jsdoc missing!
       _isRibbonType: function _isRibbonType(sSeriesType) {
         return (
           sSeriesType ===
@@ -2752,8 +2801,8 @@ sap.ui.define(
             // check: https://developer.mozilla.org/de/docs/Web/CSS/length#Interpolation
             jQuery.sap.log.warning(
               'CSS unit ' +
-                mCSS.unit +
-                ' is not supported, yet. Fallback to "auto" (max. width).'
+              mCSS.unit +
+              ' is not supported, yet. Fallback to "auto" (max. width).'
             )
             iCalculatedWidth = this._getAvailableSize(sSizeType)
             break

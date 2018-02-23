@@ -1,12 +1,6 @@
 /* @flow */
 
 /**
- * UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern on 12.07.2016.
- */
-
-/**
  * Initialization Code and shared classes of library ui5.viz.
  */
 sap.ui.define(
@@ -43,6 +37,7 @@ sap.ui.define(
         'ui5.viz.ChartLegendPosition',
         'ui5.viz.ChartTitlePosition',
         'ui5.viz.ChartSeriesType',
+        'ui5.viz.ChartDataPointType',
         'ui5.viz.LineStyle',
         'ui5.viz.ShapeStyle',
         'ui5.viz.AnimationSpeed',
@@ -104,6 +99,17 @@ sap.ui.define(
       RibbonLine: 'ribbon-line',
       RibbonStep: 'ribbon-step',
       RibbonSpline: 'ribbon-spline'
+    }
+
+    /**
+     * Available chart data point types.
+     *
+     * @enum {string}
+     * @public
+     */
+    ui5.viz.ChartDataPointType = {
+      SingleValue: 'single-value',
+      ValuePair: 'value-pair'
     }
 
     /**

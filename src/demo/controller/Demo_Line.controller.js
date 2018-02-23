@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Line', {
@@ -25,7 +25,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
           {
             name: 'Chocolate 🍫',
             dataPoints: [10, 15, 18, 17, 29, 40],
-            type: 'ui5.viz.ChartSeriesType.Line'
+            type: 'line'
           }
         ]
       })
@@ -35,7 +35,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         const aSeries = oModel.getProperty('/series/')
         const aNewSeries = aSeries.concat({
           name: 'Strawberry 🍓',
-          dataPoints: [8, 11, 12, 21, 24, 31]
+          dataPoints: [8, 11, 12, 21, 24, 31],
+          type: 'line'
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)

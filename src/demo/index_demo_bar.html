@@ -44,7 +44,7 @@
               showTooltip="{store>/showTooltip}" groupedTooltip="{store>/groupedTooltip}"
               showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}">
               <viz:series>
-                <viz:ChartSeries type="ui5.viz.ChartSeriesType.Bar" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
+                <viz:ChartSeries type="{store>type}" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
                   <viz:data>
                     <viz:ChartDataPoint value="{store>}" />
                   </viz:data>

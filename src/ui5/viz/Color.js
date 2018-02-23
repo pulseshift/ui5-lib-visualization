@@ -1,9 +1,17 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
@@ -20,8 +28,6 @@ sap.ui.define(
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -39,7 +45,6 @@ sap.ui.define(
 
           /**
            * Sets the CSS value for the color
-           * @since: 1.0.0
            */
           color: {
             type: 'sap.ui.core.CSSColor',
@@ -65,14 +70,6 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-       * @private
-       * @override
-       */
-      init() {},
-
-      /**
        * Constructor for a new <code>ui5.viz.Chart</code>.
        *
        * @param {string} [sId] Id for the new control, generated automatically if no id is given
@@ -80,7 +77,15 @@ sap.ui.define(
        */
       constructor() {
         Element.prototype.constructor.apply(this, arguments)
-      }
+      },
+
+      /**
+       * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+       * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
+       * @private
+       * @override
+       */
+      init() {}
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.

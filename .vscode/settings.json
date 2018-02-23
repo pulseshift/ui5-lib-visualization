@@ -5,6 +5,9 @@
   "prettier.jsxBracketSameLine": true,
   "prettier.semi": false,
   "editor.formatOnSave": true,
+  "[handlebars]": {
+    "editor.formatOnSave": false
+  },
   "files.associations": {
     "*.js": "javascriptreact"
   },

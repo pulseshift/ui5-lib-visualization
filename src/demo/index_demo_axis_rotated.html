@@ -44,7 +44,7 @@
               height="{store>/height}" showTooltip="{store>/showTooltip}" groupedTooltip="{store>/groupedTooltip}"
               showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}">
               <viz:series>
-                <viz:ChartSeries name="{store>name}" type="step" data="{ path: 'store>dataPoints', templateShareable: true }">
+                <viz:ChartSeries name="{store>name}" type="{store>type}" data="{ path: 'store>dataPoints', templateShareable: true }">
                   <viz:data>
                     <viz:ChartDataPoint value="{store>}" />
                   </viz:data>

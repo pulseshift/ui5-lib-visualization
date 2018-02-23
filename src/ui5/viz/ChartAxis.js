@@ -1,13 +1,21 @@
 /* @flow */
 
 /**
- * UI development toolkit enhancement for HTML5 (OpenUI5)
- * (c) Copyright 2016 PulseShift GmbH, all rights reserved.
- * Created by Jascha Quintern (fuchsvomwalde) on 28. Jul 2016.
+ * @example
+ * Sample Usage (XML View)
+ *
+ * @description
+ * This element must be used with the <code>ui5.viz.Chart</code> control and was designed to work best in XML views and in combination with data binding.
+ *
+ * @type {xml} Markdown code type.
+ * @code
+ * <Chart>
+ *   <!-- tbd -->
+ * </Chart>
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  function (Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxis</code>.
      *
@@ -20,8 +28,6 @@ sap.ui.define(
      * @extends sap.ui.core.Element
      *
      * @author PulseShift GmbH
-     * @version 1.0.0
-     * @since: 1.0.0
      *
      * @constructor
      * @public
@@ -39,19 +45,16 @@ sap.ui.define(
 
           /**
            * Sets axis title
-           * @since: 1.0.0
            */
           title: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets the posotion of the title
-           * @since: ?
            */
           // titlePosition: { type: 'ui5.viz.AxisTitlePosition', group: 'Appereance', defaultValue: 'library.AxisTitlePosition.Default' },
 
           /**
            * Sets axis title visibility
-           * @since: 1.0.0
            */
           showTitle: {
             type: 'boolean',
@@ -61,14 +64,12 @@ sap.ui.define(
 
           /**
            * Sets the grid lines style
-           * @since: ?
            */
           // gridLinesStyle: { type: 'ui5.viz.LineStyle', group: 'Appereance', defaultValue: 'library.LineStyle.Default' },
 
           /**
            * Sets visibility of grid lines
            * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           showGridLines: {
             type: 'boolean',
@@ -78,19 +79,16 @@ sap.ui.define(
 
           /**
            * Sets the minimal value of the axis. (use index/position for category X-axis, too)
-           * @since: 1.0.0
            */
           minValue: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets the maximal value of the axis. (use index/position for category X-axis, too)
-           * @since: 1.0.0
            */
           maxValue: { type: 'string', group: 'Appereance', defaultValue: null },
 
           /**
            * Sets visibility of the element.
-           * @since: 1.0.0
            */
           visible: {
             type: 'boolean',
@@ -100,7 +98,7 @@ sap.ui.define(
 
           /**
            * Sets the axis type
-           * @since: 1.0.0
+           * @private
            */
           _axisType: {
             type: 'ui5.viz.Axis',
@@ -113,7 +111,6 @@ sap.ui.define(
           /**
            * Sets the labels displayed on the axis
            * Hint: live update by c3 API is only supported for X axis, yet, therefore we must rerender the chart
-           * @since: 1.0.0
            */
           labels: { type: 'ui5.viz.ChartAxisLabel', multiple: true }
         },
@@ -122,6 +119,7 @@ sap.ui.define(
         events: {
           /**
            * Axis was updated
+           * @event axisUpdate
            */
           axisUpdate: {}
         }
@@ -155,7 +153,7 @@ sap.ui.define(
        * @private
        * @override
        */
-      init() {},
+      init() { },
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.
@@ -181,6 +179,7 @@ sap.ui.define(
        * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       insertAggregation(
         sAggregationName,
@@ -222,11 +221,12 @@ sap.ui.define(
       /**
        * Adds some entity oObject to the aggregation identified by sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       addAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         // only fire axis update if axis type is X axis
@@ -262,11 +262,12 @@ sap.ui.define(
       /**
        * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param oObject {sap.ui.base.ManagedObject} the ManagedObject to add; if empty, nothing is inserted.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {sap.ui.base.ManagedObject} [oObject] the ManagedObject to add; if empty, nothing is inserted.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
         // only fire axis update if axis type is X axis
@@ -302,10 +303,11 @@ sap.ui.define(
       /**
        * Removes all objects from the 0..n-aggregation named sAggregationName.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       removeAllAggregation(sAggregationName, bSuppressInvalidate) {
         // only fire axis update if axis type is X axis
@@ -336,10 +338,11 @@ sap.ui.define(
       /**
        * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
        *
-       * @param sAggregationName {string} the string identifying the aggregation the managed object oObject should be inserted into.
-       * @param bSuppressInvalidate {boolean} if true, this ManagedObject as well as the added child are not marked as changed
+       * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
+       * @param {boolean} [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       destroyAggregation(sAggregationName, bSuppressInvalidate) {
         // only fire axis update if axis type is X axis
@@ -375,6 +378,7 @@ sap.ui.define(
        * @param {boolean} [bSuppressInvalidation] Whether invalidation to be suppressed
        * @return {ui5.viz.ChartSeries} This instance for chaining
        * @public
+       * @override
        */
       setProperty(sName, vValue, bSuppressInvalidation) {
         // TODO: Check why change of 'minValue' or 'maxValue' are not working without rerender (simple examples are working)

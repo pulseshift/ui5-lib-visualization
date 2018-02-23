@@ -10,6 +10,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
+        showSubchart: true,
+        zoomEnabled: true,
         xAxis: [
           {
             labels: [
@@ -71,7 +73,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               67,
               12
             ],
-            type: 'ui5.viz.ChartSeriesType.Line'
+            type: 'line'
           }
         ]
       })

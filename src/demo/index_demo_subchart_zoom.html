@@ -45,7 +45,7 @@
               showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}"
               zoomEnabled="{store>/zoomEnabled}" showSubchart="{store>/showSubchart}">
               <viz:series>
-                <viz:ChartSeries type="ui5.viz.ChartSeriesType.Line" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
+                <viz:ChartSeries type="{store>type}" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
                   <viz:data>
                     <viz:ChartDataPoint value="{store>}" />
                   </viz:data>

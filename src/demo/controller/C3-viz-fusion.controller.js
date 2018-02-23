@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.C3-viz-fusion', {
@@ -12,18 +12,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showLegend: true,
         xAxis: [
           {
-            labels: [
-              '2017-01-01',
-              '2017-01-02',
-              '2017-01-03',
-              '2017-01-04',
-              '2017-01-05',
-              '2017-01-06',
-              '2017-01-07',
-              '2017-01-08',
-              '2017-01-09',
-              '2017-01-10'
-            ]
+            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
           }
         ],
         yAxis: [
@@ -33,50 +22,75 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         ],
         series: [
           {
+            name: 'Measurement',
+            dataPoints: [100, 90, 150, 100, 120, 180, 90, null, null, null],
+            type: 'line',
+            color: '#005073'
+          },
+
+          {
+            name: 'Prognose',
+            dataPoints: [null, null, null, null, 100, 210, 110, 340, 160, 230],
+            type: 'line',
+            lineStyle: 'dotted',
+            color: '#189ad3'
+          },
+          {
             name: 'Confidence interval',
+            type: 'ribbon-line',
+            color: '#71c7ec',
             dataPoints: [
               {
+                type: 'value-pair',
                 low: null,
                 high: null
               },
               {
+                type: 'value-pair',
                 low: null,
                 high: null
               },
               {
+                type: 'value-pair',
                 low: null,
                 high: null
               },
               {
-                low: 30,
-                high: 160
+                type: 'value-pair',
+                low: null,
+                high: null
               },
               {
+                type: 'value-pair',
                 low: 10,
                 high: 180
               },
               {
+                type: 'value-pair',
                 low: 100,
                 high: 300
               },
               {
+                type: 'value-pair',
                 low: 20,
                 high: 150
               },
               {
+                type: 'value-pair',
                 low: 300,
                 high: 470
               },
               {
+                type: 'value-pair',
                 low: 100,
                 high: 220
               },
               {
+                type: 'value-pair',
                 low: 190,
                 high: 280
               }
-            ],
-            type: 'ui5.viz.ChartSeriesType.RibbonLine'
+            ]
           }
         ]
       })
