@@ -38,7 +38,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './library',
 
 // libs
-'sap/ui/thirdparty/d3', '../libs/c3', '../libs/lodash'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
+'sap/ui/thirdparty/d3', '../libs/lodash.debounce', '../libs/lodash.isequal', '../libs/c3'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
   /**
    * Constructor for a new <code>ui5.viz.Chart</code>.
    *
@@ -447,9 +447,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       this._getChartUpdateHandler().halt();
 
       // init debounce update function instance
-      this._debounceUpdate = _.debounce(this._onDataUpdate, 10);
-      this._debounceUpdateChartLines = _.debounce(this._updateChartLines, 50);
-      this._debounceUpdateChartAreas = _.debounce(this._updateChartAreas, 50);
+      this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10);
+      this._debounceUpdateChartLines = lodashDebounce(this._updateChartLines, 50);
+      this._debounceUpdateChartAreas = lodashDebounce(this._updateChartAreas, 50);
     },
 
 
@@ -563,7 +563,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 // INDEX BASED LABELS
                 case library.AxisType.Indexed:
                 // CATEGORY BASED LABELS
-                case library.AxisType.Category:
+                case library.AxisType.Category: // eslint-disable-line no-fallthrough
                 default:
                   return function (iXIndex) {
                     var oLabel = _this.getXAxisLabelByIndex(iXIndex);
@@ -719,7 +719,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                   // INDEXED BASED LABELS
                   case library.AxisType.Indexed:
                   // CATEGORY BASED LABELS
-                  case library.AxisType.Category:
+                  case library.AxisType.Category: // eslint-disable-line no-fallthrough
                   default:
                     return function (iXIndex) {
                       var oLabel = _this.getXAxisLabelByIndex(iXIndex);
@@ -865,12 +865,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         transition: {
           duration: 175
         }
-      };
 
-      console.log(options);
-
-      // initialize c3 chart
-      this._chart = c3.generate(options);
+        // initialize c3 chart
+      };this._chart = c3.generate(options);
 
       // >>> continue styling
 
@@ -1195,10 +1192,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     getXAxis: function getXAxis() {
-      var iSeriesTicks = void 0,
-          iAxisTicks = void 0,
-          iDeltaTicks = void 0,
-          oXAxis = void 0;
+      var oXAxis = void 0;
 
       oXAxis = this.getAggregation('xAxis');
       if (!oXAxis) {
@@ -1525,7 +1519,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @public
      * @override
      */
-    setModel: function setModel(oModel, sName) {
+    setModel: function setModel() /* oModel, sName */{
       // to improve performance, we disable chart update until the complete model was assigned
       this._getChartUpdateHandler().halt();
 
@@ -1580,7 +1574,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var sMinValue = oAxis.getMinValue() || undefined;
 
       if (isXAxis) {
-        switch (this.getXAxisType()) {
+        switch (sXAxisType) {
           case library.AxisType.Time:
             return sMinValue;
           case library.AxisType.Indexed:
@@ -1609,7 +1603,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var sMaxValue = oAxis.getMaxValue() || undefined;
 
       if (isXAxis) {
-        switch (this.getXAxisType()) {
+        switch (sXAxisType) {
           case library.AxisType.Time:
             return sMaxValue;
           case library.AxisType.Indexed:
@@ -1874,7 +1868,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return oLine.id === oNewLine.id;
         });
         // compare old and new line
-        return oOldLine && _.isEqual(oNewLine, oOldLine) === false;
+        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
       });
 
       // if at least one event changed, we must reset all lines at once
@@ -1910,7 +1904,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return oLine.id === oNewLine.id;
         });
         // compare old and new line
-        return oOldLine && _.isEqual(oNewLine, oOldLine) === false;
+        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
       });
 
       // if at least one event changed, we must reset all lines at once
@@ -1999,7 +1993,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return oArea.id === oNewArea.id;
         });
         // compare old and new area
-        return oOldArea && _.isEqual(oNewArea, oOldArea) === false;
+        return oOldArea && lodashIsequal(oNewArea, oOldArea) === false;
       });
       if (aUpdateList.length > 0) {
         this._chart.regions(aUpdateList);
@@ -2403,9 +2397,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         // continue with 'auto:'
         case 'initial':
         // continue with 'auto:'
-        case 'inherit':
+        case 'inherit': // eslint-disable-line no-fallthrough
         // continue with 'auto:'
         case 'auto':
+          // eslint-disable-line no-fallthrough
           // continue with 'auto:'
           iCalculatedWidth = this._getAvailableSize(sSizeType);
           break;
@@ -2414,7 +2409,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           // check: https://developer.mozilla.org/de/docs/Web/CSS/length#Interpolation
           jQuery.sap.log.warning('CSS unit ' + mCSS.unit + ' is not supported, yet. Fallback to "auto" (max. width).');
           iCalculatedWidth = this._getAvailableSize(sSizeType);
-          break;
       }
 
       return iCalculatedWidth;

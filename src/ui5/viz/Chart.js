@@ -41,8 +41,9 @@ sap.ui.define(
 
     // libs
     'sap/ui/thirdparty/d3',
-    '../libs/c3',
-    '../libs/lodash'
+    '../libs/lodash.debounce',
+    '../libs/lodash.isequal',
+    '../libs/c3'
   ],
   function(Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
     /**
@@ -450,9 +451,15 @@ sap.ui.define(
         this._getChartUpdateHandler().halt()
 
         // init debounce update function instance
-        this._debounceUpdate = _.debounce(this._onDataUpdate, 10)
-        this._debounceUpdateChartLines = _.debounce(this._updateChartLines, 50)
-        this._debounceUpdateChartAreas = _.debounce(this._updateChartAreas, 50)
+        this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10)
+        this._debounceUpdateChartLines = lodashDebounce(
+          this._updateChartLines,
+          50
+        )
+        this._debounceUpdateChartAreas = lodashDebounce(
+          this._updateChartAreas,
+          50
+        )
       },
 
       /**
@@ -2104,7 +2111,7 @@ sap.ui.define(
         const aUpdateXList = aNewXLines.filter(oNewLine => {
           const oOldLine = aOldXLines.find(oLine => oLine.id === oNewLine.id)
           // compare old and new line
-          return oOldLine && _.isEqual(oNewLine, oOldLine) === false
+          return oOldLine && lodashIsequal(oNewLine, oOldLine) === false
         })
 
         // if at least one event changed, we must reset all lines at once
@@ -2136,7 +2143,7 @@ sap.ui.define(
         const aUpdateYList = aNewYLines.filter(oNewLine => {
           const oOldLine = aOldYLines.find(oLine => oLine.id === oNewLine.id)
           // compare old and new line
-          return oOldLine && _.isEqual(oNewLine, oOldLine) === false
+          return oOldLine && lodashIsequal(oNewLine, oOldLine) === false
         })
 
         // if at least one event changed, we must reset all lines at once
@@ -2216,7 +2223,7 @@ sap.ui.define(
         const aUpdateList = aNewAreas.filter(oNewArea => {
           const oOldArea = aOldAreas.find(oArea => oArea.id === oNewArea.id)
           // compare old and new area
-          return oOldArea && _.isEqual(oNewArea, oOldArea) === false
+          return oOldArea && lodashIsequal(oNewArea, oOldArea) === false
         })
         if (aUpdateList.length > 0) {
           this._chart.regions(aUpdateList)

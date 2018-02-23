@@ -8,7 +8,7 @@
 /.vscode/
 
 ### Build Process ###
-/dist/demo/
+/dist/
 /ui5/
 /.tmp/
 /.maps/

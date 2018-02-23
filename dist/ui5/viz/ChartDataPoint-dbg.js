@@ -17,22 +17,22 @@
  */
 sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) {
   /**
-     * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
-     *
-     * @param {string} [sId] Id for the new control, generated automatically if no id is given
-     * @param {object} [mSettings] Initial settings for the new control
-     *
-     * @class
-     * The <code>ChartDataPoint</code> control: ChartDataPoint container for bar, line and other chart types. Based on C3.js..
-     *
-     * @extends sap.ui.core.Element
-     *
-     * @author PulseShift GmbH
-     *
-     * @constructor
-     * @public
-     * @alias ui5.viz.ChartDataPoint
-     */
+   * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
+   *
+   * @param {string} [sId] Id for the new control, generated automatically if no id is given
+   * @param {object} [mSettings] Initial settings for the new control
+   *
+   * @class
+   * The <code>ChartDataPoint</code> control: ChartDataPoint container for bar, line and other chart types. Based on C3.js..
+   *
+   * @extends sap.ui.core.Element
+   *
+   * @author PulseShift GmbH
+   *
+   * @constructor
+   * @public
+   * @alias ui5.viz.ChartDataPoint
+   */
   return Element.extend('ui5.viz.ChartDataPoint', {
     /* =========================================================== */
     /* meta data definition                                        */
@@ -185,7 +185,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @public
      */
     getVisible: function getVisible() {
-      var v = undefined;
       if (this.getType() === library.ChartDataPointType.SingleValue) {
         var v = this.getValue();
         return this.getProperty('visible') && v !== 'null' && v !== 'undefined' && v !== null && v !== undefined;

@@ -36,6 +36,7 @@ module.exports = {
     less: false,
     c3: false,
     d3: false,
-    _: false
+    lodashDebounce: false,
+    lodashIsequal: false
   }
 }
