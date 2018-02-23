@@ -8,12 +8,11 @@
 /.vscode/
 
 ### Build Process ###
-/dist/
+/dist/demo/
 /ui5/
 /.tmp/
 /.maps/
 /.download/
-/src/vendor-beta/*
 
 
 ### Node ###

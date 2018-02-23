@@ -7,7 +7,7 @@ sap.ui.define(
   [
     // library dependency
     'sap/ui/thirdparty/d3',
-    'vendor/c3'
+    '../libs/c3'
   ],
   function() {
     /**

@@ -2,10 +2,31 @@
 <html>
 
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UI5 Visualization Library</title>
+    <meta http-equiv="X-UA-Compatible"
+      content="IE=edge" />
+    <meta charset="UTF-8">
+
+    <title>{{secure indexTitle}}</title>
+
+    <script id="sap-ui-bootstrap"
+      src="{{secure src}}"
+      data-sap-ui-libs="sap.m"
+      data-sap-ui-theme="{{secure theme}}"
+      data-sap-ui-frameOptions="deny"
+      data-sap-ui-compatVersion="edge"
+      data-sap-ui-bindingSyntax="complex"
+      data-sap-ui-preload="async"
+      data-sap-ui-resourceroots='{{secure resourceroots}}'
+      data-sap-ui-theme-roots='{{secure themeroots}}'>
+
+      </script>
+
+      <script>
+      sap.ui.getCore().attachInit(function () {
+        // init component container
+        console.log("modules and ui5 loaded successfully");
+      });
+    </script>
 </head>
 
 <body>
