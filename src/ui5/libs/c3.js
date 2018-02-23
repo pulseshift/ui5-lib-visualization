@@ -3,6 +3,7 @@
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+/* @license C3.js v0.4.21 | (c) C3 Team and other contributors | http://c3js.org/ */
 (function (global, factory) {
     (typeof exports === 'undefined' ? 'undefined' : _typeof2(exports)) === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.c3 = factory();
 })(undefined, function () {
@@ -49,6 +50,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         circle: 'c3-circle',
         circles: 'c3-circles',
         arc: 'c3-arc',
+        arcLabelLine: 'c3-arc-label-line',
         arcs: 'c3-arcs',
         area: 'c3-area',
         areas: 'c3-areas',
@@ -1099,7 +1101,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         transitions.axisSubX.call($$.subXAxis);
     };
 
-    var c3$1 = { version: "0.4.17" };
+    var c3$1 = { version: "0.4.21" };
 
     var c3_chart_fn;
     var c3_chart_internal_fn;
@@ -1314,11 +1316,6 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         }
         if (config.legend_hide) {
             $$.addHiddenLegendIds(config.legend_hide === true ? $$.mapToIds($$.data.targets) : config.legend_hide);
-        }
-
-        // when gauge, hide legend // TODO: fix
-        if ($$.hasType('gauge')) {
-            config.legend_show = false;
         }
 
         // Init sizes and scales
@@ -1900,7 +1897,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             y = config.axis_rotated ? 0 : $$.height2;
         } else if (target === 'arc') {
             x = $$.arcWidth / 2;
-            y = $$.arcHeight / 2;
+            y = $$.arcHeight / 2 - ($$.hasType('gauge') ? 6 : 0); // to prevent wrong display of min and max label
         }
         return "translate(" + x + "," + y + ")";
     };
@@ -2058,7 +2055,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         var $$ = this,
             config = $$.config;
 
-        $$.resizeFunction = $$.generateResize();
+        $$.resizeFunction = $$.generateResize(); // need to call .remove
 
         $$.resizeFunction.add(function () {
             config.onresize.call($$);
@@ -2078,10 +2075,19 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             config.onresized.call($$);
         });
 
+        $$.resizeIfElementDisplayed = function () {
+            // if element not displayed skip it
+            if ($$.api == null || !$$.api.element.offsetParent) {
+                return;
+            }
+
+            $$.resizeFunction();
+        };
+
         if (window.attachEvent) {
-            window.attachEvent('onresize', $$.resizeFunction);
+            window.attachEvent('onresize', $$.resizeIfElementDisplayed);
         } else if (window.addEventListener) {
-            window.addEventListener('resize', $$.resizeFunction, false);
+            window.addEventListener('resize', $$.resizeIfElementDisplayed, false);
         } else {
             // fallback to this, if this is a very old browser
             var wrapper = window.onresize;
@@ -2095,7 +2101,14 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             }
             // add this graph to the wrapper, we will be removed if the user calls destroy
             wrapper.add($$.resizeFunction);
-            window.onresize = wrapper;
+            window.onresize = function () {
+                // if element not displayed skip it
+                if (!$$.api.element.offsetParent) {
+                    return;
+                }
+
+                wrapper();
+            };
         }
     };
 
@@ -3601,9 +3614,9 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         }
 
         if (window.detachEvent) {
-            window.detachEvent('onresize', $$.resizeFunction);
+            window.detachEvent('onresize', $$.resizeIfElementDisplayed);
         } else if (window.removeEventListener) {
-            window.removeEventListener('resize', $$.resizeFunction);
+            window.removeEventListener('resize', $$.resizeIfElementDisplayed);
         } else {
             var wrapper = window.onresize;
             // check if no one else removed our wrapper and remove our resizeFunction from it
@@ -3611,6 +3624,9 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
                 wrapper.remove($$.resizeFunction);
             }
         }
+
+        // remove the inner resize functions
+        $$.resizeFunction.remove();
 
         $$.selectChart.classed('c3', false).html("");
 
@@ -4460,11 +4476,13 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
     c3_chart_internal_fn.updateRadius = function () {
         var $$ = this,
             config = $$.config,
-            w = config.gauge_width || config.donut_width;
-        $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2;
+            w = config.gauge_width || config.donut_width,
+            gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * $$.config.gauge_arcs_minWidth;
+        $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2 * ($$.hasType('gauge') ? 0.85 : 1);
         $$.radius = $$.radiusExpanded * 0.95;
         $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
         $$.innerRadius = $$.hasType('donut') || $$.hasType('gauge') ? $$.radius * $$.innerRadiusRatio : 0;
+        $$.gaugeArcWidth = w ? w : gaugeArcWidth <= $$.radius - $$.innerRadius ? $$.radius - $$.innerRadius : gaugeArcWidth <= $$.radius ? gaugeArcWidth : $$.radius;
     };
 
     c3_chart_internal_fn.updateArc = function () {
@@ -4515,7 +4533,13 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
 
     c3_chart_internal_fn.getSvgArc = function () {
         var $$ = this,
-            arc = $$.d3.svg.arc().outerRadius($$.radius).innerRadius($$.innerRadius),
+            hasGaugeType = $$.hasType('gauge'),
+            singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+            arc = $$.d3.svg.arc().outerRadius(function (d) {
+            return hasGaugeType ? $$.radius - singleArcWidth * d.index : $$.radius;
+        }).innerRadius(function (d) {
+            return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
+        }),
             newArc = function newArc(d, withoutUpdate) {
             var updated;
             if (withoutUpdate) {
@@ -4530,8 +4554,16 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
     };
 
     c3_chart_internal_fn.getSvgArcExpanded = function (rate) {
+        rate = rate || 1;
         var $$ = this,
-            arc = $$.d3.svg.arc().outerRadius($$.radiusExpanded * (rate ? rate : 1)).innerRadius($$.innerRadius);
+            hasGaugeType = $$.hasType('gauge'),
+            singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+            expandWidth = Math.min($$.radiusExpanded * rate - $$.radius, singleArcWidth * 0.8 - (1 - rate) * 100),
+            arc = $$.d3.svg.arc().outerRadius(function (d) {
+            return hasGaugeType ? $$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * rate;
+        }).innerRadius(function (d) {
+            return hasGaugeType ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
+        });
         return function (d) {
             var updated = $$.updateAngle(d);
             return updated ? arc(updated) : "M 0 0";
@@ -4551,8 +4583,9 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             y,
             h,
             ratio,
-            translate = "";
-        if (updated && !$$.hasType('gauge')) {
+            translate = "",
+            hasGauge = $$.hasType('gauge');
+        if (updated && !hasGauge) {
             c = this.svgArc.centroid(updated);
             x = isNaN(c[0]) ? 0 : c[0];
             y = isNaN(c[1]) ? 0 : c[1];
@@ -4565,6 +4598,11 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
                 ratio = $$.radius && h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0;
             }
             translate = "translate(" + x * ratio + ',' + y * ratio + ")";
+        } else if (updated && hasGauge && $$.filterTargetsToShow($$.data.targets).length > 1) {
+            var y1 = Math.sin(updated.endAngle - Math.PI / 2);
+            x = Math.cos(updated.endAngle - Math.PI / 2) * ($$.radiusExpanded + 25);
+            y = y1 * ($$.radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+            translate = "translate(" + x + ',' + y + ")";
         }
         return translate;
     };
@@ -4752,7 +4790,10 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             d3 = $$.d3,
             config = $$.config,
             main = $$.main,
-            mainArc;
+            mainArc,
+            backgroundArc,
+            mainArcLabelLine,
+            hasGaugeType = $$.hasType('gauge');
         mainArc = main.selectAll('.' + CLASS.arcs).selectAll('.' + CLASS.arc).data($$.arcData.bind($$));
         mainArc.enter().append('path').attr("class", $$.classArc.bind($$)).style("fill", function (d) {
             return $$.color(d.data);
@@ -4764,6 +4805,37 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             }
             this._current = d;
         });
+        if (hasGaugeType) {
+            mainArcLabelLine = main.selectAll('.' + CLASS.arcs).selectAll('.' + CLASS.arcLabelLine).data($$.arcData.bind($$));
+            mainArcLabelLine.enter().append('rect').attr("class", function (d) {
+                return CLASS.arcLabelLine + ' ' + CLASS.target + ' ' + CLASS.target + '-' + d.data.id;
+            });
+            if ($$.filterTargetsToShow($$.data.targets).length === 1) {
+                mainArcLabelLine.style("display", "none");
+            } else {
+                mainArcLabelLine.style("fill", function (d) {
+                    return config.color_pattern.length > 0 ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
+                }).style("display", config.gauge_labelLine_show ? "" : "none").each(function (d) {
+                    var lineLength = 0,
+                        lineThickness = 2,
+                        x = 0,
+                        y = 0,
+                        transform = "";
+                    if ($$.hiddenTargetIds.indexOf(d.data.id) < 0) {
+                        var updated = $$.updateAngle(d),
+                            innerLineLength = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length * (updated.index + 1),
+                            lineAngle = updated.endAngle - Math.PI / 2,
+                            arcInnerRadius = $$.radius - innerLineLength,
+                            linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : 1 / arcInnerRadius);
+                        lineLength = $$.radiusExpanded - $$.radius + innerLineLength;
+                        x = Math.cos(linePositioningAngle) * arcInnerRadius;
+                        y = Math.sin(linePositioningAngle) * arcInnerRadius;
+                        transform = "rotate(" + lineAngle * 180 / Math.PI + ", " + x + ", " + y + ")";
+                    }
+                    d3.select(this).attr({ x: x, y: y, width: lineLength, height: lineThickness, transform: transform }).style("stroke-dasharray", "0, " + (lineLength + lineThickness) + ", 0");
+                });
+            }
+        }
         mainArc.attr("transform", function (d) {
             return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
         }).on('mouseover', config.interaction_enabled ? function (d) {
@@ -4854,21 +4926,33 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         main.selectAll('.' + CLASS.chartArc).select('text').style("opacity", 0).attr('class', function (d) {
             return $$.isGaugeType(d.data) ? CLASS.gaugeValue : '';
         }).text($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style('font-size', function (d) {
-            return $$.isGaugeType(d.data) ? Math.round($$.radius / 5) + 'px' : '';
+            return $$.isGaugeType(d.data) && $$.filterTargetsToShow($$.data.targets).length === 1 ? Math.round($$.radius / 5) + 'px' : '';
         }).transition().duration(duration).style("opacity", function (d) {
             return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? 1 : 0;
         });
-        main.select('.' + CLASS.chartArcsTitle).style("opacity", $$.hasType('donut') || $$.hasType('gauge') ? 1 : 0);
+        main.select('.' + CLASS.chartArcsTitle).style("opacity", $$.hasType('donut') || hasGaugeType ? 1 : 0);
 
-        if ($$.hasType('gauge')) {
-            $$.arcs.select('.' + CLASS.chartArcsBackground).attr("d", function () {
+        if (hasGaugeType) {
+            var index = 0;
+            backgroundArc = $$.arcs.select('g.' + CLASS.chartArcsBackground).selectAll('path.' + CLASS.chartArcsBackground).data($$.data.targets);
+            backgroundArc.enter().append("path");
+            backgroundArc.attr("class", function (d, i) {
+                return CLASS.chartArcsBackground + ' ' + CLASS.chartArcsBackground + '-' + i;
+            }).attr("d", function (d1) {
+                if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) {
+                    return "M 0 0";
+                }
+
                 var d = {
                     data: [{ value: config.gauge_max }],
                     startAngle: config.gauge_startingAngle,
-                    endAngle: -1 * config.gauge_startingAngle
+                    endAngle: -1 * config.gauge_startingAngle * (config.gauge_fullCircle ? Math.PI : 1),
+                    index: index++
                 };
                 return $$.getArc(d, true, true);
             });
+            backgroundArc.exit().remove();
+
             $$.arcs.select('.' + CLASS.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : '');
             $$.arcs.select('.' + CLASS.chartArcsGaugeMin).attr("dx", -1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_min, false) : '');
             $$.arcs.select('.' + CLASS.chartArcsGaugeMax).attr("dx", $$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2) + "px").attr("dy", "1.2em").text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_max, true) : '');
@@ -4877,7 +4961,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
     c3_chart_internal_fn.initGauge = function () {
         var arcs = this.arcs;
         if (this.hasType('gauge')) {
-            arcs.append('path').attr("class", CLASS.chartArcsBackground);
+            arcs.append('g').attr("class", CLASS.chartArcsBackground);
             arcs.append("text").attr("class", CLASS.chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none");
             arcs.append("text").attr("class", CLASS.chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none");
             arcs.append("text").attr("class", CLASS.chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none");
@@ -5319,6 +5403,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             // gauge
             gauge_fullCircle: false,
             gauge_label_show: true,
+            gauge_labelLine_show: true,
             gauge_label_format: undefined,
             gauge_min: 0,
             gauge_max: 100,
@@ -5326,6 +5411,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             gauge_label_extents: undefined,
             gauge_units: undefined,
             gauge_width: undefined,
+            gauge_arcs_minWidth: 5,
             gauge_expand: {},
             gauge_expand_duration: 50,
             // donut
@@ -5596,10 +5682,27 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
                 values: data.map(function (d, i) {
                     var xKey = $$.getXKey(id),
                         rawX = d[xKey],
-                        value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null,
+
+
+                    // ===== START OPAL EXTENSION =====
+                    // introducing ribbonYs, which is a pair of y values at the same x value: a high and a low
+                    fnIsValidRibbonValue = function fnIsValidRibbonValue(val) {
+                        var isValidHigh = (typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object' && val.hasOwnProperty('high') && !isNaN(val.high);
+                        var isValidLow = (typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object' && val.hasOwnProperty('low') && !isNaN(val.low);
+                        return isValidHigh && isValidLow;
+                    },
+
+
+                    //add value if valid and no ribbon type
+                    value = d[id] !== null && !isNaN(d[id]) && !$$.isRibbonType(id) ? +d[id] : null,
+
+
+                    //add y value pair if valid and ribbon type
+                    ribbonYvalues = !$$.isRibbonType(id) ? undefined : fnIsValidRibbonValue(d[id]) ? d[id] : undefined,
                         x;
+
                     // use x as categories if custom x and categorized
-                    if ($$.isCustomX() && $$.isCategorized() && !isUndefined(rawX)) {
+                    if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
                             config.axis_x_categories = [];
                         }
@@ -5615,7 +5718,8 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
                     if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
                         x = undefined;
                     }
-                    return { x: x, value: value, id: convertedId };
+                    return { x: x, value: value, id: convertedId, ribbonYs: ribbonYvalues };
+                    // ===== END OPAL EXTENSION =====
                 }).filter(function (v) {
                     return isDefined(v.x);
                 })
@@ -5892,12 +5996,14 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             return targetIds.indexOf(id) < 0;
         });
     };
-    c3_chart_internal_fn.getValuesAsIdKeyed = function (targets) {
+    // function needed an additional parameter to tell whether the highs or the lows of the ribbons are supposed to be read
+    c3_chart_internal_fn.getValuesAsIdKeyed = function (targets, ribbonHighs) {
+        var $$ = this;
         var ys = {};
         targets.forEach(function (t) {
             ys[t.id] = [];
             t.values.forEach(function (v) {
-                ys[t.id].push(v.value);
+                if ($$.isRibbonType(v.id)) ribbonHighs ? ys[t.id].push(v.ribbonYs.high) : ys[t.id].push(v.ribbonYs.low);else ys[t.id].push(v.value);
             });
         });
         return ys;
@@ -6213,7 +6319,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         var $$ = this,
             config = $$.config,
             ids = $$.mapToIds(targets),
-            ys = $$.getValuesAsIdKeyed(targets),
+            ys = $$.getValuesAsIdKeyed(targets, false),
             j,
             k,
             baseId,
@@ -6259,7 +6365,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         var $$ = this,
             config = $$.config,
             ids = $$.mapToIds(targets),
-            ys = $$.getValuesAsIdKeyed(targets),
+            ys = $$.getValuesAsIdKeyed(targets, true),
             j,
             k,
             baseId,
@@ -6853,7 +6959,10 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         var $$ = this,
             config = $$.config,
             dataToShow = selectedData.filter(function (d) {
-            return d && isValue(d.value);
+            if (d) {
+                var ribbonIsValue = d.ribbonYs == undefined ? null : isValue(d.ribbonYs.high) && isValue(d.ribbonYs.low);
+            }
+            return d && (isValue(d.value) || ribbonIsValue);
         }),
             focusEl = $$.main.selectAll('line.' + CLASS.xgridFocus),
             xx = $$.xx.bind($$);
@@ -7626,7 +7735,9 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         }).attr('x', xForLegendRect).attr('y', yForLegendRect);
 
         tiles = $$.legend.selectAll('line.' + CLASS.legendItemTile).data(targetIds);
-        (withTransition ? tiles.transition() : tiles).style('stroke', $$.color).attr('x1', x1ForLegendTile).attr('y1', yForLegendTile).attr('x2', x2ForLegendTile).attr('y2', yForLegendTile);
+        (withTransition ? tiles.transition() : tiles).style('stroke', $$.levelColor ? function (id) {
+            return $$.levelColor($$.cache[id].values[0].value);
+        } : $$.color).attr('x1', x1ForLegendTile).attr('y1', yForLegendTile).attr('x2', x2ForLegendTile).attr('y2', yForLegendTile);
 
         if (background) {
             (withTransition ? background.transition() : background).attr('height', $$.getLegendHeight() - 12).attr('width', maxWidth * (step + 1) + 10);
@@ -8449,32 +8560,64 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             area = $$.d3.svg.area(),
             getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
             yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
-            xValue = function xValue(d) {
+            xValue = function xValue(d, i) {
             return (isSub ? $$.subxx : $$.xx).call($$, d);
         },
-            value0 = function value0(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
+
+
+        // ===== START OPAL EXTENSION =====
+        // in case of the ribbon type, area.y0 and area.y1 get the high and the low value
+        value0 = function value0(d, i) {
+            if ($$.isRibbonType(d)) return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.ribbonYs.low);else return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
         },
             value1 = function value1(d, i) {
-            return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
+            if ($$.isRibbonType(d)) return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.ribbonYs.high);else return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
+            // ===== END OPAL EXTENSION =====
         };
 
         area = config.axis_rotated ? area.x0(value0).x1(value1).y(xValue) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1);
         if (!config.line_connectNull) {
             area = area.defined(function (d) {
-                return d.value !== null;
+                if ($$.isRibbonType(d)) {
+                    return d.ribbonYs !== null;
+                } else {
+                    return d.value !== null;
+                }
             });
         }
 
         return function (d) {
-            var values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values,
-                x0 = 0,
+            // ===== START OPAL EXTENSION =====
+            // additional condition is necessary, otherwise filterRemoveNull will leave the values-array of the ribbon object empty
+            var values = config.line_connectNull && !$$.isRibbonType(d) ? $$.filterRemoveNull(d.values) : d.values,
+
+
+            // ===== END OPAL EXTENSION =====
+            x0 = 0,
                 y0 = 0,
                 path;
             if ($$.isAreaType(d)) {
                 if ($$.isStepType(d)) {
                     values = $$.convertValuesToStep(values);
                 }
+
+                // ===== START OPAL EXTENSION ====
+                // in case of the ribbon type, the null defined sequence in the beginning needs to be cut off
+                if ($$.isRibbonType(d)) {
+                    var sliceStart = 0,
+                        valuesLength = values.length,
+                        sliceEnd = 0;
+                    for (var i = 0; i < valuesLength; i++) {
+                        if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null) sliceStart++;else break;
+                    }
+
+                    for (var i = valuesLength - 1; i > 0; i--) {
+                        if (values[i].ribbonYs.low === null && values[i].ribbonYs.high === null) sliceEnd++;else break;
+                    }
+                    values = values.slice(sliceStart, values.length - sliceEnd);
+                }
+                // ===== END OPAL EXTENSION =====
+
                 path = area.interpolate($$.getInterpolate(d))(values);
             } else {
                 if (values[0]) {
@@ -9155,33 +9298,87 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             title,
             value,
             name,
-            bgcolor;
+            bgcolor,
+            orderAsc = $$.isOrderAsc();
 
-        var tooltipSortFunction = this.getTooltipSortFunction();
-        if (tooltipSortFunction) {
-            d.sort(tooltipSortFunction);
-        }
+        //create an array that contains any CI's high AND low values as seperate entries
+        var completeArray = []; //.concat(d);
+        var offset = 0;
 
         for (i = 0; i < d.length; i++) {
-            if (!(d[i] && (d[i].value || d[i].value === 0))) {
+            if (!d[i]) {
+                offset++;
+                continue;
+            }
+
+            //append the data for one graph
+            completeArray.push({
+                id: d[i].id,
+                value: d[i].value,
+                name: d[i].name,
+                index: d[i].index,
+                x: d[i].x
+            });
+
+            //append high and low data for ribbon type
+            if ($$.isRibbonType(d[i])) {
+                var sName = d[i].name;
+                //create a new element and append it to the array for the low value
+                completeArray.push({
+                    id: d[i].id,
+                    value: d[i].ribbonYs.low,
+                    name: sName.concat(" low"),
+                    index: d[i].index,
+                    ribbonYs: d[i].ribbonYs,
+                    x: d[i].x
+                });
+                //change original CI element to represent the high value
+                completeArray[i - offset].value = d[i].ribbonYs.high;
+                completeArray[i - offset].name = sName.concat(" high");
+            }
+        }
+
+        if (config.data_groups.length === 0) {
+            completeArray.sort(function (a, b) {
+                var v1 = a ? a.value : null,
+                    v2 = b ? b.value : null;
+                return orderAsc ? v1 - v2 : v2 - v1;
+            });
+        } else {
+            var ids = $$.orderTargets($$.data.targets).map(function (i) {
+                return i.id;
+            });
+            completeArray.sort(function (a, b) {
+                var v1 = a ? a.value : null,
+                    v2 = b ? b.value : null;
+                if (v1 > 0 && v2 > 0) {
+                    v1 = a ? ids.indexOf(a.id) : null;
+                    v2 = b ? ids.indexOf(b.id) : null;
+                }
+                return orderAsc ? v1 - v2 : v2 - v1;
+            });
+        }
+
+        for (i = 0; i < completeArray.length; i++) {
+            if (!(completeArray[i] && (completeArray[i].value || completeArray[i].value === 0))) {
                 continue;
             }
 
             if (!text) {
-                title = sanitise(titleFormat ? titleFormat(d[i].x) : d[i].x);
+                title = sanitise(titleFormat ? titleFormat(completeArray[i].x) : completeArray[i].x);
                 text = "<table class='" + $$.CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
             }
 
-            value = sanitise(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d));
+            value = sanitise(valueFormat(completeArray[i].value, completeArray[i].ratio, completeArray[i].id, completeArray[i].index, completeArray));
             if (value !== undefined) {
                 // Skip elements when their name is set to null
-                if (d[i].name === null) {
+                if (completeArray[i].name === null) {
                     continue;
                 }
-                name = sanitise(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index));
-                bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+                name = sanitise(nameFormat(completeArray[i].name, completeArray[i].ratio, completeArray[i].id, completeArray[i].index));
+                bgcolor = $$.levelColor ? $$.levelColor(completeArray[i].value) : color(completeArray[i].id);
 
-                text += "<tr class='" + $$.CLASS.tooltipName + "-" + $$.getTargetSelectorSuffix(d[i].id) + "'>";
+                text += "<tr class='" + $$.CLASS.tooltipName + "-" + $$.getTargetSelectorSuffix(completeArray[i].id) + "'>";
                 text += "<td class='name'><span style='background-color:" + bgcolor + "'></span>" + name + "</td>";
                 text += "<td class='value'>" + value + "</td>";
                 text += "</tr>";
@@ -9199,7 +9396,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         // Determin tooltip position
         if (forArc) {
             tooltipLeft = ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2 + mouse[0];
-            tooltipTop = $$.height / 2 + mouse[1] + 20;
+            tooltipTop = ($$.hasType('gauge') ? $$.height : $$.height / 2) + mouse[1] + 20;
         } else {
             svgLeft = $$.getSvgLeft(true);
             if (config.axis_rotated) {
@@ -9233,7 +9430,10 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         var tWidth, tHeight, position;
         var forArc = $$.hasArcType(),
             dataToShow = selectedData.filter(function (d) {
-            return d && isValue(d.value);
+            if (d) {
+                var ribbonIsValue = d.ribbonYs == undefined ? null : isValue(d.ribbonYs.high) && isValue(d.ribbonYs.low);
+            }
+            return d && (isValue(d.value) || ribbonIsValue);
         }),
             positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
         if (dataToShow.length === 0 || !config.tooltip_show) {
@@ -9293,19 +9493,22 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
     c3_chart_internal_fn.isLineType = function (d) {
         var config = this.config,
             id = isString(d) ? d : d.id;
-        return !config.data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(config.data_types[id]) >= 0;
+        return !config.data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step', 'ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isStepType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['step', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+        return ['step', 'area-step', 'ribbon-step'].indexOf(this.config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isSplineType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['spline', 'area-spline'].indexOf(this.config.data_types[id]) >= 0;
+        return ['spline', 'area-spline', 'ribbon-spline'].indexOf(this.config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isAreaType = function (d) {
         var id = isString(d) ? d : d.id;
-        return ['area', 'area-spline', 'area-step'].indexOf(this.config.data_types[id]) >= 0;
+        return ['area', 'area-spline', 'area-step', 'ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(this.config.data_types[id]) >= 0;
+    };c3_chart_internal_fn.isRibbonType = function (d) {
+        var id = isString(d) ? d : d.id;
+        return ['ribbon-step', 'ribbon-spline', 'ribbon-line'].indexOf(this.config.data_types[id]) >= 0;
     };
     c3_chart_internal_fn.isBarType = function (d) {
         var id = isString(d) ? d : d.id;
