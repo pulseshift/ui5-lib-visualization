@@ -14,11 +14,8 @@
 /.download/
 
 ### Dist Files ###
-/dist/*
-!/dist/ui5/viz/library-preload.js
-!/dist/ui5/viz/themes/**/*.css
-!/dist/ui5/viz/libs/**/*
-
+/dist/demo/
+/dist/ui5/viz/themes/**/*.less
 
 ### Node ###
 node_modules/
