@@ -2,21 +2,24 @@
   "name": "ui5-lib-visualization",
   "version": "0.1.0",
   "scripts": {
-    "test": "yarn eslint ./src/ui5 --ext .js --cache",
-    "start": "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js --silent",
-    "start:verbose": "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js",
-    "start:dist": "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js testDist --silent",
-    "build": "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build --silent",
-    "build:verbose": "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build",
-    "build:disclaimer": "yarn licenses generate-disclaimer --production >> DISCLAIMER.md",
+    "test": "yarn eslint ./src/ui5/viz --ext .js --cache",
+    "start":
+      "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js --silent",
+    "start:verbose":
+      "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js",
+    "start:dist":
+      "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js testDist --silent",
+    "build":
+      "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build --silent",
+    "build:verbose":
+      "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build",
+    "build:disclaimer":
+      "yarn licenses generate-disclaimer --production >> DISCLAIMER.md",
     "docs": "babel-node docs/tools/create-ui5-docs.js",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "prettier --write --no-semi --single-quote",
-      "git add"
-    ]
+    "*.js": ["prettier --write --no-semi --single-quote", "git add"]
   },
   "description": "UI5 Visualization Library",
   "repository": "https://github.com/pulseshift/ui5-lib-visualization.git",
@@ -33,7 +36,8 @@
     "src": "cdn",
     "srcLinks": {
       "cdn": {
-        "url": "https://openui5.hana.ondemand.com/{{version}}/resources/sap-ui-core.js",
+        "url":
+          "https://openui5.hana.ondemand.com/{{version}}/resources/sap-ui-core.js",
         "version": "1.50.8",
         "isPrebuild": true,
         "isArchive": false
