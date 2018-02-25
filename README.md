@@ -49,6 +49,8 @@ _Hint: This overview is not yet complete. In the course of time we will point ou
 
 A brief overview of features, additional to C3.js line and area charts:
 
+* tbd
+
 ### Example
 
 To execute the demo, please follow the instructions described in section `Development`. At the time the demo is being refactored with the goal to provide you an SAP explored like experience.
