@@ -280,6 +280,11 @@ function watch() {
     // learn more about the powerful options (proxy, middleware, etc.) here:
     // https://www.browsersync.io/docs/options
     port: 3000,
+
+    // auto-open the site in Chrome
+    open: true,
+    browser: 'google chrome canary',
+
     // TODO: create path automatically based on pkg.main
     startPath: 'demo/index.html',
     server: {
@@ -324,7 +329,12 @@ export function testDist() {
 
 // [development build]
 function reload(done) {
-  server.reload()
+  if (commander.local) {
+    server.reload()
+  } else {
+    gutil.log('Change completed, ready for reload...')
+  }
+  spinner.print(`\u{1F435}  update completed.`)
   done()
 }
 
@@ -1289,6 +1299,7 @@ function loadDependencies() {
           return (
             browserify({
               entries: sEntry,
+              // global name will never be exposed, cause we wrap the module in an ui5 define statement
               standalone: sGlobalName
             })
               // babel will run with the settings defined in `.babelrc` file
@@ -1296,6 +1307,18 @@ function loadDependencies() {
               .bundle()
               .pipe(source(`${sModuleName}.js`))
               .pipe(buffer())
+              // wrap complete module to be compatible with ui5 loading system
+              .pipe(
+                tap(file => {
+                  file.contents = Buffer.concat([
+                    new Buffer(`sap.ui.define([/* no dependencies */], function(){
+                      var exports = {};
+                      var module = { exports: null };`),
+                    file.contents,
+                    new Buffer(`return module.exports; });`)
+                  ])
+                })
+              )
               .pipe(gulp.dest(sVendorLibsPathSrc))
               .pipe(gulp.dest(sVendorLibsPathDev))
               .on('end', resolve)
@@ -1350,6 +1373,7 @@ function loadDependenciesDist() {
           return (
             browserify({
               entries: sEntry,
+              // global name will never be exposed, cause we wrap the module in an ui5 define statement
               standalone: sGlobalName
             })
               // babel will run with the settings defined in `.babelrc` file
@@ -1357,6 +1381,18 @@ function loadDependenciesDist() {
               .bundle()
               .pipe(source(`${sModuleName}.js`))
               .pipe(buffer())
+              // wrap complete module to be compatible with ui5 loading system
+              .pipe(
+                tap(file => {
+                  file.contents = Buffer.concat([
+                    new Buffer(`sap.ui.define([/* no dependencies */], function(){
+                      var exports = {};
+                      var module = { exports: null };`),
+                    file.contents,
+                    new Buffer(`return module.exports; });`)
+                  ])
+                })
+              )
               // minify scripts
               .pipe(uglify())
               .pipe(gulp.dest(sVendorLibsPath))

@@ -44,8 +44,8 @@
       }
     },
     "vendor": {
-      "name": "ui5.libs",
-      "path": "src/ui5/libs"
+      "name": "ui5.viz.libs",
+      "path": "src/ui5/viz/libs"
     },
     "theme": "sap_belize",
     "apps": [],

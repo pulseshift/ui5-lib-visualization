@@ -5,6 +5,8 @@
 
 This library provides an OpenUI5 API that acts as a wrapper for D3-based charting library [C3.js](http://c3js.org/). It offers a more detailed and attractive API design than `sap.viz` chart controls, which interacts harmoniously especially in XML Views in combination with data binding.
 
+> Furthermore, this project is also a Boilerplate for all UI5 control libraries that rely completely on Open Source and uses 100% internally the same Gulp based build script as our [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit). One build script to **rule them all**, I mean, how cool is that? Probably pretty cool, at least as long as we haven't found an alternative with Webpack yet. So take a look at our Starter Kit to learn more about the features and functionality of the build process.
+
 ## Usage
 
 tbd: how to use this lib in your project...

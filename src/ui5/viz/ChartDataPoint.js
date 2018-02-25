@@ -1,3 +1,5 @@
+'use strict';
+
 /* @flow */
 
 /**
@@ -13,7 +15,7 @@
  *   <!-- tbd -->
  * </Chart>
  */
-sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) {
   /**
    * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
    *
@@ -123,9 +125,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @param {string} [sId] Id for the new control, generated automatically if no id is given
      * @param {object} [mSettings] Initial settings for the new control
      */
-    constructor() {
-      Element.prototype.constructor.apply(this, arguments)
+    constructor: function constructor() {
+      Element.prototype.constructor.apply(this, arguments);
     },
+
 
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
@@ -133,7 +136,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @private
      * @override
      */
-    init() {},
+    init: function init() {},
+
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -141,10 +145,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @private
      * @override
      */
-    exit() {
+    exit: function exit() {
       // inform observers about control destroy
-      this.fireDataPointUpdate()
+      this.fireDataPointUpdate();
     },
+
 
     /* =========================================================== */
     /* override methods                                            */
@@ -160,106 +165,82 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @public
      * @override
      */
-    setProperty(sName, vValue, bSuppressInvalidation) {
-      if (
-        [
-          'value',
-          'high',
-          'low',
-          'label',
-          'visible',
-          'highlightAnimation'
-        ].includes(sName)
-      ) {
+    setProperty: function setProperty(sName, vValue, bSuppressInvalidation) {
+      if (['value', 'high', 'low', 'label', 'visible', 'highlightAnimation'].includes(sName)) {
         // important: update value, before fire event
-        Element.prototype.setProperty.call(this, sName, vValue, true)
+        Element.prototype.setProperty.call(this, sName, vValue, true);
 
         // inform observers about data update
-        this.fireDataPointUpdate()
+        this.fireDataPointUpdate();
       } else {
-        Element.prototype.setProperty.call(
-          this,
-          sName,
-          vValue,
-          bSuppressInvalidation
-        )
+        Element.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
       }
 
-      return this
+      return this;
     },
+
 
     /**
      * Overwrites getter in order to make sure it is a valid value. Visible can be false due to different reasons.
      * @public
      */
-    getVisible() {
+    getVisible: function getVisible() {
       if (this.getType() === library.ChartDataPointType.SingleValue) {
-        var v = this.getValue()
-        return (
-          this.getProperty('visible') &&
-          v !== 'null' &&
-          v !== 'undefined' &&
-          v !== null &&
-          v !== undefined
-        )
+        var v = this.getValue();
+        return this.getProperty('visible') && v !== 'null' && v !== 'undefined' && v !== null && v !== undefined;
       } else {
-        var h = this.getHigh()
-        var l = this.getLow()
-        return (
-          this.getProperty('visible') &&
-          h !== 'null' &&
-          h !== 'undefined' &&
-          h !== null &&
-          h !== undefined &&
-          l !== 'null' &&
-          l !== 'undefined' &&
-          l !== null &&
-          l !== undefined
-        )
+        var h = this.getHigh();
+        var l = this.getLow();
+        return this.getProperty('visible') && h !== 'null' && h !== 'undefined' && h !== null && h !== undefined && l !== 'null' && l !== 'undefined' && l !== null && l !== undefined;
       }
     },
 
-    /**
-     * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
-     * @public
-     */
-    getValue() {
-      var v = this.getProperty('value')
-      return !isNaN(v) && v !== null ? parseInt(v, 10) : null
-    },
 
     /**
      * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
      * @public
      */
-    getHigh() {
-      var h = this.getProperty('high')
-      return !isNaN(h) && h !== null ? parseInt(h, 10) : null
+    getValue: function getValue() {
+      var v = this.getProperty('value');
+      return !isNaN(v) && v !== null ? parseInt(v, 10) : null;
     },
+
 
     /**
      * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
      * @public
      */
-    getLow() {
-      var l = this.getProperty('low')
-      return !isNaN(l) && l !== null ? parseInt(l, 10) : null
+    getHigh: function getHigh() {
+      var h = this.getProperty('high');
+      return !isNaN(h) && h !== null ? parseInt(h, 10) : null;
     },
+
+
+    /**
+     * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
+     * @public
+     */
+    getLow: function getLow() {
+      var l = this.getProperty('low');
+      return !isNaN(l) && l !== null ? parseInt(l, 10) : null;
+    },
+
 
     // FIXME: add jsdoc
-    getValueOrValuePair() {
-      const isVisible = this.getVisible()
+    getValueOrValuePair: function getValueOrValuePair() {
+      var isVisible = this.getVisible();
       if (this.getType() === library.ChartDataPointType.SingleValue) {
-        return isVisible ? this.getValue() : null
+        return isVisible ? this.getValue() : null;
       } else {
-        var highValue = this.getHigh()
-        var lowValue = this.getLow()
+        var highValue = this.getHigh();
+        var lowValue = this.getLow();
         var result = {
           high: highValue,
           low: lowValue
-        }
-        return isVisible ? result : { high: null, low: null }
+        };
+        return isVisible ? result : { high: null, low: null };
       }
     }
-  })
-})
+  });
+});
+//# sourceMappingURL=ChartDataPoint.js.map

@@ -35,10 +35,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
  *   </yAxis>
  * </Chart>
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './library',
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './libs/lodash.debounce', './libs/lodash.isequal', './libs/c3', './library',
 
 // libs
-'sap/ui/thirdparty/d3', '../libs/lodash.debounce', '../libs/lodash.isequal', '../libs/c3'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
+'sap/ui/thirdparty/d3'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, lodashDebounce, lodashIsequal, c3, library) {
   /**
    * Constructor for a new <code>ui5.viz.Chart</code>.
    *
