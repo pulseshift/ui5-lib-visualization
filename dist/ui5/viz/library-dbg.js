@@ -20,9 +20,7 @@ sap.ui.define([
   sap.ui.getCore().initLibrary({
     name: 'ui5.viz',
     version: '1.0.0',
-    dependencies: [
-      // no sap libraries required
-    ],
+    dependencies: [],
     types: [
     // builtin types
     'any', 'boolean', 'float', 'int', 'object', 'string', 'void',

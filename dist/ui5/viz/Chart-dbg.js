@@ -871,7 +871,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // >>> continue styling
 
-      // highlight data ponts
+      // highlight data points
       d3.selectAll('#' + this.getId() + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
       if (aHighlightedDataPoints.length > 0) {
         aHighlightedDataPoints.forEach(function (oHighlightInfo) {
