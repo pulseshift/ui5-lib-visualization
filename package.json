@@ -4,11 +4,11 @@
   "scripts": {
     "test": "yarn eslint ./src/ui5/viz  --ext .js --cache ",
     "start":
-      "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js --silent",
+      "NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --silent",
     "start:verbose":
-      "NODE_ENV=development babel-node node_modules/gulp/bin/gulp.js",
+      "NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js",
     "start:dist":
-      "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js testDist --silent",
+      "NODE_ENV=production DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js testDist",
     "build":
       "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build --silent",
     "build:verbose":
@@ -31,8 +31,11 @@
   "homepage": "https://github.com/pulseshift/openui5-gulp-starter-kit#readme",
   "main": "src/demo/index.hbs",
   "ui5": {
-    "cacheBuster": false,
     "indexTitle": "UI5 Visualization Library",
+    "build": {
+      "cacheBuster": false,
+      "compression": false
+    },
     "src": "cdn",
     "srcLinks": {
       "cdn": {
@@ -73,6 +76,7 @@
     "babelify": "^8.0.0",
     "browser-sync": "^2.18.13",
     "browserify": "^15.0.0",
+    "connect-gzip-static": "^2.1.1",
     "del": "^3.0.0",
     "dox": "^0.9.0",
     "eslint": "^4.8.0",
@@ -82,7 +86,10 @@
     "fs-es6-promise": "^0.0.3",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-babel": "^7.0.0",
+    "gulp-brotli": "^1.2.1",
     "gulp-clean-css": "^3.9.0",
+    "gulp-favicons": "^2.2.7",
+    "gulp-gzip": "^1.4.2",
     "gulp-handlebars-html": "^0.0.2",
     "gulp-htmlmin": "^4.0.0",
     "gulp-if": "^2.0.1",
