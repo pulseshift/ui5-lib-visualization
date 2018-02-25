@@ -14,8 +14,8 @@
  * </Chart>
  */
 sap.ui.define(
-  ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  ['sap/ui/core/Element'],
+  function(Element) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxisLabel</code>.
      *
