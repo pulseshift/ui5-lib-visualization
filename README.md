@@ -49,7 +49,12 @@ _Hint: This overview is not yet complete. In the course of time we will point ou
 
 A brief overview of features, additional to C3.js line and area charts:
 
-* tbd
+* Complete API coverage of properties and aggregations for a fully integrated feature set in XML views.
+* If supported by C3.js, rerender will be avoided by the chart control to ensure smooth transitions in case of changes in the data.
+* Support of pins and areas.
+* Support for special designs such as animated dashed lines or hatched areas.
+* Convergence interval as a new display type of series.
+* Simple color management by implementing color palettes or individual colors for specific series.
 
 ### Example
 
@@ -121,6 +126,14 @@ const oModel = new JSONModel({
     {
       name: 'Foxes 🦊',
       dataPoints: [2, 5, 3, 5, 8, 9],
+      type: 'area'
+    },{
+      name: 'Bears 🐻',
+      dataPoints: [1, 2, 0, 2, 1, 3],
+      type: 'area'
+    },{
+      name: 'Deer 🦌',
+      dataPoints: [14, 20, 18, 23, 17, 18],
       type: 'area'
     }
   ]
