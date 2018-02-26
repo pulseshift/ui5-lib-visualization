@@ -23,7 +23,7 @@ _\*snipped to include the library via ui5 config in `package. json`:_
 ```json
 "library":[
     {
-      "name": "ui5. viz",
+      "name": "ui5.viz",
       "path": "node_modules/ui5-lib-visualization/dist/ui5/viz",
       "prebuild": true
     }
