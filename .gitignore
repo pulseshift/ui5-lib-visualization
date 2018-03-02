@@ -20,5 +20,3 @@
 ### Node ###
 node_modules/
 *.log
-
-src/vendor-beta/
