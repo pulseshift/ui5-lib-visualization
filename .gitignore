@@ -12,6 +12,7 @@
 /.tmp/
 /.maps/
 /.download/
+/src/ui5/libs/*
 
 ### Dist Files ###
 /dist/demo/
