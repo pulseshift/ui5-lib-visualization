@@ -16,11 +16,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         showLegend: true,
         lines: {
           show: true,
-          todayColor: aColorPalette[12]
+          todayColor: aColorPalette[12],
+          style: ui5.viz.LineStyle.Solid
         },
         areas: {
           show: false,
-          areaColor: aColorPalette[7]
+          areaColor: aColorPalette[7],
+          style: ui5.viz.ShapeStyle.Solid
         },
         xAxis: {
           labels: [

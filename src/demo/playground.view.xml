@@ -24,7 +24,20 @@
         <m:ToolbarSpacer/>
         <m:Title class="sapUiTinyMarginBegin" text="X Axis" />
         <m:ToggleButton text="Lines" pressed="{store>/lines/show}" />
+        <m:SegmentedButton selectedKey="{store>/lines/style}" enabled="{store>/lines/show}">
+          <m:items>
+            <m:SegmentedButtonItem text="Solid" key="Solid" />
+            <m:SegmentedButtonItem text="Dashed" key="Dashed" />
+            <m:SegmentedButtonItem text="Dotted" key="Dotted" />
+          </m:items>
+        </m:SegmentedButton>
         <m:ToggleButton text="Areas" pressed="{store>/areas/show}" />
+        <m:SegmentedButton selectedKey="{store>/areas/style}" enabled="{store>/areas/show}">
+          <m:items>
+            <m:SegmentedButtonItem text="Solid" key="Solid" />
+            <m:SegmentedButtonItem text="Striped" key="Striped" />
+          </m:items>
+        </m:SegmentedButton>
         <m:ToolbarSpacer/>
       </m:Toolbar>
     </m:subHeader>
@@ -99,11 +112,13 @@
         <ChartLine
           axis="X"
           value="July"
+          style="{store>/lines/style}"
           title=" 🦌 deer recruiting day"
           visible="{store>/lines/show}" />
         <ChartLine
           axis="X"
           value="September"
+          style="{store>/lines/style}"
           title="last sightings"
           color="{store>/lines/todayColor}"
           visible="{store>/lines/show}" />
@@ -120,6 +135,7 @@
           axis="X"
           startValue="April"
           endValue="June"
+          style="{store>/areas/style}"
           title="🌧️ rainy spring"
           color="{store>/areas/areaColor}"
           visible="{store>/areas/show}" />

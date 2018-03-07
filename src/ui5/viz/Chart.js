@@ -2421,7 +2421,7 @@ sap.ui.define(
             case library.LineStyle.Dashed:
             case library.LineStyle.Dotted:
               // calculate dash array
-              sDashArray = oSeries.getLineStyle() === 'dotted' ? '1 5' : '5'
+              sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5'
 
               // add css to svg definitions
               oStrokeStyle = d3.select(
@@ -2493,32 +2493,71 @@ sap.ui.define(
 
         // get all chart lines  and concatenate color rules
         this.getLines().forEach(oLine => {
-          let sColor = oLine.getColor()
+          const sColor = oLine.getColor()
+          const sLineStyle = oLine.getStyle()
+          const sCSSLineSelector = `#${this.getId()} .${this.CSS_CLASS_LINE}-${oLine.getId()}`
+          const sUID = `${this.getId()}-${oLine.getId()}`
+          let oStrokeStyle
+          let sDashArray
 
           if (sColor) {
             // update svg area style
-            sCSS += `#${this.getId()} .${
-              this.CSS_CLASS_LINE
-            }-${oLine.getId()} line {
-                                stroke: ${sColor};
-                            }
+            sCSS += `${sCSSLineSelector} line {
+                stroke: ${sColor};
+            }
 
-                            #${this.getId()} .${
-              this.CSS_CLASS_LINE
-            }-${oLine.getId()} circle {
-                                stroke: ${sColor};
-                            }
+            ${sCSSLineSelector} circle {
+                stroke: ${sColor};
+            }
 
-                            #${this.getId()} .${
-              this.CSS_CLASS_LINE
-            }-${oLine.getId()} text {
-                                fill: ${sColor};
-                            }`
+            ${sCSSLineSelector} text {
+                fill: ${sColor};
+            }`
+          }
+
+          switch (sLineStyle) {
+            case library.LineStyle.Dashed:
+            case library.LineStyle.Dotted:
+              // calculate dash array
+              sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5'
+
+              // add css to svg definitions
+              oStrokeStyle = d3.select(
+                `#${this.getId()} defs #${sUID}`
+              )
+              if (oStrokeStyle.empty()) {
+                oStrokeStyle = d3
+                  .select(`#${this.getId()} defs`)
+                  .append('style')
+                  .attr({
+                    id: `${sUID}`,
+                    type: 'text/css'
+                  })
+              }
+              // update svg pattern style
+              oStrokeStyle.text(
+                `${sCSSLineSelector} line {
+                    stroke-dashoffset: 50rem;
+                    stroke-dasharray: ${sDashArray};
+                    stroke-linecap: round;
+                }`
+              )
+              break
+            case library.LineStyle.Solid:
+            default:
+              // remove pattern style from shape area
+              oStrokeStyle = d3.select(
+                `#${this.getId()} defs #${sUID}`
+              )
+              if (!oStrokeStyle.empty()) {
+                oStrokeStyle.text('')
+              }
+              break
           }
 
           // update line selector icon and selector press event
           let oLineHook = d3.select(
-              `#${this.getId()} .ui5-viz-chart-line-${oLine.getId()}`
+              sCSSLineSelector
             ),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(
               oLine.getLineSelectorIcon()
@@ -2575,9 +2614,9 @@ sap.ui.define(
 
         // get all chart areas and concatenate style rules
         this.getAreas().forEach(oArea => {
-          let sColor = oArea.getColor() || '#000000',
-            sShapeStyle = oArea.getStyle(),
-            oPattern
+          const sColor = oArea.getColor() || '#000000'
+          const sShapeStyle = oArea.getStyle()
+          let oPattern
 
           switch (sShapeStyle) {
             case library.ShapeStyle.Striped:
