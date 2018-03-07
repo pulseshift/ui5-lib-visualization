@@ -9,26 +9,55 @@ This library provides an OpenUI5 API that acts as a wrapper for D3-based chartin
 
 ## Usage
 
-This npm module already provides all content to use the library immediately: the folder `/src` contains all source files (written in LESS and ES6/ES7), in the folder `/dist` you will find the library, completely ready for use. Now there are two ways to use the library in your npm project:
+There are two options how to use the chart library in your UI5 project, depending of the boilerplate you are using.
 
-1. You can go the way recommended by [UI5Lab](https://github.com/UI5Lab/UI5Lab-library-simple) which ends up with copying the resources and files from the cloned npm project to your project either manually or via a custom script. We do not recommend that you go this way, because changes to the library must always be copied manually and this variant is more susceptible to errors.
+### a) projects based on [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit)
 
-1. The way we recommend you is to use our OpenUI5 Starter-Kit for embedding. The prerequisite is that your project uses the build process of the starter kit (see instructions [here](https://github.com/pulseshift/openui5-gulp-starter-kit)). All you have to do then is:
-   * Download our library as dev-dependency with `yarn add ui5-lib-visualization --dev`.
-   * Add the library to your UI5 build settings in the `package. json`_\*_.
-   * Finished, you can now integrate the library into your XML Views via `xmlns: viz="ui5. viz"` or use it in your controllers etc..
+Add `ui5-lib-visualization` as dev dependency:
 
-_\*snipped to include the library via ui5 config in `package. json`:_
-
-```json
-"library":[
-    {
-      "name": "ui5.viz",
-      "path": "node_modules/ui5-lib-visualization/dist/ui5/viz",
-      "prebuild": true
-    }
-]
 ```
+yarn add ui5-lib-visualization --dev
+```
+
+Update ui5 library config in your `package.json`:
+
+```js
+"ui5" {
+  // ...
+  "library":[
+      {
+        "name": "ui5.viz",
+        "path": "node_modules/ui5-lib-visualization/dist/ui5/viz",
+        "prebuild": true
+      }
+  ]
+  // ...
+}
+```
+
+Finished, you can now use the library in your XML Views via e.g. `xmlns:viz="ui5.viz"` or in your controllers etc. If you want to upgrade the library, just use default yarn commands, the build process of the starter kit will handle the rest for you:
+
+```
+yarn upgrade ui5-lib-visualization
+```
+
+### b) other UI5 projects (see also [UI5Lab](https://github.com/UI5Lab/UI5Lab-library-simple))
+
+[Download](https://github.com/pulseshift/ui5-lib-visualization/archive/master.zip) or clone this repository:
+
+```
+git clone git@github.com:pulseshift/ui5-lib-visualization.git
+```
+
+Copy the complete ready-to-use library from `/dist` to a target destination in your UI5 project (please keep the folder structure as is `ui5/viz/`).
+
+Add the library to the `sap-ui-bootstrap` resourceroots in your `index.html`:
+
+```
+data-sap-ui-resourceroots="{ "ui5.viz": "pathToTargetDestination/ui5/viz" }"
+```
+
+_Please be aware that all manual steps must be repeated every time when you want to update the library version. Because this variant is more susceptible to errors, we recommend to use the [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit)_
 
 ### Documentation
 
@@ -70,7 +99,7 @@ Here a basic sample of how to use the charts in an XML view:
   showTooltip="{store>/showTooltip}"
   groupedTooltip="{store>/groupedTooltip}"
   showLegend="{store>/showLegend}"
-  xAxisType="Indexed"
+  xAxisType="Category"
   series="{store>/series}">
   <series>
     <ChartSeries
@@ -80,20 +109,16 @@ Here a basic sample of how to use the charts in an XML view:
         path: 'store>dataPoints',
         templateShareable: false
       }">
-      <data>
-        <ChartDataPoint value="{store>}" />
-      </data>
+      <ChartDataPoint value="{store>}" />
     </ChartSeries>
   </series>
   <xAxis>
-    <ChartAxis labels="{ path: 'store>/xAxis/0/labels'}">
-      <labels>
-        <ChartAxisLabel value="{store>}" />
-      </labels>
+    <ChartAxis labels="{ path: 'store>/xAxis/labels'}">
+      <ChartAxisLabel value="{store>}" />
     </ChartAxis>
   </xAxis>
   <yAxis>
-    <ChartAxis title="{store>/yAxis/0/title}" />
+    <ChartAxis title="{store>/yAxis/title}" />
   </yAxis>
 </Chart>
 ```
@@ -106,35 +131,33 @@ ui5.viz.setDefaultColorPalette(ui5.viz.ColorPalette.Material500)
 
 // define model
 const oModel = new JSONModel({
-  title: 'Area line chart',
+  title: 'Chart',
   width: '100%',
   height: '300px',
   showTooltip: true,
   groupedTooltip: true,
   showLegend: true,
-  xAxis: [
-    {
-      labels: ['April', 'May', 'June', 'July', 'August', 'September']
-    }
-  ],
-  yAxis: [
-    {
-      title: 'Sightings in the woods 🍃'
-    }
-  ],
+  xAxis: {
+    labels: ['April', 'May', 'June', 'July', 'August', 'September']
+  },
+  yAxis: {
+    title: 'Sightings in the woods 🌲'
+  },
   series: [
     {
       name: 'Foxes 🦊',
       dataPoints: [2, 5, 3, 5, 8, 9],
-      type: 'area'
-    },{
+      type: ui5.viz.ChartSeriesType.Spline
+    },
+    {
       name: 'Bears 🐻',
       dataPoints: [1, 2, 0, 2, 1, 3],
-      type: 'area'
-    },{
-      name: 'Deer 🦌',
+      type: ui5.viz.ChartSeriesType.Spline
+    },
+    {
+      name: 'Deers 🦌',
       dataPoints: [14, 20, 18, 23, 17, 18],
-      type: 'area'
+      type: ui5.viz.ChartSeriesType.Spline
     }
   ]
 })
@@ -194,8 +217,8 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 
-| [<img src="https://avatars1.githubusercontent.com/u/28702172?s=460&v=4" width="100px;"/><br /><sub><b>Lena Serdarusic</b></sub>](https://github.com/lenasrd)<br />[💻](https://github.com/pulseshift/ui5-lib-visualization/commits?author=lenasrd 'Code')[💡](#examples "Examples")[🤔](#ideas "Ideas & Planning") | [<img src="https://avatars2.githubusercontent.com/u/8706643?s=460&v=4" width="100px;"/><br /><sub><b>Jascha A. Quintern</b></sub>](http://jascha-quintern.de)<br />[💻](https://github.com/pulseshift/ui5-lib-visualization/commits?author=fuchsvomwalde 'Code')[💬](#question-kentcdodds "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/1016675?s=460&v=4" width="100px;"/><br /><sub><b>Michael Dell</b></sub>](http://mdell.org)<br />[🤔](#ideas "Ideas & Planning") |
-| :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| [<img src="https://avatars1.githubusercontent.com/u/28702172?s=460&v=4" width="100px;"/><br /><sub><b>Lena Serdarusic</b></sub>](https://github.com/lenasrd)<br />[💻](https://github.com/pulseshift/ui5-lib-visualization/commits?author=lenasrd 'Code')[💡](#examples 'Examples')[🤔](#ideas 'Ideas & Planning') | [<img src="https://avatars2.githubusercontent.com/u/8706643?s=460&v=4" width="100px;"/><br /><sub><b>Jascha A. Quintern</b></sub>](http://jascha-quintern.de)<br />[💻](https://github.com/pulseshift/ui5-lib-visualization/commits?author=fuchsvomwalde 'Code')[💬](#question-kentcdodds 'Answering Questions') | [<img src="https://avatars1.githubusercontent.com/u/1016675?s=460&v=4" width="100px;"/><br /><sub><b>Michael Dell</b></sub>](http://mdell.org)<br />[🤔](#ideas 'Ideas & Planning') |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 
 
 ### License
