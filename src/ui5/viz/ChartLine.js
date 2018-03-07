@@ -65,7 +65,7 @@ sap.ui.define(
           style: {
             type: 'ui5.viz.LineStyle',
             group: 'Appearance',
-            defaultValue: library.LineStyle.Default
+            defaultValue: library.LineStyle.Solid
           },
 
           /**

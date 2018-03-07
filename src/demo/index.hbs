@@ -22,15 +22,18 @@
       </script>
 
       <script>
-      sap.ui.getCore().attachInit(function () {
-        // init component container
-        console.log("modules and ui5 loaded successfully");
+      sap.ui.getCore().attachInit(function() {
+        "use strict";
+        new sap.ui.xmlview('ui5.demo.playground').placeAt("content");
       });
     </script>
 </head>
 
-<body>
-  <h1>UI5 Visualization Library Demo</h1>
+<body class="sapUiBody">
+
+  <div id="content" style="height: 100vh;"></div>
+
+  {{!-- <h1>UI5 Visualization Library Demo</h1>
 
   <p>Final demo is coming soon.</p>
 
@@ -72,5 +75,5 @@
   <h2>4. C3 extension charts</h2>
   <ul>
     <li><a href="/demo/todo_refactor_to_final_demo/c3-viz-fusion.html">C3 viz fusion</a></li>
-  </ul>
+  </ul> --}}
 </body>

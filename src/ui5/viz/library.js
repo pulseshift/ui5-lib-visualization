@@ -65,8 +65,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ChartLegendPosition = {
-      Right: 'right',
-      Bottom: 'bottom'
+      Right: 'Right',
+      Bottom: 'Bottom'
     }
 
     /**
@@ -76,9 +76,9 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ChartTitlePosition = {
-      Start: 'start',
-      Middle: 'middle',
-      End: 'end'
+      Start: 'Start',
+      Middle: 'Middle',
+      End: 'End'
     }
 
     /**
@@ -107,8 +107,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ChartDataPointType = {
-      SingleValue: 'single-value',
-      ValuePair: 'value-pair'
+      SingleValue: 'SingleValue',
+      ValuePair: 'ValuePair'
     }
 
     /**
@@ -118,9 +118,9 @@ sap.ui.define(
      * @public
      */
     ui5.viz.LineStyle = {
-      Default: 'default',
-      Dashed: 'dashed',
-      Dotted: 'dotted'
+      Solid: 'Solid',
+      Dashed: 'Dashed',
+      Dotted: 'Dotted'
     }
 
     /**
@@ -130,8 +130,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ShapeStyle = {
-      Default: 'default',
-      Striped: 'striped'
+      Solid: 'Solid',
+      Striped: 'Striped'
     }
 
     /**
@@ -141,10 +141,10 @@ sap.ui.define(
      * @public
      */
     ui5.viz.AnimationSpeed = {
-      None: 'none',
-      Slow: 'slow',
-      Medium: 'medium',
-      Fast: 'faste'
+      None: 'None',
+      Slow: 'Slow',
+      Medium: 'Medium',
+      Fast: 'Fast'
     }
 
     /**
@@ -154,10 +154,10 @@ sap.ui.define(
      * @public
      */
     ui5.viz.Axis = {
-      Y: 'y',
-      Y2: 'y2',
-      X: 'x',
-      Z: 'z'
+      Y: 'Y',
+      Y2: 'Y2',
+      X: 'X',
+      Z: 'Z'
     }
 
     /**

@@ -246,7 +246,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
       return !isNaN(l) && l !== null ? parseInt(l, 10) : null
     },
 
-    // FIXME: add jsdoc
+    /**
+     * Unified method to get correct value object based on data point type.
+     * @returns {string|int|{high: string|int, low: string|int}}
+     * @public
+     */
     getValueOrValuePair() {
       const isVisible = this.getVisible()
       if (this.getType() === library.ChartDataPointType.SingleValue) {

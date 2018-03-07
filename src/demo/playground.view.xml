@@ -1,0 +1,98 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="ui5.viz"
+  xmlns:m="sap.m"
+  height="100%"
+  controllerName="ui5.demo.playground">
+  <m:Page
+    class="sapUiContentPadding" >
+    <m:customHeader>
+      <m:Toolbar>
+        <m:ToolbarSpacer/>
+        <m:Title text="{store>/title}" level="H2"/>
+        <m:ToolbarSpacer/>
+      </m:Toolbar>
+    </m:customHeader>
+    <m:subHeader>
+      <m:Toolbar>
+        <m:Label class="sapUiTinyMarginBegin" text="Y Axis:" />
+        <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
+        <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
+        <m:ToolbarSpacer/>
+        <m:Label class="sapUiTinyMarginBegin" text="Lines:" />
+        <m:ToggleButton icon="sap-icon://{= ${store>/lines/show} ? 'show' : 'hide'}" pressed="{store>/lines/show}" />
+        <m:Label class="sapUiTinyMarginBegin" text="Areas:" />
+        <m:ToggleButton icon="sap-icon://{= ${store>/areas/show} ? 'show' : 'hide'}" pressed="{store>/areas/show}" />
+        <m:ToolbarSpacer/>
+      </m:Toolbar>
+    </m:subHeader>
+
+    <!-- CHART -->
+    <Chart
+      width="{store>/width}"
+      height="{store>/height}"
+      showTooltip="{store>/showTooltip}"
+      groupedTooltip="{store>/groupedTooltip}"
+      showLegend="{store>/showLegend}"
+      legendPosition="Bottom"
+      xAxisType="Category"
+      series="{store>/series}">
+      <series>
+        <ChartSeries
+          type="{store>type}"
+          name="{store>name}"
+          lineStyle="{= ${store>forecast} ? 'Dashed' : 'Solid' }"
+          lineAnimationSpeed="Slow"
+          color="{store>color}"
+          data="{
+            path: 'store>dataPoints',
+            templateShareable: false
+          }">
+          <data>
+            <ChartDataPoint value="{store>}" />
+          </data>
+        </ChartSeries>
+      </series>
+      <xAxis>
+        <ChartAxis labels="{
+            path: 'store>/xAxis/labels',
+            templateShareable: false
+          }">
+          <labels>
+            <ChartAxisLabel
+              value="{store>}"
+              title="{= ${store>}.substring(0,3).toUpperCase() }" />
+          </labels>
+        </ChartAxis>
+      </xAxis>
+      <yAxis>
+        <ChartAxis
+          title="{store>/yAxis/title}"
+          maxValue="{= ${store>/yAxis/maxEnabled} ? 15 : null}"
+          minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}" />
+      </yAxis>
+      <lines>
+        <ChartLine
+          axis="X"
+          value="July"
+          title=" 🦌 deer recruiting day"
+          visible="{store>/lines/show}" />
+        <ChartLine
+          axis="X"
+          color="{store>/lines/todayColor}"
+          value="September"
+          title="last sightings"
+          visible="{store>/lines/show}" />
+      </lines>
+      <areas>
+        <ChartArea
+          axis="X"
+          startValue="April"
+          endValue="May"
+          title="🌧️ rainy spring"
+          visible="{store>/areas/show}" />
+      </areas>
+    </Chart>
+
+  </m:Page>
+</mvc:View>

@@ -432,19 +432,6 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * Constructor for a new <code>ui5.viz.Chart</code>.
-       *
-       * @param {string} [sId] Id for the new control, generated automatically if no id is given
-       * @param {object} [mSettings] Initial settings for the new control
-       */
-      constructor() {
-        Control.prototype.constructor.apply(this, arguments)
-
-        // initialization phase finished, update routine is enabled again
-        this._getChartUpdateHandler().release()
-      },
-
-      /**
        * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
        * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
@@ -469,6 +456,19 @@ sap.ui.define(
           this._updateChartAreas,
           50
         )
+      },
+
+      /**
+       * Constructor for a new <code>ui5.viz.Chart</code>.
+       *
+       * @param {string} [sId] Id for the new control, generated automatically if no id is given
+       * @param {object} [mSettings] Initial settings for the new control
+       */
+      constructor() {
+        Control.prototype.constructor.apply(this, arguments)
+
+        // initialization phase finished, update routine is enabled again
+        this._getChartUpdateHandler().release()
       },
 
       /**
@@ -557,7 +557,7 @@ sap.ui.define(
             enabled: this.getZoomEnabled()
           },
           legend: {
-            position: this.getLegendPosition(),
+            position: this.getLegendPosition().toLowerCase(),
             show: this.getShowLegend()
           },
           tooltip: {
@@ -601,6 +601,10 @@ sap.ui.define(
                 }
               })()
             }
+          },
+          // if true set, the region of null data will be connected without any data point
+          line: {
+            connectNull: true
           },
           data: {
             x: 'x',
@@ -657,7 +661,7 @@ sap.ui.define(
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
                     // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                    oTypes[oSeries.getKey()] = oSeries.getYAxis()
+                    oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase()
                     return oTypes
                   }, {}),
             types:
@@ -1003,7 +1007,7 @@ sap.ui.define(
                 id: oArea.getId(),
                 start: oArea.getStartValue(),
                 end: oArea.getEndValue(),
-                axis: oArea.getAxis(),
+                axis: oArea.getAxis().toLowerCase(),
                 text: oArea.getTitle(),
                 // position: oArea.getTitlePosition(),
                 // add three classes: general line class, line style class and line identifier
@@ -1019,6 +1023,9 @@ sap.ui.define(
             duration: 175
           }
         }
+
+        // for debugging purposes
+        // console.log(options)
 
         // initialize c3 chart
         this._chart = c3.generate(options)
@@ -1258,7 +1265,6 @@ sap.ui.define(
        */
       setLegendPosition(sLegendPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
-        // TODO: check if custom modification is possible: c3.chart.fn.legend.position = function (position) { ... }
         // if (this._chart) this._chart.legend.position = sLegendPosition;
         return this.setProperty('legendPosition', sLegendPosition, false) // force rerender
       },
@@ -1351,6 +1357,33 @@ sap.ui.define(
           oXAxis = new ChartAxis()
           this.setAggregation('xAxis', oXAxis, true) // do not rerender
         }
+
+        // TODO: this part was removed (check if it can be deleted completely)
+        // let iSeriesTicks, iAxisTicks, iDeltaTicks
+
+        // // get maximal axis ticks
+        // iSeriesTicks = Math.max.apply(
+        //   Math,
+        //   this.getSeries().length === 0
+        //     ? [0]
+        //     : this.getSeries().map(oSeries => oSeries.getData().length)
+        // )
+
+        // // add missing ticks if required
+        // iAxisTicks = oXAxis.getLabels().length
+
+        // if (iAxisTicks < iSeriesTicks) {
+        //   iDeltaTicks = iSeriesTicks - iAxisTicks
+        //   for (let i = 0; i <= iDeltaTicks; i++) {
+        //     // add label without fire update event
+        //     Control.prototype.addAggregation.call(
+        //       oXAxis,
+        //       'labels',
+        //       new ChartAxisLabel({ value: iAxisTicks + i }),
+        //       true
+        //     )
+        //   }
+        // }
 
         return oXAxis
       },
@@ -1760,6 +1793,37 @@ sap.ui.define(
       },
 
       /**
+       * Get respective X axis index by value.
+       *
+       * @param {string|int|null} [vValue] Index.
+       * @return {any} Value depending on axis type.
+       * @public
+       */
+      getXAxisIndexByValue(vValue) {
+        const oXAxis = this.getXAxis()
+        const sXAxisType = this.getXAxisType()
+        const aLabels = oXAxis.getLabels() || []
+        const iLabels = aLabels.length
+
+        // return value if axis is from type Indexed
+        if (sXAxisType === library.AxisType.Indexed) {
+          return parseInt(vValue, 10) || null
+        }
+
+        // find respective label and return index
+        for (let iIndex = 0; iIndex < iLabels; iIndex++) {
+          const oLabel = aLabels[iIndex];
+
+          if (oLabel.getValue() === vValue) {
+            return iIndex
+          }
+        }
+
+        // return fallback
+        return null
+      },
+
+      /**
        * Getter for property <code>minValue</code> of an axis.
        *
        * @param {ui5.viz.ChartAxis} [oAxis] Axis.
@@ -1954,7 +2018,7 @@ sap.ui.define(
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
                   // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                  oTypes[oSeries.getKey()] = oSeries.getYAxis()
+                  oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase()
                   return oTypes
                 }, {}),
 
@@ -2200,7 +2264,7 @@ sap.ui.define(
               id: oArea.getId(),
               start: oArea.getStartValue(),
               end: oArea.getEndValue(),
-              axis: oArea.getAxis(),
+              axis: oArea.getAxis().toLowerCase(),
               text: oArea.getTitle(),
               // position: oArea.getTitlePosition(),
               // add three classes: general line class, line style class and line identifier
@@ -2259,9 +2323,9 @@ sap.ui.define(
         return {
           id: oChartLine.getId(),
           value: oChartLine.getValue(),
-          axis: oChartLine.getAxis(),
+          axis: oChartLine.getAxis().toLowerCase(),
           text: oChartLine.getTitle(),
-          position: oChartLine.getTitlePosition(),
+          position: oChartLine.getTitlePosition().toLowerCase(),
           showSelector: oChartLine.getShowLineSelector() ? true : false,
           // add three classes: general line class, line style class and line identifier
           class: `${this.CSS_CLASS_LINE} ${
@@ -2300,7 +2364,7 @@ sap.ui.define(
             // set solid style if series type (e.g. bar) is not supporting line styles
             sShapeStyle = this._isShapeType(oSeries.getType())
               ? oSeries.getShapeStyle()
-              : library.ShapeStyle.Default
+              : library.ShapeStyle.Solid
 
           switch (sShapeStyle) {
             case library.ShapeStyle.Striped:
@@ -2350,7 +2414,7 @@ sap.ui.define(
                                 }`
               )
               break
-            case library.ShapeStyle.Default:
+            case library.ShapeStyle.Solid:
             default:
               // remove pattern style from shape area
               oPatternStyle = d3.select(
@@ -2370,7 +2434,7 @@ sap.ui.define(
             // set solid style if series type (e.g. bar) is not supporting line styles
             sLineStyle = this._isLineType(oSeries.getType())
               ? oSeries.getLineStyle()
-              : library.LineStyle.Default,
+              : library.LineStyle.Solid,
             iAnimationSpeed
 
           // set animation speed
@@ -2428,7 +2492,7 @@ sap.ui.define(
                                 }`
               )
               break
-            case library.LineStyle.Default:
+            case library.LineStyle.Solid:
             default:
               // remove pattern style from shape area
               oStrokeStyle = d3.select(
@@ -2594,7 +2658,7 @@ sap.ui.define(
                                 }`
               break
 
-            case library.ShapeStyle.Default:
+            case library.ShapeStyle.Solid:
             default:
               // update svg area style
               sCSS += `#${this.getId()} .${
@@ -2641,7 +2705,7 @@ sap.ui.define(
        * Check if a style is valid for lines
        *
        * @param {string} [sSeriesType] style to be validated
-       * @return {boolean} returns true if style is valid for shape tzpe
+       * @return {boolean} returns true if style is valid for shape type
        * @private
        */
       _isLineType(sSeriesType) {
@@ -2665,9 +2729,14 @@ sap.ui.define(
         return bTypeValid
       },
 
-      // ===== START OPAL EXTENSION =====
-      // TODO: jsdoc missing!
-      _isRibbonType: function _isRibbonType(sSeriesType) {
+      /**
+       * Check if a series type is from type ribbon
+       *
+       * @param {string} [sSeriesType] style to be validated
+       * @return {boolean} returns true if style is a ribbon
+       * @private
+       */
+      _isRibbonType(sSeriesType) {
         return (
           sSeriesType ===
           (library.ChartSeriesType.RibbonLine ||
@@ -2675,7 +2744,6 @@ sap.ui.define(
             library.ChartSeriesType.RibbonStep)
         )
       },
-      // ===== END OPAL EXTENSION =====
 
       /**
        * Get available size in pixel of parent element.
