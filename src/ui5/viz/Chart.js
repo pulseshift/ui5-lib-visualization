@@ -821,28 +821,30 @@ sap.ui.define(
               max:
                 this.getMaxValueByAxis(oYAxis) ||
                 oYAxis
-                  .getLabels()
-                  .reduce(
-                    (pre, curr) =>
-                      Math.max(
-                        pre === undefined ? -Infinity : pre,
-                        parseInt(curr.getValue(), 10) || undefined
-                      ),
-                    undefined
-                  ),
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    ),
               // default: min = lowest y axis value
               min:
                 this.getMinValueByAxis(oYAxis) ||
                 oYAxis
-                  .getLabels()
-                  .reduce(
-                    (pre, curr) =>
-                      Math.min(
-                        pre === undefined ? Infinity : pre,
-                        parseInt(curr.getValue(), 10) || undefined
-                      ),
-                    undefined
-                  ),
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    ),
               // inverted: false,
               // center: 0,
               padding: {
@@ -854,22 +856,24 @@ sap.ui.define(
                 oYAxis.getMinValue() ||
                   oYAxis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .reduce(
                       (pre, curr) =>
                         Math.min(
                           pre === undefined ? Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
+                          parseInt(curr.getValue(), 10)
                         ),
                       undefined
                     ),
                 oYAxis.getMaxValue() ||
                   oYAxis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .reduce(
                       (pre, curr) =>
                         Math.max(
                           pre === undefined ? -Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
+                          parseInt(curr.getValue(), 10)
                         ),
                       undefined
                     )
@@ -877,14 +881,16 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oYAxis.getLabels().length > 0
+                  oYAxis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oYAxis
                         .getLabels()
+                        .filter(o => o.getVisible())
                         .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
                     : null,
                 format: iYValue => {
                   const oLabel = oYAxis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .find(oLabel => parseInt(oLabel.getValue(), 10) === iYValue)
 
                   if (!oLabel) {
@@ -909,8 +915,32 @@ sap.ui.define(
             y2: {
               show: oY2Axis.getVisible(),
               // inner: false,
-              max: this.getMaxValueByAxis(oY2Axis),
-              min: this.getMinValueByAxis(oY2Axis),
+              // default: max = highest y axis value
+              max:
+                this.getMaxValueByAxis(oY2Axis) ||
+                oY2Axis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    ),
+              // default: min = lowest y axis value
+              min:
+                this.getMinValueByAxis(oY2Axis) ||
+                oY2Axis
+                    .getLabels()
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    ),
               // inverted: false,
               // center: 0,
               padding: {
@@ -922,22 +952,24 @@ sap.ui.define(
                 oY2Axis.getMinValue() ||
                   oY2Axis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .reduce(
                       (pre, curr) =>
                         Math.min(
                           pre === undefined ? Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
+                          parseInt(curr.getValue(), 10)
                         ),
                       undefined
                     ),
                 oY2Axis.getMaxValue() ||
                   oY2Axis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .reduce(
                       (pre, curr) =>
                         Math.max(
                           pre === undefined ? -Infinity : pre,
-                          parseInt(curr.getValue(), 10) || undefined
+                          parseInt(curr.getValue(), 10)
                         ),
                       undefined
                     )
@@ -945,14 +977,16 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oY2Axis.getLabels().length > 0
+                  oY2Axis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oY2Axis
                         .getLabels()
+                        .filter(o => o.getVisible())
                         .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
                     : null,
                 format: iY2Value => {
                   const oLabel = oY2Axis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .find(
                       oLabel => parseInt(oLabel.getValue(), 10) === iY2Value
                     )
@@ -2092,15 +2126,27 @@ sap.ui.define(
               this.getMinValueByAxis(oYAxis) ||
               oYAxis
                 .getLabels()
+                .filter(o => o.getVisible())
                 .reduce(
                   (pre, curr) =>
                     Math.min(
                       pre === undefined ? Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
+                      parseInt(curr.getValue(), 10)
                     ),
                   undefined
                 ),
-            y2: this.getMinValueByAxis(oY2Axis)
+            y2: this.getMinValueByAxis(oY2Axis) ||
+                oY2Axis
+                  .getLabels()
+                  .filter(o => o.getVisible())
+                  .reduce(
+                    (pre, curr) =>
+                      Math.min(
+                        pre === undefined ? Infinity : pre,
+                        parseInt(curr.getValue(), 10)
+                      ),
+                    undefined
+                  )
           },
           max: {
             x: this.getMaxValueByAxis(oXAxis),
@@ -2108,15 +2154,27 @@ sap.ui.define(
               this.getMaxValueByAxis(oYAxis) ||
               oYAxis
                 .getLabels()
+                .filter(o => o.getVisible())
                 .reduce(
                   (pre, curr) =>
                     Math.max(
                       pre === undefined ? -Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
+                      parseInt(curr.getValue(), 10)
                     ),
                   undefined
                 ),
-            y2: this.getMaxValueByAxis(oY2Axis)
+            y2: this.getMaxValueByAxis(oY2Axis) ||
+                oY2Axis
+                  .getLabels()
+                  .filter(o => o.getVisible())
+                  .reduce(
+                    (pre, curr) =>
+                      Math.max(
+                        pre === undefined ? -Infinity : pre,
+                        parseInt(curr.getValue(), 10)
+                      ),
+                    undefined
+                  )
           }
         })
 

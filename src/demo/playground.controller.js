@@ -28,7 +28,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         yAxis: {
           title: 'Sightings in the woods 🌲',
           minEnabled: false,
-          maxEnabled: false
+          maxEnabled: false,
+          gridLines: false,
+          customTicks: false
         },
         series: [{
           name: 'Foxes 🦊',

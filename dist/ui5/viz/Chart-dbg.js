@@ -744,12 +744,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             show: oYAxis.getVisible(),
             // inner: false,
             // default: max = highest y axis value
-            max: this.getMaxValueByAxis(oYAxis) || oYAxis.getLabels().reduce(function (pre, curr) {
-              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+            max: this.getMaxValueByAxis(oYAxis) || oYAxis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
             }, undefined),
             // default: min = lowest y axis value
-            min: this.getMinValueByAxis(oYAxis) || oYAxis.getLabels().reduce(function (pre, curr) {
-              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+            min: this.getMinValueByAxis(oYAxis) || oYAxis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
             }, undefined),
             // inverted: false,
             // center: 0,
@@ -759,18 +763,28 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             },
             default: [
             // identify min and max value to set default range
-            oYAxis.getMinValue() || oYAxis.getLabels().reduce(function (pre, curr) {
-              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
-            }, undefined), oYAxis.getMaxValue() || oYAxis.getLabels().reduce(function (pre, curr) {
-              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+            oYAxis.getMinValue() || oYAxis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+            }, undefined), oYAxis.getMaxValue() || oYAxis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
-              values: oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(function (oLabel) {
+              values: oYAxis.getLabels().filter(function (o) {
+                return o.getVisible();
+              }).length > 0 ? oYAxis.getLabels().filter(function (o) {
+                return o.getVisible();
+              }).map(function (oLabel) {
                 return parseInt(oLabel.getValue(), 10) || 0;
               }) : null,
               format: function format(iYValue) {
-                var oLabel = oYAxis.getLabels().find(function (oLabel) {
+                var oLabel = oYAxis.getLabels().filter(function (o) {
+                  return o.getVisible();
+                }).find(function (oLabel) {
                   return parseInt(oLabel.getValue(), 10) === iYValue;
                 });
 
@@ -793,8 +807,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           y2: {
             show: oY2Axis.getVisible(),
             // inner: false,
-            max: this.getMaxValueByAxis(oY2Axis),
-            min: this.getMinValueByAxis(oY2Axis),
+            // default: max = highest y axis value
+            max: this.getMaxValueByAxis(oY2Axis) || oY2Axis.getLabels().reduce(function (pre, curr) {
+              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
+            }, undefined),
+            // default: min = lowest y axis value
+            min: this.getMinValueByAxis(oY2Axis) || oY2Axis.getLabels().reduce(function (pre, curr) {
+              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+            }, undefined),
             // inverted: false,
             // center: 0,
             padding: {
@@ -803,18 +823,28 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             },
             default: [
             // identify min and max value to set default range
-            oY2Axis.getMinValue() || oY2Axis.getLabels().reduce(function (pre, curr) {
-              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
-            }, undefined), oY2Axis.getMaxValue() || oY2Axis.getLabels().reduce(function (pre, curr) {
-              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+            oY2Axis.getMinValue() || oY2Axis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+            }, undefined), oY2Axis.getMaxValue() || oY2Axis.getLabels().filter(function (o) {
+              return o.getVisible();
+            }).reduce(function (pre, curr) {
+              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
-              values: oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(function (oLabel) {
+              values: oY2Axis.getLabels().filter(function (o) {
+                return o.getVisible();
+              }).length > 0 ? oY2Axis.getLabels().filter(function (o) {
+                return o.getVisible();
+              }).map(function (oLabel) {
                 return parseInt(oLabel.getValue(), 10) || null;
               }) : null,
               format: function format(iY2Value) {
-                var oLabel = oY2Axis.getLabels().find(function (oLabel) {
+                var oLabel = oY2Axis.getLabels().filter(function (o) {
+                  return o.getVisible();
+                }).find(function (oLabel) {
                   return parseInt(oLabel.getValue(), 10) === iY2Value;
                 });
                 if (!oLabel) {
@@ -1850,17 +1880,29 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       this._chart.axis.range({
         min: {
           X: this.getMinValueByAxis(oXAxis),
-          y: this.getMinValueByAxis(oYAxis) || oYAxis.getLabels().reduce(function (pre, curr) {
-            return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+          y: this.getMinValueByAxis(oYAxis) || oYAxis.getLabels().filter(function (o) {
+            return o.getVisible();
+          }).reduce(function (pre, curr) {
+            return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
           }, undefined),
-          y2: this.getMinValueByAxis(oY2Axis)
+          y2: this.getMinValueByAxis(oY2Axis) || oY2Axis.getLabels().filter(function (o) {
+            return o.getVisible();
+          }).reduce(function (pre, curr) {
+            return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+          }, undefined)
         },
         max: {
           x: this.getMaxValueByAxis(oXAxis),
-          y: this.getMaxValueByAxis(oYAxis) || oYAxis.getLabels().reduce(function (pre, curr) {
-            return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10) || undefined);
+          y: this.getMaxValueByAxis(oYAxis) || oYAxis.getLabels().filter(function (o) {
+            return o.getVisible();
+          }).reduce(function (pre, curr) {
+            return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
           }, undefined),
-          y2: this.getMaxValueByAxis(oY2Axis)
+          y2: this.getMaxValueByAxis(oY2Axis) || oY2Axis.getLabels().filter(function (o) {
+            return o.getVisible();
+          }).reduce(function (pre, curr) {
+            return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
+          }, undefined)
         }
       });
 

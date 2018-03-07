@@ -18,6 +18,8 @@
         <m:Label class="sapUiTinyMarginBegin" text="Y Axis:" />
         <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
         <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
+        <m:ToggleButton text="Grid" pressed="{store>/yAxis/gridLines}" />
+        <m:ToggleButton text="Custom Ticks" pressed="{store>/yAxis/customTicks}" />
         <m:ToolbarSpacer/>
         <m:Label class="sapUiTinyMarginBegin" text="Lines:" />
         <m:ToggleButton icon="sap-icon://{= ${store>/lines/show} ? 'show' : 'hide'}" pressed="{store>/lines/show}" />
@@ -48,9 +50,7 @@
             path: 'store>dataPoints',
             templateShareable: false
           }">
-          <data>
-            <ChartDataPoint value="{store>}" />
-          </data>
+          <ChartDataPoint value="{store>}" />
         </ChartSeries>
       </series>
       <xAxis>
@@ -58,18 +58,23 @@
             path: 'store>/xAxis/labels',
             templateShareable: false
           }">
-          <labels>
-            <ChartAxisLabel
-              value="{store>}"
-              title="{= ${store>}.substring(0,3).toUpperCase() }" />
-          </labels>
+          <ChartAxisLabel
+            value="{store>}"
+            title="{= ${store>}.substring(0,3).toUpperCase() }" />
         </ChartAxis>
       </xAxis>
       <yAxis>
         <ChartAxis
           title="{store>/yAxis/title}"
+          showGridLines="{store>/yAxis/gridLines}"
           maxValue="{= ${store>/yAxis/maxEnabled} ? 15 : null}"
-          minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}" />
+          minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}">
+          <ChartAxisLabel value="0" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="5" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="10" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="15" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="20" visible="{store>/yAxis/customTicks}" />
+        </ChartAxis>
       </yAxis>
       <lines>
         <ChartLine
