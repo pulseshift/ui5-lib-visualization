@@ -2204,7 +2204,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           case library.LineStyle.Dashed:
           case library.LineStyle.Dotted:
             // calculate dash array
-            sDashArray = oSeries.getLineStyle() === 'dotted' ? '1 5' : '5';
+            sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5';
 
             // add css to svg definitions
             oStrokeStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-dashdot-style-' + oSeries.getKey());
@@ -2252,14 +2252,46 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // get all chart lines  and concatenate color rules
       this.getLines().forEach(function (oLine) {
         var sColor = oLine.getColor();
+        var sLineStyle = oLine.getStyle();
+        var sCSSLineSelector = '#' + _this9.getId() + ' .' + _this9.CSS_CLASS_LINE + '-' + oLine.getId();
+        var sUID = _this9.getId() + '-' + oLine.getId();
+        var oStrokeStyle = void 0;
+        var sDashArray = void 0;
 
         if (sColor) {
           // update svg area style
-          sCSS += '#' + _this9.getId() + ' .' + _this9.CSS_CLASS_LINE + '-' + oLine.getId() + ' line {\n                                stroke: ' + sColor + ';\n                            }\n\n                            #' + _this9.getId() + ' .' + _this9.CSS_CLASS_LINE + '-' + oLine.getId() + ' circle {\n                                stroke: ' + sColor + ';\n                            }\n\n                            #' + _this9.getId() + ' .' + _this9.CSS_CLASS_LINE + '-' + oLine.getId() + ' text {\n                                fill: ' + sColor + ';\n                            }';
+          sCSS += sCSSLineSelector + ' line {\n                stroke: ' + sColor + ';\n            }\n\n            ' + sCSSLineSelector + ' circle {\n                stroke: ' + sColor + ';\n            }\n\n            ' + sCSSLineSelector + ' text {\n                fill: ' + sColor + ';\n            }';
+        }
+
+        switch (sLineStyle) {
+          case library.LineStyle.Dashed:
+          case library.LineStyle.Dotted:
+            // calculate dash array
+            sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5';
+
+            // add css to svg definitions
+            oStrokeStyle = d3.select('#' + _this9.getId() + ' defs #' + sUID);
+            if (oStrokeStyle.empty()) {
+              oStrokeStyle = d3.select('#' + _this9.getId() + ' defs').append('style').attr({
+                id: '' + sUID,
+                type: 'text/css'
+              });
+            }
+            // update svg pattern style
+            oStrokeStyle.text(sCSSLineSelector + ' line {\n                    stroke-dasharray: ' + sDashArray + ';\n                    stroke-linecap: round;\n                }');
+            break;
+          case library.LineStyle.Solid:
+          default:
+            // remove pattern style from shape area
+            oStrokeStyle = d3.select('#' + _this9.getId() + ' defs #' + sUID);
+            if (!oStrokeStyle.empty()) {
+              oStrokeStyle.text('');
+            }
+            break;
         }
 
         // update line selector icon and selector press event
-        var oLineHook = d3.select('#' + _this9.getId() + ' .ui5-viz-chart-line-' + oLine.getId()),
+        var oLineHook = d3.select(sCSSLineSelector),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(oLine.getLineSelectorIcon());
 
         if (oLine.getShowLineSelector()) {
@@ -2304,9 +2336,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // get all chart areas and concatenate style rules
       this.getAreas().forEach(function (oArea) {
-        var sColor = oArea.getColor() || '#000000',
-            sShapeStyle = oArea.getStyle(),
-            oPattern = void 0;
+        var sColor = oArea.getColor() || '#000000';
+        var sShapeStyle = oArea.getStyle();
+        var oPattern = void 0;
 
         switch (sShapeStyle) {
           case library.ShapeStyle.Striped:
