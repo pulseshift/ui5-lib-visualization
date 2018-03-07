@@ -59,7 +59,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         style: {
           type: 'ui5.viz.ShapeStyle',
           group: 'Appearance',
-          defaultValue: library.ShapeStyle.Default
+          defaultValue: library.ShapeStyle.Solid
         },
 
         /**
@@ -133,6 +133,15 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     /* =========================================================== */
 
     /**
+     * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
+     * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
+     * @private
+     * @override
+     */
+    init: function init() {},
+
+
+    /**
      * Constructor for a new <code>ui5.viz.Chart</code>.
      *
      * @param {string} [sId] Id for the new control, generated automatically if no id is given
@@ -141,15 +150,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     constructor: function constructor() {
       Element.prototype.constructor.apply(this, arguments);
     },
-
-
-    /**
-     * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
-     * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
-     * @private
-     * @override
-     */
-    init: function init() {},
 
 
     /**
@@ -169,6 +169,44 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     /* =========================================================== */
     /* override methods                                            */
     /* =========================================================== */
+
+    /**
+     * Overwrites getter for property <code>startValue</code>.
+     * @returns {string|int}
+     * @public
+     */
+    getStartValue: function getStartValue() {
+      var v = this.getProperty('startValue');
+      var sRefAxis = this.getProperty('axis');
+
+      if (sRefAxis === library.Axis.X) {
+        var oChart = this.getParent();
+
+        return oChart.getXAxisIndexByValue(v);
+      }
+
+      return v;
+    },
+
+
+    /**
+     * Overwrites getter for property <code>endValue</code>.
+     * @returns {string|int}
+     * @public
+     */
+    getEndValue: function getEndValue() {
+      var v = this.getProperty('endValue');
+      var sRefAxis = this.getProperty('axis');
+
+      if (sRefAxis === library.Axis.X) {
+        var oChart = this.getParent();
+
+        return oChart.getXAxisIndexByValue(v);
+      }
+
+      return v;
+    },
+
 
     /**
      * Overwrites the method in order to check on supported properties.

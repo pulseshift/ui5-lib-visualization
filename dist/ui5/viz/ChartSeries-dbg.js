@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         lineStyle: {
           type: 'ui5.viz.LineStyle',
           group: 'Appearance',
-          defaultValue: library.LineStyle.Default
+          defaultValue: library.LineStyle.Solid
         },
 
         /**
@@ -90,7 +90,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         shapeStyle: {
           type: 'ui5.viz.ShapeStyle',
           group: 'Appearance',
-          defaultValue: library.ShapeStyle.Default
+          defaultValue: library.ShapeStyle.Solid
         },
 
         /**

@@ -226,7 +226,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     },
 
 
-    // FIXME: add jsdoc
+    /**
+     * Unified method to get correct value object based on data point type.
+     * @returns {string|int|{high: string|int, low: string|int}}
+     * @public
+     */
     getValueOrValuePair: function getValueOrValuePair() {
       var isVisible = this.getVisible();
       if (this.getType() === library.ChartDataPointType.SingleValue) {

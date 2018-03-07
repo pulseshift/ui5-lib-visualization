@@ -418,20 +418,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     /* =========================================================== */
 
     /**
-     * Constructor for a new <code>ui5.viz.Chart</code>.
-     *
-     * @param {string} [sId] Id for the new control, generated automatically if no id is given
-     * @param {object} [mSettings] Initial settings for the new control
-     */
-    constructor: function constructor() {
-      Control.prototype.constructor.apply(this, arguments);
-
-      // initialization phase finished, update routine is enabled again
-      this._getChartUpdateHandler().release();
-    },
-
-
-    /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
      * @private
@@ -450,6 +436,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10);
       this._debounceUpdateChartLines = lodashDebounce(this._updateChartLines, 50);
       this._debounceUpdateChartAreas = lodashDebounce(this._updateChartAreas, 50);
+    },
+
+
+    /**
+     * Constructor for a new <code>ui5.viz.Chart</code>.
+     *
+     * @param {string} [sId] Id for the new control, generated automatically if no id is given
+     * @param {object} [mSettings] Initial settings for the new control
+     */
+    constructor: function constructor() {
+      Control.prototype.constructor.apply(this, arguments);
+
+      // initialization phase finished, update routine is enabled again
+      this._getChartUpdateHandler().release();
     },
 
 
@@ -536,7 +536,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           enabled: this.getZoomEnabled()
         },
         legend: {
-          position: this.getLegendPosition(),
+          position: this.getLegendPosition().toLowerCase(),
           show: this.getShowLegend()
         },
         tooltip: {
@@ -575,6 +575,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               }
             }()
           }
+        },
+        // if true set, the region of null data will be connected without any data point
+        line: {
+          connectNull: true
         },
         data: {
           x: 'x',
@@ -617,7 +621,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           }))),
           axes: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
             // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-            oTypes[oSeries.getKey()] = oSeries.getYAxis();
+            oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase();
             return oTypes;
           }, {}),
           types: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
@@ -855,7 +859,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             id: oArea.getId(),
             start: oArea.getStartValue(),
             end: oArea.getEndValue(),
-            axis: oArea.getAxis(),
+            axis: oArea.getAxis().toLowerCase(),
             text: oArea.getTitle(),
             // position: oArea.getTitlePosition(),
             // add three classes: general line class, line style class and line identifier
@@ -865,6 +869,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         transition: {
           duration: 175
         }
+
+        // for debugging purposes
+        // console.log(options)
 
         // initialize c3 chart
       };this._chart = c3.generate(options);
@@ -1105,7 +1112,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     setLegendPosition: function setLegendPosition(sLegendPosition) {
       // live update by c3 API is not working, yet, therefore we must rerender the chart
-      // TODO: check if custom modification is possible: c3.chart.fn.legend.position = function (position) { ... }
       // if (this._chart) this._chart.legend.position = sLegendPosition;
       return this.setProperty('legendPosition', sLegendPosition, false); // force rerender
     },
@@ -1199,6 +1205,33 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         oXAxis = new ChartAxis();
         this.setAggregation('xAxis', oXAxis, true); // do not rerender
       }
+
+      // TODO: this part was removed (check if it can be deleted completely)
+      // let iSeriesTicks, iAxisTicks, iDeltaTicks
+
+      // // get maximal axis ticks
+      // iSeriesTicks = Math.max.apply(
+      //   Math,
+      //   this.getSeries().length === 0
+      //     ? [0]
+      //     : this.getSeries().map(oSeries => oSeries.getData().length)
+      // )
+
+      // // add missing ticks if required
+      // iAxisTicks = oXAxis.getLabels().length
+
+      // if (iAxisTicks < iSeriesTicks) {
+      //   iDeltaTicks = iSeriesTicks - iAxisTicks
+      //   for (let i = 0; i <= iDeltaTicks; i++) {
+      //     // add label without fire update event
+      //     Control.prototype.addAggregation.call(
+      //       oXAxis,
+      //       'labels',
+      //       new ChartAxisLabel({ value: iAxisTicks + i }),
+      //       true
+      //     )
+      //   }
+      // }
 
       return oXAxis;
     },
@@ -1561,6 +1594,38 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
 
     /**
+     * Get respective X axis index by value.
+     *
+     * @param {string|int|null} [vValue] Index.
+     * @return {any} Value depending on axis type.
+     * @public
+     */
+    getXAxisIndexByValue: function getXAxisIndexByValue(vValue) {
+      var oXAxis = this.getXAxis();
+      var sXAxisType = this.getXAxisType();
+      var aLabels = oXAxis.getLabels() || [];
+      var iLabels = aLabels.length;
+
+      // return value if axis is from type Indexed
+      if (sXAxisType === library.AxisType.Indexed) {
+        return parseInt(vValue, 10) || null;
+      }
+
+      // find respective label and return index
+      for (var iIndex = 0; iIndex < iLabels; iIndex++) {
+        var oLabel = aLabels[iIndex];
+
+        if (oLabel.getValue() === vValue) {
+          return iIndex;
+        }
+      }
+
+      // return fallback
+      return null;
+    },
+
+
+    /**
      * Getter for property <code>minValue</code> of an axis.
      *
      * @param {ui5.viz.ChartAxis} [oAxis] Axis.
@@ -1741,7 +1806,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         // update axis assignment
         axes: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
           // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-          oTypes[oSeries.getKey()] = oSeries.getYAxis();
+          oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase();
           return oTypes;
         }, {}),
 
@@ -1957,7 +2022,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           id: oArea.getId(),
           start: oArea.getStartValue(),
           end: oArea.getEndValue(),
-          axis: oArea.getAxis(),
+          axis: oArea.getAxis().toLowerCase(),
           text: oArea.getTitle(),
           // position: oArea.getTitlePosition(),
           // add three classes: general line class, line style class and line identifier
@@ -2017,9 +2082,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return {
         id: oChartLine.getId(),
         value: oChartLine.getValue(),
-        axis: oChartLine.getAxis(),
+        axis: oChartLine.getAxis().toLowerCase(),
         text: oChartLine.getTitle(),
-        position: oChartLine.getTitlePosition(),
+        position: oChartLine.getTitlePosition().toLowerCase(),
         showSelector: oChartLine.getShowLineSelector() ? true : false,
         // add three classes: general line class, line style class and line identifier
         class: this.CSS_CLASS_LINE + ' ' + this.CSS_CLASS_LINE + '-' + oChartLine.getStyle() + ' ' + this.CSS_CLASS_LINE + '-' + oChartLine.getId() + ' ' + sShowSelectorClass + ' ' + sIconOnlyClass
@@ -2057,7 +2122,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oPattern = void 0,
 
         // set solid style if series type (e.g. bar) is not supporting line styles
-        sShapeStyle = _this8._isShapeType(oSeries.getType()) ? oSeries.getShapeStyle() : library.ShapeStyle.Default;
+        sShapeStyle = _this8._isShapeType(oSeries.getType()) ? oSeries.getShapeStyle() : library.ShapeStyle.Solid;
 
         switch (sShapeStyle) {
           case library.ShapeStyle.Striped:
@@ -2087,7 +2152,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // update svg pattern style
             oPatternStyle.text('#' + _this8.getId() + ' .stripe-pattern-' + oSeries.getKey() + ' path {\n                                    fill: ' + sCurrentColor + ';\n                                    stroke: none;\n                                }\n                                #' + _this8.getId() + ' .c3-target-' + oSeries.getKey() + ' .c3-shape {\n                                    fill: url(#' + _this8.getId() + '-stripe-pattern-' + oSeries.getKey() + ') !important;\n                                }');
             break;
-          case library.ShapeStyle.Default:
+          case library.ShapeStyle.Solid:
           default:
             // remove pattern style from shape area
             oPatternStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-stripe-style-' + oSeries.getKey());
@@ -2104,7 +2169,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             sDashArray = void 0,
 
         // set solid style if series type (e.g. bar) is not supporting line styles
-        sLineStyle = _this8._isLineType(oSeries.getType()) ? oSeries.getLineStyle() : library.LineStyle.Default,
+        sLineStyle = _this8._isLineType(oSeries.getType()) ? oSeries.getLineStyle() : library.LineStyle.Solid,
             iAnimationSpeed = void 0;
 
         // set animation speed
@@ -2141,7 +2206,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // update svg pattern style
             oStrokeStyle.text('#' + _this8.getId() + ' .c3-target-' + oSeries.getKey() + ' .c3-shape {\n                                    stroke-dashoffset: ' + (oSeries.getLineAnimationForwards() ? '' : '-') + '50rem;\n                                    stroke-dasharray: ' + sDashArray + ';\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                }');
             break;
-          case library.LineStyle.Default:
+          case library.LineStyle.Solid:
           default:
             // remove pattern style from shape area
             oStrokeStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-dashdot-style-' + oSeries.getKey());
@@ -2251,7 +2316,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             sCSS += '#' + _this10.getId() + ' .area-stripe-pattern-' + oArea.getId() + ' path {\n                                    fill: ' + sColor + ';\n                                    stroke: none;\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-stripe,\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-area {\n                                    fill: url(#' + _this10.getId() + '-area-stripe-pattern-' + oArea.getId() + ') !important;\n                                }';
             break;
 
-          case library.ShapeStyle.Default:
+          case library.ShapeStyle.Solid:
           default:
             // update svg area style
             sCSS += '#' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-stripe,\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-area {\n                                    fill: ' + sColor + ';\n                                }';
@@ -2288,7 +2353,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * Check if a style is valid for lines
      *
      * @param {string} [sSeriesType] style to be validated
-     * @return {boolean} returns true if style is valid for shape tzpe
+     * @return {boolean} returns true if style is valid for shape type
      * @private
      */
     _isLineType: function _isLineType(sSeriesType) {
@@ -2313,12 +2378,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     },
 
 
-    // ===== START OPAL EXTENSION =====
-    // TODO: jsdoc missing!
+    /**
+     * Check if a series type is from type ribbon
+     *
+     * @param {string} [sSeriesType] style to be validated
+     * @return {boolean} returns true if style is a ribbon
+     * @private
+     */
     _isRibbonType: function _isRibbonType(sSeriesType) {
       return sSeriesType === (library.ChartSeriesType.RibbonLine || library.ChartSeriesType.RibbonSpline || library.ChartSeriesType.RibbonStep);
     },
-    // ===== END OPAL EXTENSION =====
+
 
     /**
      * Get available size in pixel of parent element.
