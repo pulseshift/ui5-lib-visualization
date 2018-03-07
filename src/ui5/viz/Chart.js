@@ -2421,7 +2421,10 @@ sap.ui.define(
             case library.LineStyle.Dashed:
             case library.LineStyle.Dotted:
               // calculate dash array
-              sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5'
+              sDashArray =
+                oSeries.getLineStyle() === library.LineStyle.Dotted
+                  ? '1 5'
+                  : '5'
 
               // add css to svg definitions
               oStrokeStyle = d3.select(
@@ -2495,7 +2498,9 @@ sap.ui.define(
         this.getLines().forEach(oLine => {
           const sColor = oLine.getColor()
           const sLineStyle = oLine.getStyle()
-          const sCSSLineSelector = `#${this.getId()} .${this.CSS_CLASS_LINE}-${oLine.getId()}`
+          const sCSSLineSelector = `#${this.getId()} .${
+            this.CSS_CLASS_LINE
+          }-${oLine.getId()}`
           const sUID = `${this.getId()}-${oLine.getId()}`
           let oStrokeStyle
           let sDashArray
@@ -2522,9 +2527,7 @@ sap.ui.define(
               sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5'
 
               // add css to svg definitions
-              oStrokeStyle = d3.select(
-                `#${this.getId()} defs #${sUID}`
-              )
+              oStrokeStyle = d3.select(`#${this.getId()} defs #${sUID}`)
               if (oStrokeStyle.empty()) {
                 oStrokeStyle = d3
                   .select(`#${this.getId()} defs`)
@@ -2537,7 +2540,6 @@ sap.ui.define(
               // update svg pattern style
               oStrokeStyle.text(
                 `${sCSSLineSelector} line {
-                    stroke-dashoffset: 50rem;
                     stroke-dasharray: ${sDashArray};
                     stroke-linecap: round;
                 }`
@@ -2546,9 +2548,7 @@ sap.ui.define(
             case library.LineStyle.Solid:
             default:
               // remove pattern style from shape area
-              oStrokeStyle = d3.select(
-                `#${this.getId()} defs #${sUID}`
-              )
+              oStrokeStyle = d3.select(`#${this.getId()} defs #${sUID}`)
               if (!oStrokeStyle.empty()) {
                 oStrokeStyle.text('')
               }
@@ -2556,9 +2556,7 @@ sap.ui.define(
           }
 
           // update line selector icon and selector press event
-          let oLineHook = d3.select(
-              sCSSLineSelector
-            ),
+          let oLineHook = d3.select(sCSSLineSelector),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(
               oLine.getLineSelectorIcon()
             )

@@ -20,7 +20,7 @@
         <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
         <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
         <m:ToggleButton text="Grid" pressed="{store>/yAxis/gridLines}" />
-        <m:ToggleButton text="Custom Ticks" pressed="{store>/yAxis/customTicks}" />
+        <m:ToggleButton text="Custom Labels" pressed="{store>/yAxis/customTicks}" />
         <m:ToolbarSpacer/>
         <m:Title class="sapUiTinyMarginBegin" text="X Axis" />
         <m:ToggleButton text="Lines" pressed="{store>/lines/show}" />
@@ -101,11 +101,11 @@
           showGridLines="{store>/yAxis/gridLines}"
           maxValue="{= ${store>/yAxis/maxEnabled} ? 15 : null}"
           minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}">
-          <ChartAxisLabel value="0" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="5" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="10" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="15" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="20" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="0" title="😯" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="5" title="😐" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="10" title="🙂" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="15" title="😀" visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel value="20" title="😃" visible="{store>/yAxis/customTicks}" />
         </ChartAxis>
       </yAxis>
       <lines>
