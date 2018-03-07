@@ -46,6 +46,7 @@ Data was updated.
 * <a href="#getValue">getValue</a> Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
 * <a href="#getHigh">getHigh</a> Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
 * <a href="#getLow">getLow</a> Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
+* <a href="#getValueOrValuePair">getValueOrValuePair</a> Unified method to get correct value object based on data point type.
 
 <br/>
 
@@ -93,6 +94,18 @@ Overwrites getter in order to make sure it is a valid value. As the data type is
 Returns: `undefined`
 ```js
 getLow()
+```
+
+<br/>
+
+<a name="getValueOrValuePair"></a>
+
+### `getValueOrValuePair`
+Unified method to get correct value object based on data point type.
+
+Returns: `undefined`
+```js
+getValueOrValuePair()
 ```
 
 <br/>

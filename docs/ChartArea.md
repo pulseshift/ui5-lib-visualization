@@ -17,7 +17,7 @@ All properties have corresponding getters and setters. ([read which property met
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | `title` | `string` | `null` | Sets the ttitleext of the ChartArea. |
-| `style` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Default` | Sets the style of the shape. |
+| `style` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Solid` | Sets the style of the shape. |
 | `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null` | Sets a custom color for the area. |
 | `axis` | `ui5.viz.Axis` | `library.Axis.X` | Sets the referenced y axis the line value property is related to. |
 | `visible` | `boolean` | `true` | Sets visibility of the element. |
@@ -43,7 +43,32 @@ Line was updated. Providing parameters:
 
 
 ## Methods
-There are no public methods defined for `ui5.viz.ChartArea`.
+* <a href="#getStartValue">getStartValue</a> Overwrites getter for property <code>startValue</code>.
+* <a href="#getEndValue">getEndValue</a> Overwrites getter for property <code>endValue</code>.
+
+<br/>
+
+<a name="getStartValue"></a>
+
+### `getStartValue`
+Overwrites getter for property <code>startValue</code>.
+
+Returns: `undefined`
+```js
+getStartValue()
+```
+
+<br/>
+
+<a name="getEndValue"></a>
+
+### `getEndValue`
+Overwrites getter for property <code>endValue</code>.
+
+Returns: `undefined`
+```js
+getEndValue()
+```
 
 <br/>
 

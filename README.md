@@ -57,7 +57,7 @@ Add the library to the `sap-ui-bootstrap` resourceroots in your `index.html`:
 data-sap-ui-resourceroots="{ "ui5.viz": "pathToTargetDestination/ui5/viz" }"
 ```
 
-_Please be aware that for option b) all manual steps must be repeated every time when you want to update the library version. Because this variant is more susceptible to errors, we recommend to use the [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit)_
+_Please be aware that for option b) all manual steps must be repeated every time when you want to update the library version. Because this variant is more susceptible to errors, we recommend to use the [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit)._
 
 ### Documentation
 

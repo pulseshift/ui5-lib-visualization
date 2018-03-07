@@ -20,8 +20,8 @@ All properties have corresponding getters and setters. ([read which property met
 | `name` | `string` | `null` | Name of the series. |
 | `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null` | Sets a custom color for the series, overwriting the default color palette. |
 | `showLabels` | `boolean` | `false` | Sets visibility of labels. |
-| `lineStyle` | `ui5.viz.LineStyle` | `library.LineStyle.Default` | Sets style of series lines (supported types: line, spline, step, area, area-spline, area-step). |
-| `shapeStyle` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Default` | Sets style of series shape (supported types: bar). |
+| `lineStyle` | `ui5.viz.LineStyle` | `library.LineStyle.Solid` | Sets style of series lines (supported types: line, spline, step, area, area-spline, area-step). |
+| `shapeStyle` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Solid` | Sets style of series shape (supported types: bar). |
 | `lineAnimationSpeed` | `ui5.viz.AnimationSpeed` | `library.AnimationSpeed.None` | Sets speed of animated dashes / dots (none, slow, medium, fast). |
 | `lineAnimationForwards` | `boolean` | `true` | Sets if line animation should run forwards or backwards. |
 | `groupKey` | `string` | `null` | ChartSeries with the same group key are displayed as a cluster (e.g. stacked bar). |
