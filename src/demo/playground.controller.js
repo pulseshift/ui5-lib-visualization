@@ -19,7 +19,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
           todayColor: aColorPalette[12]
         },
         areas: {
-          show: true
+          show: true,
+          areaColor: aColorPalette[0]
         },
         xAxis: {
           labels: ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November']
