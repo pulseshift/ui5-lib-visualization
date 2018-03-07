@@ -104,7 +104,7 @@ Here a basic sample of how to use the charts in an XML view:
   <series>
     <ChartSeries
       type="{store>type}"
-      name=" {store>name}"
+      name="{store>name}"
       data="{
         path: 'store>dataPoints',
         templateShareable: false
