@@ -134,8 +134,8 @@
     </Chart>
 
     <m:footer>
-      <m:Toolbar>
-      </m:Toolbar>
+      <!-- <m:Toolbar>
+      </m:Toolbar> -->
     </m:footer>
   </m:Page>
 </mvc:View>

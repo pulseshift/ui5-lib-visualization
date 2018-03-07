@@ -23,7 +23,7 @@ sap.ui.define([
     dependencies: [],
     types: [
     // builtin types
-    'any', 'boolean', 'float', 'int', 'object', 'string', 'void',
+    'any', 'boolean', 'float', 'int', 'object', 'string',
 
     // public simple types and enums
     'ui5.viz.ChartLegendPosition', 'ui5.viz.ChartTitlePosition', 'ui5.viz.ChartSeriesType', 'ui5.viz.DataPointType', 'ui5.viz.LineStyle', 'ui5.viz.ShapeStyle', 'ui5.viz.AnimationSpeed', 'ui5.viz.AxisType', 'ui5.viz.DataPointAnimation', 'ui5.viz.ColorPalette'],
@@ -186,13 +186,164 @@ sap.ui.define([
     Material300S: ['#64B5F6', '#4FC3F7', '#4DD0E1', '#4DB6AC', '#81C784', '#AED581', '#DCE775', '#FFF176', '#FFD54F', '#FFB74D', '#FF8A65', '#E57373', '#F06292', '#BA68C8', '#9575CD', '#7986CB']
 
     /**
-     * Define default color palette.
+     * Transform hexadecimal color to RGBA color.
      *
      * @function
-     * @param {Array[String]} [aColorPalette] Ordered list with plain CSS colors.
-     * @protected
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [alpha] Alpha (0-1).
+     * @return {sap.ui.core.CSSColor} RGBA color.
+     * @public
      */
-  };ui5.viz.setDefaultColorPalette = function (aColorPalette) {
+  };ui5.viz.hexToRgba = function (hex) {
+    var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+    var a = alpha >= 0 && alpha <= 1 ? alpha : 1;
+    var rgbColor = ui5.viz.hexToRgbObject(hex);
+    return 'rgba(' + rgbColor.r + ',' + rgbColor.g + ',' + rgbColor.b + ',' + a + ')';
+  };
+
+  /**
+   * Transform hexadecimal color to RGB color.
+   *
+   * @function
+   * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+   * @return {sap.ui.core.CSSColor} RGB color.
+   * @public
+   */
+  ui5.viz.hexToRgb = function (hex) {
+    var rgbColor = ui5.viz.hexToRgbObject(hex);
+    return 'rgb(' + rgbColor.r + ',' + rgbColor.g + ',' + rgbColor.b + ')';
+  };
+
+  /**
+   * Lighten hexadecimal color.
+   *
+   * @function
+   * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+   * @param {float} [percent] Percentage of lighten intensity (0-100).
+   * @return {sap.ui.core.CSSColor} Hexadecimal color.
+   * @public
+   */
+  ui5.viz.lightenHexColor = function (hex) {
+    var percent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+    // parse hex color to RGB
+    var _ui5$viz$hexToRgbObje = ui5.viz.hexToRgbObject(hex),
+        red = _ui5$viz$hexToRgbObje.r,
+        green = _ui5$viz$hexToRgbObje.g,
+        blue = _ui5$viz$hexToRgbObje.b;
+
+    // lighten RGB colors
+
+
+    var lightenRed = parseInt(red * (100 + percent) / 100);
+    var lightenGreen = parseInt(green * (100 + percent) / 100);
+    var lightenBlue = parseInt(blue * (100 + percent) / 100);
+
+    // normalize RGB colors
+    var r = lightenRed < 255 ? lightenRed : 255;
+    var g = lightenGreen < 255 ? lightenGreen : 255;
+    var b = lightenBlue < 255 ? lightenBlue : 255;
+
+    // transform RGB to hex
+    var lightenRedHex = r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16);
+    var lightenGreenHex = g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16);
+    var lightenBlueHex = b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16);
+
+    return '#' + lightenRedHex + lightenGreenHex + lightenBlueHex;
+  };
+
+  /**
+   * Darken hexadecimal color.
+   *
+   * @function
+   * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+   * @param {float} [alpha] Percentage of darken intensity (0-100).
+   * @return {sap.ui.core.CSSColor} Hexadecimal color.
+   * @public
+   */
+  ui5.viz.darkenHexColor = function (hex) {
+    var percent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+    // parse hex color to RGB
+    var _ui5$viz$hexToRgbObje2 = ui5.viz.hexToRgbObject(hex),
+        red = _ui5$viz$hexToRgbObje2.r,
+        green = _ui5$viz$hexToRgbObje2.g,
+        blue = _ui5$viz$hexToRgbObje2.b;
+
+    // darken RGB colors
+
+
+    var darkenRed = parseInt(red * (100 - percent) / 100);
+    var darkenGreen = parseInt(green * (100 - percent) / 100);
+    var darkenBlue = parseInt(blue * (100 - percent) / 100);
+
+    // normalize RGB colors
+    var r = darkenRed < 255 ? darkenRed : 255;
+    var g = darkenGreen < 255 ? darkenGreen : 255;
+    var b = darkenBlue < 255 ? darkenBlue : 255;
+
+    // transform RGB to hex
+    var darkenRedHex = r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16);
+    var darkenGreenHex = g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16);
+    var darkenBlueHex = b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16);
+
+    return '#' + darkenRedHex + darkenGreenHex + darkenBlueHex;
+  };
+
+  /**
+   * Get black or white contrast color based on hexadecimal background color.
+   * Useful to determine font color based on background.
+   *
+   * @function
+   * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+   * @return {sap.ui.core.CSSColor} Foreground contrast color (either black or white).
+   * @public
+   */
+  ui5.viz.hexToBWContrastColor = function (hex) {
+    var rgbColor = ui5.viz.hexToRgbObject(hex);
+    var brightness = Math.round((parseInt(rgbColor.r, 10) * 299 + parseInt(rgbColor.g, 10) * 587 + parseInt(rgbColor.b, 10) * 114) / 1000);
+    var BLACK = '#000000';
+    var WHITE = '#ffffff';
+
+    return brightness > 125 ? BLACK : WHITE;
+  };
+
+  /**
+   * Transform hexadecimal color to RGB object.
+   *
+   * @function
+   * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+   * @return {{r: int, g: int, b: int}} RGB object.
+   * @public
+   */
+  ui5.viz.hexToRgbObject = function (hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : {
+      r: 0,
+      g: 0,
+      b: 0
+    };
+  };
+
+  /**
+   * Define default color palette.
+   *
+   * @function
+   * @param {Array[String]} [aColorPalette] Ordered list with plain CSS colors.
+   * @protected
+   */
+  ui5.viz.setDefaultColorPalette = function (aColorPalette) {
     ui5.viz.ColorPalette.custom = Array.isArray(aColorPalette) ? aColorPalette : null;
   };
 
@@ -200,7 +351,7 @@ sap.ui.define([
    * Parse CSS size.
    *
    * @function
-   * @param {string} sCSSSize
+   * @param {sap.ui.core.CSSColor} sCSSSize
    * @return { value: {string}, unit: {string} }
    * @protected
    */
