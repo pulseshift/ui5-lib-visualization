@@ -17,7 +17,7 @@ All properties have corresponding getters and setters. ([read which property met
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | `highlightAnimation` | `ui5.viz.DataPointAnimation` | `library.DataPointAnimation.None` | Sets the representation of value as formatted text Hint: Not available for chart types Bar, Step and AreaStep, yet. |
-| `type` | `ui5.viz.ChartDataPointType` | `library.ChartDataPointType.SingleValue` | Sets the type of the data point. |
+| `type` | `ui5.viz.DataPointType` | `library.DataPointType.SingleValue` | Sets the type of the data point. |
 | `label` | `string` | `null` | Sets the representation of value as formatted text. |
 | `value` | `any` | `null` | Sets the value the data point should represent Hint: To support null as value, the type must be "any". |
 | `high` | `any` | `null` | Sets the high value the data point should represent in case of ribbon type Hint: To support null as value, the type must be "any". |

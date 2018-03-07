@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.C3-viz-fusion', {
@@ -32,7 +32,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
             name: 'Prognose',
             dataPoints: [null, null, null, null, 100, 210, 110, 340, 160, 230],
             type: 'line',
-            lineStyle: 'dotted',
+            lineStyle: 'Dotted',
             color: '#189ad3'
           },
           {
@@ -41,52 +41,52 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
             color: '#71c7ec',
             dataPoints: [
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: null,
                 high: null
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: null,
                 high: null
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: null,
                 high: null
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: null,
                 high: null
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 10,
                 high: 180
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 100,
                 high: 300
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 20,
                 high: 150
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 300,
                 high: 470
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 100,
                 high: 220
               },
               {
-                type: 'value-pair',
+                type: ui5.viz.DataPointType.ValuePair,
                 low: 190,
                 high: 280
               }

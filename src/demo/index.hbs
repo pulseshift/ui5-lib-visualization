@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+  <head>
     <meta http-equiv="X-UA-Compatible"
       content="IE=edge" />
     <meta charset="UTF-8">
@@ -21,19 +21,20 @@
 
       </script>
 
-      <script>
-      sap.ui.getCore().attachInit(function() {
+    <script>
+      sap.ui.getCore().attachInit(function () {
         "use strict";
         new sap.ui.xmlview('ui5.demo.playground').placeAt("content");
       });
     </script>
-</head>
+  </head>
 
-<body class="sapUiBody">
+  <body class="sapUiBody sapUiSizeCompact">
 
-  <div id="content" style="height: 100vh;"></div>
+    <div id="content"
+      style="height: 100vh;"></div>
 
-  {{!-- <h1>UI5 Visualization Library Demo</h1>
+    {{!-- <h1>UI5 Visualization Library Demo</h1>
 
   <p>Final demo is coming soon.</p>
 
@@ -76,4 +77,4 @@
   <ul>
     <li><a href="/demo/todo_refactor_to_final_demo/c3-viz-fusion.html">C3 viz fusion</a></li>
   </ul> --}}
-</body>
+  </body>

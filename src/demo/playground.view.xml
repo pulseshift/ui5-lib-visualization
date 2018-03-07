@@ -5,7 +5,8 @@
   height="100%"
   controllerName="ui5.demo.playground">
   <m:Page
-    class="sapUiContentPadding" >
+    class="sapUiContentPadding"
+    floatingFooter="true">
     <m:customHeader>
       <m:Toolbar>
         <m:ToolbarSpacer/>
@@ -15,19 +16,33 @@
     </m:customHeader>
     <m:subHeader>
       <m:Toolbar>
-        <m:Label class="sapUiTinyMarginBegin" text="Y Axis:" />
+        <m:Title class="sapUiTinyMarginBegin" text="Y Axis" />
         <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
         <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
         <m:ToggleButton text="Grid" pressed="{store>/yAxis/gridLines}" />
         <m:ToggleButton text="Custom Ticks" pressed="{store>/yAxis/customTicks}" />
         <m:ToolbarSpacer/>
-        <m:Label class="sapUiTinyMarginBegin" text="Lines:" />
-        <m:ToggleButton icon="sap-icon://{= ${store>/lines/show} ? 'show' : 'hide'}" pressed="{store>/lines/show}" />
-        <m:Label class="sapUiTinyMarginBegin" text="Areas:" />
-        <m:ToggleButton icon="sap-icon://{= ${store>/areas/show} ? 'show' : 'hide'}" pressed="{store>/areas/show}" />
+        <m:Title class="sapUiTinyMarginBegin" text="X Axis" />
+        <m:ToggleButton text="Lines" pressed="{store>/lines/show}" />
+        <m:ToggleButton text="Areas" pressed="{store>/areas/show}" />
         <m:ToolbarSpacer/>
       </m:Toolbar>
     </m:subHeader>
+
+    <!-- <m:Toolbar design="Transparent">
+      <m:Title class="sapUiTinyMarginBegin" text="Y Axis" />
+      <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
+      <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
+      <m:ToggleButton text="Grid" pressed="{store>/yAxis/gridLines}" />
+      <m:ToggleButton text="Custom Ticks" pressed="{store>/yAxis/customTicks}" />
+      <m:ToolbarSpacer/>
+      <m:Label class="sapUiTinyMarginBegin" text="Lines:" />
+      <m:ToggleButton icon="sap-icon://{= ${store>/lines/show} ? 'show' : 'hide'}" pressed="{store>/lines/show}" />
+      <m:Label class="sapUiTinyMarginBegin" text="Areas:" />
+      <m:ToggleButton icon="sap-icon://{= ${store>/areas/show} ? 'show' : 'hide'}" pressed="{store>/areas/show}" />
+      <m:ToolbarSpacer/>
+    </m:Toolbar> -->
+
 
     <!-- CHART -->
     <Chart
@@ -50,7 +65,11 @@
             path: 'store>dataPoints',
             templateShareable: false
           }">
-          <ChartDataPoint value="{store>}" />
+          <ChartDataPoint
+            value="{store>}"
+            low="{store>low}"
+            high="{store>high}"
+            type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
         </ChartSeries>
       </series>
       <xAxis>
@@ -88,17 +107,35 @@
           title="last sightings"
           color="{store>/lines/todayColor}"
           visible="{store>/lines/show}" />
+        <!-- <ChartLine
+          axis="Y"
+          value="20"
+          title="overpopulation"
+          style="Dotted"
+          color="{store>/lines/todayColor}"
+          visible="{store>/lines/show}" /> -->
       </lines>
       <areas>
         <ChartArea
           axis="X"
           startValue="April"
-          endValue="May"
+          endValue="June"
           title="🌧️ rainy spring"
           color="{store>/areas/areaColor}"
           visible="{store>/areas/show}" />
+        <!-- <ChartArea
+          axis="Y"
+          startValue="0"
+          endValue="5"
+          title="threatened existence"
+          color="{store>/areas/areaColor}"
+          visible="{store>/areas/show}" /> -->
       </areas>
     </Chart>
 
+    <m:footer>
+      <m:Toolbar>
+      </m:Toolbar>
+    </m:footer>
   </m:Page>
 </mvc:View>

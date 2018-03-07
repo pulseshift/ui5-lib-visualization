@@ -26,7 +26,7 @@ sap.ui.define([
     'any', 'boolean', 'float', 'int', 'object', 'string', 'void',
 
     // public simple types and enums
-    'ui5.viz.ChartLegendPosition', 'ui5.viz.ChartTitlePosition', 'ui5.viz.ChartSeriesType', 'ui5.viz.ChartDataPointType', 'ui5.viz.LineStyle', 'ui5.viz.ShapeStyle', 'ui5.viz.AnimationSpeed', 'ui5.viz.AxisType', 'ui5.viz.DataPointAnimation', 'ui5.viz.ColorPalette'],
+    'ui5.viz.ChartLegendPosition', 'ui5.viz.ChartTitlePosition', 'ui5.viz.ChartSeriesType', 'ui5.viz.DataPointType', 'ui5.viz.LineStyle', 'ui5.viz.ShapeStyle', 'ui5.viz.AnimationSpeed', 'ui5.viz.AxisType', 'ui5.viz.DataPointAnimation', 'ui5.viz.ColorPalette'],
     interfaces: [],
     controls: ['ui5.viz.Chart', 'ui5.viz.ChartSeries', 'ui5.viz.ChartDataPoint', 'ui5.viz.ChartLine', 'ui5.viz.ChartArea', 'ui5.viz.ChartAxis', 'ui5.viz.ChartAxisLabel', 'ui5.viz.Color'],
     elements: []
@@ -77,7 +77,7 @@ sap.ui.define([
      * @enum {string}
      * @public
      */
-  };ui5.viz.ChartDataPointType = {
+  };ui5.viz.DataPointType = {
     SingleValue: 'SingleValue',
     ValuePair: 'ValuePair'
 

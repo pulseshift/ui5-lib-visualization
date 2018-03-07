@@ -57,9 +57,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
          * Sets the type of the data point.
          */
         type: {
-          type: 'ui5.viz.ChartDataPointType',
+          type: 'ui5.viz.DataPointType',
           group: 'Appearance',
-          defaultValue: library.ChartDataPointType.SingleValue
+          defaultValue: library.DataPointType.SingleValue
         },
 
         /* === Data === */
@@ -185,7 +185,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @public
      */
     getVisible: function getVisible() {
-      if (this.getType() === library.ChartDataPointType.SingleValue) {
+      if (this.getType() === library.DataPointType.SingleValue) {
         var v = this.getValue();
         return this.getProperty('visible') && v !== 'null' && v !== 'undefined' && v !== null && v !== undefined;
       } else {
@@ -233,7 +233,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getValueOrValuePair: function getValueOrValuePair() {
       var isVisible = this.getVisible();
-      if (this.getType() === library.ChartDataPointType.SingleValue) {
+      if (this.getType() === library.DataPointType.SingleValue) {
         return isVisible ? this.getValue() : null;
       } else {
         var highValue = this.getHigh();

@@ -30,13 +30,12 @@ sap.ui.define(
         'int',
         'object',
         'string',
-        'void',
 
         // public simple types and enums
         'ui5.viz.ChartLegendPosition',
         'ui5.viz.ChartTitlePosition',
         'ui5.viz.ChartSeriesType',
-        'ui5.viz.ChartDataPointType',
+        'ui5.viz.DataPointType',
         'ui5.viz.LineStyle',
         'ui5.viz.ShapeStyle',
         'ui5.viz.AnimationSpeed',
@@ -106,7 +105,7 @@ sap.ui.define(
      * @enum {string}
      * @public
      */
-    ui5.viz.ChartDataPointType = {
+    ui5.viz.DataPointType = {
       SingleValue: 'SingleValue',
       ValuePair: 'ValuePair'
     }
@@ -275,6 +274,154 @@ sap.ui.define(
     }
 
     /**
+     * Transform hexadecimal color to RGBA color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [alpha] Alpha (0-1).
+     * @return {sap.ui.core.CSSColor} RGBA color.
+     * @public
+     */
+    ui5.viz.hexToRgba = function(hex, alpha = 1) {
+      const a = alpha >= 0 && alpha <= 1 ? alpha : 1
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      return `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${a})`
+    }
+
+    /**
+     * Transform hexadecimal color to RGB color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {sap.ui.core.CSSColor} RGB color.
+     * @public
+     */
+    ui5.viz.hexToRgb = function(hex) {
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      return `rgb(${rgbColor.r},${rgbColor.g},${rgbColor.b})`
+    }
+
+    /**
+     * Lighten hexadecimal color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [percent] Percentage of lighten intensity (0-100).
+     * @return {sap.ui.core.CSSColor} Hexadecimal color.
+     * @public
+     */
+    ui5.viz.lightenHexColor = function(hex, percent = 0) {
+      // parse hex color to RGB
+      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+
+      // lighten RGB colors
+      const lightenRed = parseInt(red * (100 + percent) / 100)
+      const lightenGreen = parseInt(green * (100 + percent) / 100)
+      const lightenBlue = parseInt(blue * (100 + percent) / 100)
+
+      // normalize RGB colors
+      const r = lightenRed < 255 ? lightenRed : 255
+      const g = lightenGreen < 255 ? lightenGreen : 255
+      const b = lightenBlue < 255 ? lightenBlue : 255
+
+      // transform RGB to hex
+      const lightenRedHex =
+        r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16)
+      const lightenGreenHex =
+        g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16)
+      const lightenBlueHex =
+        b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16)
+
+      return `#${lightenRedHex}${lightenGreenHex}${lightenBlueHex}`
+    }
+
+    /**
+     * Darken hexadecimal color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [alpha] Percentage of darken intensity (0-100).
+     * @return {sap.ui.core.CSSColor} Hexadecimal color.
+     * @public
+     */
+    ui5.viz.darkenHexColor = function(hex, percent = 0) {
+      // parse hex color to RGB
+      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+
+      // darken RGB colors
+      const darkenRed = parseInt(red * (100 - percent) / 100)
+      const darkenGreen = parseInt(green * (100 - percent) / 100)
+      const darkenBlue = parseInt(blue * (100 - percent) / 100)
+
+      // normalize RGB colors
+      const r = darkenRed < 255 ? darkenRed : 255
+      const g = darkenGreen < 255 ? darkenGreen : 255
+      const b = darkenBlue < 255 ? darkenBlue : 255
+
+      // transform RGB to hex
+      const darkenRedHex =
+        r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16)
+      const darkenGreenHex =
+        g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16)
+      const darkenBlueHex =
+        b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16)
+
+      return `#${darkenRedHex}${darkenGreenHex}${darkenBlueHex}`
+    }
+
+    /**
+     * Get black or white contrast color based on hexadecimal background color.
+     * Useful to determine font color based on background.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {sap.ui.core.CSSColor} Foreground contrast color (either black or white).
+     * @public
+     */
+    ui5.viz.hexToBWContrastColor = function(hex) {
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      const brightness = Math.round(
+        (parseInt(rgbColor.r, 10) * 299 +
+          parseInt(rgbColor.g, 10) * 587 +
+          parseInt(rgbColor.b, 10) * 114) /
+          1000
+      )
+      const BLACK = '#000000'
+      const WHITE = '#ffffff'
+
+      return brightness > 125 ? BLACK : WHITE
+    }
+
+    /**
+     * Transform hexadecimal color to RGB object.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {{r: int, g: int, b: int}} RGB object.
+     * @public
+     */
+    ui5.viz.hexToRgbObject = function(hex) {
+      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+      const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+      hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+        return r + r + g + g + b + b
+      })
+
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result
+        ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          }
+        : {
+            r: 0,
+            g: 0,
+            b: 0
+          }
+    }
+
+    /**
      * Define default color palette.
      *
      * @function
@@ -291,7 +438,7 @@ sap.ui.define(
      * Parse CSS size.
      *
      * @function
-     * @param {string} sCSSSize
+     * @param {sap.ui.core.CSSColor} sCSSSize
      * @return { value: {string}, unit: {string} }
      * @protected
      */
