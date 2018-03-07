@@ -181,8 +181,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       if (sRefAxis === library.Axis.X) {
         var oChart = this.getParent();
+        var isTimeAxis = oChart.getXAxisType() === library.AxisType.Time;
 
-        return oChart.getXAxisIndexByValue(v);
+        return isTimeAxis ? v : oChart.getXAxisIndexByValue(v);
       }
 
       return v;
@@ -200,8 +201,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       if (sRefAxis === library.Axis.X) {
         var oChart = this.getParent();
+        var isTimeAxis = oChart.getXAxisType() === library.AxisType.Time;
 
-        return oChart.getXAxisIndexByValue(v);
+        return isTimeAxis ? v : oChart.getXAxisIndexByValue(v);
       }
 
       return v;

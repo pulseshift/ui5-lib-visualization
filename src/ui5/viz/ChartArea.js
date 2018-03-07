@@ -178,8 +178,9 @@ sap.ui.define(
 
         if (sRefAxis === library.Axis.X) {
           const oChart = this.getParent()
+          const isTimeAxis = oChart.getXAxisType() === library.AxisType.Time
 
-          return oChart.getXAxisIndexByValue(v)
+          return isTimeAxis ? v : oChart.getXAxisIndexByValue(v)
         }
 
         return v
@@ -196,8 +197,9 @@ sap.ui.define(
 
        if (sRefAxis === library.Axis.X) {
         const oChart = this.getParent()
+        const isTimeAxis = oChart.getXAxisType() === library.AxisType.Time
 
-        return oChart.getXAxisIndexByValue(v)
+        return isTimeAxis ? v : oChart.getXAxisIndexByValue(v)
       }
 
        return v

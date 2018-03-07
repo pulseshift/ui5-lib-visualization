@@ -1206,33 +1206,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         this.setAggregation('xAxis', oXAxis, true); // do not rerender
       }
 
-      // TODO: this part was removed (check if it can be deleted completely)
-      // let iSeriesTicks, iAxisTicks, iDeltaTicks
-
-      // // get maximal axis ticks
-      // iSeriesTicks = Math.max.apply(
-      //   Math,
-      //   this.getSeries().length === 0
-      //     ? [0]
-      //     : this.getSeries().map(oSeries => oSeries.getData().length)
-      // )
-
-      // // add missing ticks if required
-      // iAxisTicks = oXAxis.getLabels().length
-
-      // if (iAxisTicks < iSeriesTicks) {
-      //   iDeltaTicks = iSeriesTicks - iAxisTicks
-      //   for (let i = 0; i <= iDeltaTicks; i++) {
-      //     // add label without fire update event
-      //     Control.prototype.addAggregation.call(
-      //       oXAxis,
-      //       'labels',
-      //       new ChartAxisLabel({ value: iAxisTicks + i }),
-      //       true
-      //     )
-      //   }
-      // }
-
       return oXAxis;
     },
 
