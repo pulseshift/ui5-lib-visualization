@@ -10,6 +10,7 @@
     "build:verbose": "NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build",
     "build:disclaimer": "yarn licenses generate-disclaimer --production >> DISCLAIMER.md",
     "docs": "babel-node docs/tools/create-ui5-docs.js",
+    "prepublish": "yarn test && yarn docs && yarn build && yarn build:disclaimer",
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -48,19 +49,15 @@
     },
     "theme": "sap_belize_plus",
     "apps": [],
-    "libraries": [
-      {
-        "name": "ui5.viz",
-        "path": "src/ui5/viz"
-      }
-    ],
+    "libraries": [{
+      "name": "ui5.viz",
+      "path": "src/ui5/viz"
+    }],
     "themes": [],
-    "assets": [
-      {
-        "name": "ui5.demo",
-        "path": "src/demo"
-      }
-    ]
+    "assets": [{
+      "name": "ui5.demo",
+      "path": "src/demo"
+    }]
   },
   "devDependencies": {
     "babel": "^6.23.0",

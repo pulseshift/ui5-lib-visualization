@@ -194,16 +194,20 @@ Info: To get a more detailed logging, use `yarn start:verbose` instead.
 
 ## Distribution
 
-Start build:
-_Will create a `dist` directory in your project root._
+Start publish preparation build:
+_Will execute tests, update docs and create a `dist` directory in your project root._
 
 ```
-yarn build
+yarn prepublish
 ```
 
-Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000`
+The production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000`
 
-Info: To get a more detailed logging, use `yarn build:verbose` instead.
+When production build seems correct, you can publish the build finally (please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)):
+
+```
+yarn publish
+```
 
 ### Contributing & Troubleshooting
 
