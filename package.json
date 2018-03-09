@@ -1,6 +1,6 @@
 {
   "name": "ui5-lib-visualization",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "scripts": {
     "test": "yarn eslint ./src/ui5/viz  --ext .js --cache ",
     "start": "NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --silent",
@@ -49,15 +49,19 @@
     },
     "theme": "sap_belize_plus",
     "apps": [],
-    "libraries": [{
-      "name": "ui5.viz",
-      "path": "src/ui5/viz"
-    }],
+    "libraries": [
+      {
+        "name": "ui5.viz",
+        "path": "src/ui5/viz"
+      }
+    ],
     "themes": [],
-    "assets": [{
-      "name": "ui5.demo",
-      "path": "src/demo"
-    }]
+    "assets": [
+      {
+        "name": "ui5.demo",
+        "path": "src/demo"
+      }
+    ]
   },
   "devDependencies": {
     "babel": "^6.23.0",
