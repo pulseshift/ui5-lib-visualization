@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               { low: null, high: null, type: ui5.viz.DataPointType.ValuePair },
               { low: null, high: null, type: ui5.viz.DataPointType.ValuePair }
             ],
-            color: ui5.viz.hexToRgba(aColorPalette[0], 0.2),
+            color: aColorPalette[0],
             type: ui5.viz.ChartSeriesType.RibbonSpline
           },
           {
