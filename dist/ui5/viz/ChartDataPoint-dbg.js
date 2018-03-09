@@ -202,7 +202,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getValue: function getValue() {
       var v = this.getProperty('value');
-      return !isNaN(v) && v !== null ? parseInt(v, 10) : null;
+      return !isNaN(v) && v !== null ? parseFloat(v) : null;
     },
 
 
@@ -212,7 +212,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getHigh: function getHigh() {
       var h = this.getProperty('high');
-      return !isNaN(h) && h !== null ? parseInt(h, 10) : null;
+      return !isNaN(h) && h !== null ? parseFloat(h) : null;
     },
 
 
@@ -222,7 +222,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getLow: function getLow() {
       var l = this.getProperty('low');
-      return !isNaN(l) && l !== null ? parseInt(l, 10) : null;
+      return !isNaN(l) && l !== null ? parseFloat(l) : null;
     },
 
 
