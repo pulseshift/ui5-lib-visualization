@@ -56,6 +56,98 @@
       <m:ToolbarSpacer/>
     </m:Toolbar> -->
 
+    <m:GenericTile
+      class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+      header="{store>/yAxis/title}"
+      subheader="Spline Microchart">
+      <m:TileContent
+        footer="last 6 months +">
+        <Chart
+          width="{store>/tileContentWidth}"
+          height="{store>/tileContentHeight}"
+          showTooltip="false"
+          microMode="true"
+          xAxisType="Category"
+          showDataPoints="false"
+          series="{store>/series}">
+          <ChartSeries
+            type="{store>type}"
+            name="{store>name}"
+            lineStyle="{= ${store>forecast} ? 'Dashed' : 'Solid' }"
+            lineAnimationSpeed="Slow"
+            color="{store>color}"
+            data="{
+              path: 'store>dataPoints',
+              templateShareable: false
+            }">
+            <ChartDataPoint
+              value="{store>}"
+              low="{store>low}"
+              high="{store>high}"
+              type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
+          </ChartSeries>
+          <xAxis>
+            <ChartAxis
+              labels="{
+                path: 'store>/xAxis/labels',
+                templateShareable: false
+              }">
+              <ChartAxisLabel value="{store>}" />
+            </ChartAxis>
+          </xAxis>
+        </Chart>
+      </m:TileContent>
+    </m:GenericTile>
+
+    <m:GenericTile
+      class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+      header="Overall Population"
+      subheader="Area Spline Microchart">
+      <m:TileContent
+        footer="last 6 months">
+        <Chart
+          width="{store>/tileContentWidth}"
+          height="{store>/tileContentHeight}"
+          showTooltip="false"
+          microMode="true"
+          xAxisType="Indexed"
+          showDataPoints="false">
+          <ChartSeries
+            type="AreaSpline"
+            groupKey="overallPopulationStack">
+            <ChartDataPoint value="3" />
+            <ChartDataPoint value="5" />
+            <ChartDataPoint value="8" />
+            <ChartDataPoint value="4" />
+          </ChartSeries>
+          <ChartSeries
+            type="AreaSpline"
+            groupKey="overallPopulationStack">
+            <ChartDataPoint value="3" />
+            <ChartDataPoint value="5" />
+            <ChartDataPoint value="8" />
+            <ChartDataPoint value="4" />
+          </ChartSeries>
+          <ChartSeries
+            type="AreaSpline"
+            groupKey="overallPopulationStack">
+            <ChartDataPoint value="3" />
+            <ChartDataPoint value="5" />
+            <ChartDataPoint value="8" />
+            <ChartDataPoint value="4" />
+          </ChartSeries>
+          <xAxis>
+            <ChartAxis>
+              <ChartAxisLabel value="1" />
+              <ChartAxisLabel value="2" />
+              <ChartAxisLabel value="3" />
+              <ChartAxisLabel value="4" />
+            </ChartAxis>
+          </xAxis>
+        </Chart>
+      </m:TileContent>
+    </m:GenericTile>
+
 
     <!-- CHART -->
     <Chart

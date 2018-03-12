@@ -11,6 +11,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         title: 'Spline chart',
         width: '100%',
         height: '300px',
+        tileContentWidth: '144px',
+        tileContentHeight: '62px',
         showTooltip: true,
         groupedTooltip: true,
         showLegend: true,
