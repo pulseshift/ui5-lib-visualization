@@ -1227,12 +1227,13 @@ function ui5LibStylesDist() {
                     base: DIST
                   })
                   .pipe(plumber(buildErrorHandler))
+                  // TODO: disable clean CSS until v4.2 is released, because svg styles are beeing removed
                   // minify CSS
-                  .pipe(
-                    cleanCSS({
-                      level: 2
-                    })
-                  )
+                  // .pipe(
+                  //   cleanCSS({
+                  //     level: 2
+                  //   })
+                  // )
                   .pipe(gulp.dest(DIST))
                   .on('end', resolve)
                   .on('error', reject)
