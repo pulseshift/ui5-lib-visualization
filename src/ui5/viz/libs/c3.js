@@ -5,7 +5,7 @@ sap.ui.define([/* no dependencies */], function(){
 
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* @license C3.js v0.4.22 | (c) C3 Team and other contributors | http://c3js.org/ */
+/* @license C3.js v0.4.23 | (c) C3 Team and other contributors | http://c3js.org/ */
 (function (global, factory) {
     (typeof exports === 'undefined' ? 'undefined' : _typeof2(exports)) === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.c3 = factory();
 })(undefined, function () {
@@ -8558,7 +8558,13 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         $$.mainArea.exit().transition().duration(durationForExit).style('opacity', 0).remove();
     };
     c3_chart_internal_fn.redrawArea = function (drawArea, withTransition) {
-        return [(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", this.orgAreaOpacity)];
+        return [(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea).attr("d", drawArea).style("fill", this.color)
+        // === END PULSESHIFT BUG FIX: initial opacity is not displayed correct ===
+        .style('opacity', function () {
+            return this.orgAreaOpacity;
+        })
+        // === END PULSESHIFT BUG FIX: initial opacity is not displayed correct ===
+        ];
     };
     c3_chart_internal_fn.generateDrawArea = function (areaIndices, isSub) {
         var $$ = this,

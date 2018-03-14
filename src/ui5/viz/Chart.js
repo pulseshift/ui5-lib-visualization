@@ -2441,7 +2441,7 @@ sap.ui.define(
               }
               // update svg pattern style
               oStrokeStyle.text(
-                `#${this.getId()} .c3-target-${oSeries.getKey()} .c3-shape {
+                `#${this.getId()} .c3-target-${oSeries.getKey()} path.c3-shape {
                                     stroke-dashoffset: ${
                                       oSeries.getLineAnimationForwards()
                                         ? ''
