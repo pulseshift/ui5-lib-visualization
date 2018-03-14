@@ -56,7 +56,7 @@
       <m:ToolbarSpacer/>
     </m:Toolbar> -->
 
-    <!-- <m:GenericTile
+    <m:GenericTile
       class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
       header="{store>/yAxis/title}"
       subheader="Spline Microchart">
@@ -97,9 +97,9 @@
           </xAxis>
         </Chart>
       </m:TileContent>
-    </m:GenericTile> -->
+    </m:GenericTile>
 
-    <!-- <m:GenericTile
+    <m:GenericTile
       class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
       header="Overall Population"
       subheader="Area Spline Microchart">
@@ -146,7 +146,7 @@
           </xAxis>
         </Chart>
       </m:TileContent>
-    </m:GenericTile> -->
+    </m:GenericTile>
 
 
     <!-- CHART -->
@@ -174,7 +174,7 @@
             value="{store>}"
             low="{store>low}"
             high="{store>high}"
-            highlightAnimation="Pulsate"
+            highlightAnimation="None"
             type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
         </ChartSeries>
       </series>
