@@ -1148,9 +1148,7 @@ function ui5LibStyles() {
               gulp
                 .src(aSelectLibrarySources, {
                   base: DEV,
-                  read: true,
-                  // filter out unchanged files between runs
-                  since: gulp.lastRun(ui5LibStyles)
+                  read: true
                 })
                 // don't exit the running watcher task on errors
                 .pipe(plumber())
@@ -1384,9 +1382,7 @@ function ui5ThemeStyles() {
               gulp
                 .src(aSelectLibrarySources, {
                   base: DEV,
-                  read: true,
-                  // filter out unchanged files between runs
-                  since: gulp.lastRun(ui5ThemeStyles)
+                  read: true
                 })
                 // don't exit the running watcher task on errors
                 .pipe(plumber())
@@ -1465,9 +1461,7 @@ function ui5ThemeStylesDist() {
                 // 3. minify css after creation
                 gulp
                   .src(aSelectLibraryBundles, {
-                    base: DIST,
-                    // select only files that have changed since the last run
-                    since: gulp.lastRun(ui5LibStylesDist)
+                    base: DIST
                   })
                   .pipe(plumber(buildErrorHandler))
                   // minify CSS
