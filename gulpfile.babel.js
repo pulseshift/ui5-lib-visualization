@@ -28,6 +28,7 @@ import imagemin from 'gulp-imagemin'
 import cleanCSS from 'gulp-clean-css'
 import less from 'gulp-less'
 import tap from 'gulp-tap'
+import order from 'gulp-order'
 import sourcemaps from 'gulp-sourcemaps'
 import ui5preload from 'gulp-ui5-preload'
 import mainNpmFiles from 'gulp-main-npm-files'
@@ -1035,6 +1036,7 @@ function ui5preloads() {
             `!${sDistAppPath}/**/*-dbg.js`
           ])
           .pipe(plumber(buildErrorHandler))
+          .pipe(order())
           .pipe(
             ui5preload({
               base: sDistAppPath,
@@ -1076,6 +1078,7 @@ function ui5LibPreloads() {
             `!${sDistLibraryPath}/**/*-preload.js`
           ])
           .pipe(plumber(buildErrorHandler))
+          .pipe(order())
           .pipe(
             ui5preload({
               base: sDistLibraryPath,
