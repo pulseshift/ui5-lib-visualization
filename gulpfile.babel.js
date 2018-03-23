@@ -29,6 +29,7 @@ import cleanCSS from 'gulp-clean-css'
 import less from 'gulp-less'
 import tap from 'gulp-tap'
 import order from 'gulp-order'
+import touch from 'gulp-touch-cmd'
 import sourcemaps from 'gulp-sourcemaps'
 import ui5preload from 'gulp-ui5-preload'
 import mainNpmFiles from 'gulp-main-npm-files'
@@ -720,8 +721,8 @@ function entry() {
                 extname: '.html'
               })
             )
-            .on('error', reject)
             .pipe(gulp.dest(DEV))
+            .on('error', reject)
             .on('end', resolve)
         )
     )
@@ -769,9 +770,10 @@ function entryDist() {
                 extname: '.html'
               })
             )
-            .on('error', reject)
             .pipe(gulp.dest(DIST))
+            .on('error', reject)
             .on('end', resolve)
+            .pipe(touch())
         )
     )
 
@@ -1044,8 +1046,8 @@ function ui5preloads() {
               isLibrary: false
             })
           )
-          .on('error', reject)
           .pipe(gulp.dest(sDistAppPath))
+          .on('error', reject)
           .on('end', resolve)
       })
     })
@@ -1108,8 +1110,8 @@ function ui5LibPreloads() {
               })
             )
           )
-          .on('error', reject)
           .pipe(gulp.dest(sDistLibraryPath))
+          .on('error', reject)
           .on('end', resolve)
       })
     })
@@ -1238,9 +1240,9 @@ function ui5LibStylesDist() {
                   //   })
                   // )
                   .pipe(gulp.dest(DIST))
-                  .on('end', resolve)
                   .on('error', reject)
-              )
+                  .on('end', resolve)
+                )
           )
   } catch (error) {
     spinner.fail(error)
@@ -1477,8 +1479,8 @@ function ui5ThemeStylesDist() {
                     })
                   )
                   .pipe(gulp.dest(DIST))
-                  .on('end', resolve)
                   .on('error', reject)
+                  .on('end', resolve)
               )
           )
   } catch (error) {
@@ -1549,8 +1551,8 @@ export function loadDependencies() {
               )
               .pipe(gulp.dest(sVendorLibsPathSrc))
               .pipe(gulp.dest(sVendorLibsPathDev))
-              .on('end', resolve)
               .on('error', reject)
+              .on('end', resolve)
           )
         })
     )
@@ -1563,8 +1565,8 @@ export function loadDependencies() {
                 .src([sStylesheetName])
                 .pipe(gulp.dest(sVendorLibsPathSrc))
                 .pipe(gulp.dest(sVendorLibsPathDev))
-                .on('end', resolve)
                 .on('error', reject)
+                .on('end', resolve)
             : resolve()
         })
     )
@@ -1576,8 +1578,8 @@ export function loadDependencies() {
               base: './'
             })
             .pipe(gulp.dest(DEV))
-            .on('end', resolve)
             .on('error', reject)
+            .on('end', resolve)
         : resolve()
     })
 
@@ -1653,8 +1655,8 @@ function loadDependenciesDist() {
               // minify scripts
               .pipe(uglify())
               .pipe(gulp.dest(sVendorLibsPathDist))
-              .on('end', resolve)
               .on('error', reject)
+              .on('end', resolve)
           )
         })
     )
@@ -1674,8 +1676,8 @@ function loadDependenciesDist() {
                 )
                 .pipe(gulp.dest(sVendorLibsPathSrc))
                 .pipe(gulp.dest(sVendorLibsPathDist))
-                .on('end', resolve)
                 .on('error', reject)
+                .on('end', resolve)
             : resolve()
         })
     )
@@ -1687,8 +1689,8 @@ function loadDependenciesDist() {
               base: './'
             })
             .pipe(gulp.dest(DIST))
-            .on('end', resolve)
             .on('error', reject)
+            .on('end', resolve)
         : resolve()
     })
 
