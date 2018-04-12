@@ -585,18 +585,21 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           columns: [
           // add x axis values first
           ['x'].concat(_toConsumableArray(oXAxis.getLabels().map(function (oLabel, iIndex) {
+            var vValue = oLabel.getValue();
+
             // check if an index based formatter function must be used or a time based formatter
             switch (_this.getXAxisType()) {
               // TIME BASED VALUES
               case library.AxisType.Time:
-                return oLabel.getValue();
+                return (/^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
+                );
               // INDEX BASED LABELS
               case library.AxisType.Indexed:
-                return parseInt(oLabel.getValue(), 10) || iIndex;
+                return parseInt(vValue, 10) || iIndex;
               // CATEGORY BASED LABELS
               case library.AxisType.Category:
               default:
-                return oLabel.getValue();
+                return vValue;
             }
           })))].concat(_toConsumableArray(aSeries.map(function (oSeries) {
             // get all data points
@@ -700,11 +703,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               // count: 10, >> this value should be set automatically
               // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
               values: oXAxis.getLabels().length > 0 ? oXAxis.getLabels().map(function (oLabel, iIndex) {
+                var vValue = oLabel.getValue();
+
                 switch (_this.getXAxisType()) {
                   case library.AxisType.Time:
-                    return oLabel.getValue();
+                    return (/^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
+                    );
                   case library.AxisType.Indexed:
-                    return parseInt(oLabel.getValue(), 10) || 0;
+                    return parseInt(vValue, 10) || 0;
                   case library.AxisType.Category:
                   default:
                     return iIndex;
@@ -1654,7 +1660,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return vMinValue;
+            return (/^\d{4}-\d{2}-\d{2}&/.test(vMinValue) ? vMinValue : undefined
+            );
           case library.AxisType.Indexed:
           case library.AxisType.Category:
           default:
@@ -1685,7 +1692,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return vMaxValue;
+            return (/^\d{4}-\d{2}-\d{2}&/.test(vMaxValue) ? vMaxValue : undefined
+            );
           case library.AxisType.Indexed:
           case library.AxisType.Category:
           default:

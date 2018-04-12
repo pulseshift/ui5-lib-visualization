@@ -613,18 +613,20 @@ sap.ui.define(
               [
                 'x',
                 ...oXAxis.getLabels().map((oLabel, iIndex) => {
+                  const vValue = oLabel.getValue()
+
                   // check if an index based formatter function must be used or a time based formatter
                   switch (this.getXAxisType()) {
                     // TIME BASED VALUES
                     case library.AxisType.Time:
-                      return oLabel.getValue()
+                      return /^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
                     // INDEX BASED LABELS
                     case library.AxisType.Indexed:
-                      return parseInt(oLabel.getValue(), 10) || iIndex
+                      return parseInt(vValue, 10) || iIndex
                     // CATEGORY BASED LABELS
                     case library.AxisType.Category:
                     default:
-                      return oLabel.getValue()
+                      return vValue
                   }
                 })
               ],
@@ -768,11 +770,13 @@ sap.ui.define(
                 values:
                   oXAxis.getLabels().length > 0
                     ? oXAxis.getLabels().map((oLabel, iIndex) => {
+                        const vValue = oLabel.getValue()
+
                         switch (this.getXAxisType()) {
                           case library.AxisType.Time:
-                            return oLabel.getValue()
+                            return /^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
                           case library.AxisType.Indexed:
-                            return parseInt(oLabel.getValue(), 10) || 0
+                            return parseInt(vValue, 10) || 0
                           case library.AxisType.Category:
                           default:
                             return iIndex
@@ -1822,7 +1826,7 @@ sap.ui.define(
         if (isXAxis) {
           switch (sXAxisType) {
             case library.AxisType.Time:
-              return vMinValue
+              return /^\d{4}-\d{2}-\d{2}&/.test(vMinValue) ? vMinValue : undefined
             case library.AxisType.Indexed:
             case library.AxisType.Category:
             default:
@@ -1852,7 +1856,7 @@ sap.ui.define(
         if (isXAxis) {
           switch (sXAxisType) {
             case library.AxisType.Time:
-              return vMaxValue
+              return /^\d{4}-\d{2}-\d{2}&/.test(vMaxValue) ? vMaxValue : undefined
             case library.AxisType.Indexed:
             case library.AxisType.Category:
             default:
