@@ -591,7 +591,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             switch (_this.getXAxisType()) {
               // TIME BASED VALUES
               case library.AxisType.Time:
-                return (/^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
+                return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
                 );
               // INDEX BASED LABELS
               case library.AxisType.Indexed:
@@ -707,7 +707,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
                 switch (_this.getXAxisType()) {
                   case library.AxisType.Time:
-                    return (/^\d{4}-\d{2}-\d{2}&/.test(vValue) ? vValue : undefined
+                    return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
                     );
                   case library.AxisType.Indexed:
                     return parseInt(vValue, 10) || 0;
@@ -1660,7 +1660,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return (/^\d{4}-\d{2}-\d{2}&/.test(vMinValue) ? vMinValue : undefined
+            return (/^\d{4}-\d{2}-\d{2}$/.test(vMinValue) ? vMinValue : undefined
             );
           case library.AxisType.Indexed:
           case library.AxisType.Category:
@@ -1692,7 +1692,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return (/^\d{4}-\d{2}-\d{2}&/.test(vMaxValue) ? vMaxValue : undefined
+            return (/^\d{4}-\d{2}-\d{2}$/.test(vMaxValue) ? vMaxValue : undefined
             );
           case library.AxisType.Indexed:
           case library.AxisType.Category:
