@@ -35,16 +35,26 @@ sap.ui.define(
   [
     'sap/ui/core/Control',
     'sap/ui/core/format/DateFormat',
-    'ui5/viz/ChartAxis',
-    'ui5/viz/ChartAxisLabel',
+    './ChartAxis',
+    './ChartAxisLabel',
+    './libs/lodash.debounce',
+    './libs/lodash.isequal',
+    './libs/c3',
     './library',
 
     // libs
-    'sap/ui/thirdparty/d3',
-    'vendor/c3-extended',
-    'vendor/lodash'
+    'sap/ui/thirdparty/d3'
   ],
-  function (Control, DateFormat, ChartAxis, ChartAxisLabel, library) {
+  function(
+    Control,
+    DateFormat,
+    ChartAxis,
+    ChartAxisLabel,
+    lodashDebounce,
+    lodashIsequal,
+    c3,
+    library
+  ) {
     /**
      * Constructor for a new <code>ui5.viz.Chart</code>.
      *
@@ -422,19 +432,6 @@ sap.ui.define(
       /* =========================================================== */
 
       /**
-       * Constructor for a new <code>ui5.viz.Chart</code>.
-       *
-       * @param {string} [sId] Id for the new control, generated automatically if no id is given
-       * @param {object} [mSettings] Initial settings for the new control
-       */
-      constructor() {
-        Control.prototype.constructor.apply(this, arguments)
-
-        // initialization phase finished, update routine is enabled again
-        this._getChartUpdateHandler().release()
-      },
-
-      /**
        * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
        * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
        * @private
@@ -450,9 +447,28 @@ sap.ui.define(
         this._getChartUpdateHandler().halt()
 
         // init debounce update function instance
-        this._debounceUpdate = _.debounce(this._onDataUpdate, 10)
-        this._debounceUpdateChartLines = _.debounce(this._updateChartLines, 50)
-        this._debounceUpdateChartAreas = _.debounce(this._updateChartAreas, 50)
+        this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10)
+        this._debounceUpdateChartLines = lodashDebounce(
+          this._updateChartLines,
+          50
+        )
+        this._debounceUpdateChartAreas = lodashDebounce(
+          this._updateChartAreas,
+          50
+        )
+      },
+
+      /**
+       * Constructor for a new <code>ui5.viz.Chart</code>.
+       *
+       * @param {string} [sId] Id for the new control, generated automatically if no id is given
+       * @param {object} [mSettings] Initial settings for the new control
+       */
+      constructor() {
+        Control.prototype.constructor.apply(this, arguments)
+
+        // initialization phase finished, update routine is enabled again
+        this._getChartUpdateHandler().release()
       },
 
       /**
@@ -503,10 +519,10 @@ sap.ui.define(
 
         // enable/disable axis depending on microMode is active or not
         if (this.getMicroMode()) {
-          const suppressRerender = true;
-          oXAxis.setProperty('visible', false, suppressRerender);
-          oYAxis.setProperty('visible', false, suppressRerender);
-          oY2Axis.setProperty('visible', false, suppressRerender);
+          const suppressRerender = true
+          oXAxis.setProperty('visible', false, suppressRerender)
+          oYAxis.setProperty('visible', false, suppressRerender)
+          oY2Axis.setProperty('visible', false, suppressRerender)
         }
 
         // because properties can't be take into account during rendering, we must process all properties and aggregations manually here
@@ -541,7 +557,7 @@ sap.ui.define(
             enabled: this.getZoomEnabled()
           },
           legend: {
-            position: this.getLegendPosition(),
+            position: this.getLegendPosition().toLowerCase(),
             show: this.getShowLegend()
           },
           tooltip: {
@@ -570,7 +586,7 @@ sap.ui.define(
                   // INDEX BASED LABELS
                   case library.AxisType.Indexed:
                   // CATEGORY BASED LABELS
-                  case library.AxisType.Category:
+                  case library.AxisType.Category: // eslint-disable-line no-fallthrough
                   default:
                     return iXIndex => {
                       const oLabel = this.getXAxisLabelByIndex(iXIndex)
@@ -586,6 +602,10 @@ sap.ui.define(
               })()
             }
           },
+          // if true set, the region of null data will be connected without any data point
+          line: {
+            connectNull: true
+          },
           data: {
             x: 'x',
             columns: [
@@ -593,18 +613,20 @@ sap.ui.define(
               [
                 'x',
                 ...oXAxis.getLabels().map((oLabel, iIndex) => {
+                  const vValue = oLabel.getValue()
+
                   // check if an index based formatter function must be used or a time based formatter
                   switch (this.getXAxisType()) {
                     // TIME BASED VALUES
                     case library.AxisType.Time:
-                      return oLabel.getValue()
+                      return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
                     // INDEX BASED LABELS
                     case library.AxisType.Indexed:
-                      return parseInt(oLabel.getValue(), 10) || iIndex
+                      return parseInt(vValue, 10) || iIndex
                     // CATEGORY BASED LABELS
                     case library.AxisType.Category:
                     default:
-                      return oLabel.getValue()
+                      return vValue
                   }
                 })
               ],
@@ -618,7 +640,7 @@ sap.ui.define(
                     if (
                       isVisible &&
                       oDataPoint.getHighlightAnimation() !==
-                      library.DataPointAnimation.None
+                        library.DataPointAnimation.None
                     ) {
                       aHighlightedDataPoints.push({
                         series: oSeries.getKey(),
@@ -640,84 +662,84 @@ sap.ui.define(
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                  oTypes[oSeries.getKey()] = oSeries.getYAxis()
-                  return oTypes
-                }, {}),
+                    // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
+                    oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase()
+                    return oTypes
+                  }, {}),
             types:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesType, ... }
-                  oTypes[oSeries.getKey()] = oSeries.getType()
-                  return oTypes
-                }, {}),
+                    // return a map with the structure: { @seriesKey: @seriesType, ... }
+                    oTypes[oSeries.getKey()] = oSeries.getType()
+                    return oTypes
+                  }, {}),
             names:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesName, ... }
-                  oTypes[oSeries.getKey()] =
-                    oSeries.getName() || oSeries.getKey()
-                  return oTypes
-                }, {}),
+                    // return a map with the structure: { @seriesKey: @seriesName, ... }
+                    oTypes[oSeries.getKey()] =
+                      oSeries.getName() || oSeries.getKey()
+                    return oTypes
+                  }, {}),
             colors:
               aSeries.length === 0
                 ? []
                 : aSeries.reduce((oTypes, oSeries) => {
-                  // return a map with the structure: { @seriesKey: @seriesColor, ... }
-                  if (oSeries.getColor()) {
-                    oTypes[oSeries.getKey()] = oSeries.getColor()
-                  }
-                  return oTypes
-                }, {}),
+                    // return a map with the structure: { @seriesKey: @seriesColor, ... }
+                    if (oSeries.getColor()) {
+                      oTypes[oSeries.getKey()] = oSeries.getColor()
+                    }
+                    return oTypes
+                  }, {}),
             labels: {
               format:
                 aSeries.length === 0
                   ? []
                   : aSeries.reduce((oTypes, oSeries) => {
-                    // return a map with the structure: { @seriesKey: @seriesFormatFunction, ... }
-                    oTypes[oSeries.getKey()] = (value, seriesKey, index) => {
-                      const sLabel = oSeries.getData()[index]
-                        ? oSeries.getData()[index].getLabel()
-                        : null
-                      const sValidatedLabel = sLabel ? sLabel : value
-                      // if showLabels = true then display label or value
-                      return oSeries.getShowLabels() ? sValidatedLabel : null
-                    }
-                    return oTypes
-                  }, {})
+                      // return a map with the structure: { @seriesKey: @seriesFormatFunction, ... }
+                      oTypes[oSeries.getKey()] = (value, seriesKey, index) => {
+                        const sLabel = oSeries.getData()[index]
+                          ? oSeries.getData()[index].getLabel()
+                          : null
+                        const sValidatedLabel = sLabel ? sLabel : value
+                        // if showLabels = true then display label or value
+                        return oSeries.getShowLabels() ? sValidatedLabel : null
+                      }
+                      return oTypes
+                    }, {})
             },
             groups:
               aSeries.length === 0
                 ? []
                 : aSeries
-                  .reduce((aGroups, oSeries) => {
-                    // collect all group keys
-                    if (
-                      oSeries &&
-                      oSeries.getGroupKey() &&
-                      !aGroups.includes(oSeries.getGroupKey())
-                    ) {
-                      aGroups.push(oSeries.getGroupKey())
-                    }
-                    return aGroups
-                  }, [])
-                  .map(sGroupKey => {
-                    // return for each group key the list of respective series keys (['data1', 'data2'])
-                    return aSeries
-                      .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
-                      .map(oSeries => oSeries.getKey())
-                  })
+                    .reduce((aGroups, oSeries) => {
+                      // collect all group keys
+                      if (
+                        oSeries &&
+                        oSeries.getGroupKey() &&
+                        !aGroups.includes(oSeries.getGroupKey())
+                      ) {
+                        aGroups.push(oSeries.getGroupKey())
+                      }
+                      return aGroups
+                    }, [])
+                    .map(sGroupKey => {
+                      // return for each group key the list of respective series keys (['data1', 'data2'])
+                      return aSeries
+                        .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
+                        .map(oSeries => oSeries.getKey())
+                    })
           },
           color: {
             pattern: this.getColors()
               .map(oColor => oColor.getColor())
               .concat(
-              // retrieve custom color palette first if available
-              library.ColorPalette.custom
-                ? library.ColorPalette.custom
-                : library.ColorPalette.Material300
+                // retrieve custom color palette first if available
+                library.ColorPalette.custom
+                  ? library.ColorPalette.custom
+                  : library.ColorPalette.Material300
               )
           },
           axis: {
@@ -748,16 +770,18 @@ sap.ui.define(
                 values:
                   oXAxis.getLabels().length > 0
                     ? oXAxis.getLabels().map((oLabel, iIndex) => {
-                      switch (this.getXAxisType()) {
-                        case library.AxisType.Time:
-                          return oLabel.getValue()
-                        case library.AxisType.Indexed:
-                          return parseInt(oLabel.getValue(), 10) || 0
-                        case library.AxisType.Category:
-                        default:
-                          return iIndex
-                      }
-                    })
+                        const vValue = oLabel.getValue()
+
+                        switch (this.getXAxisType()) {
+                          case library.AxisType.Time:
+                            return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
+                          case library.AxisType.Indexed:
+                            return parseInt(vValue, 10) || 0
+                          case library.AxisType.Category:
+                          default:
+                            return iIndex
+                        }
+                      })
                     : null,
                 format: (() => {
                   // check if an index based formatter function must be used or a time based formatter
@@ -772,7 +796,7 @@ sap.ui.define(
                     // INDEXED BASED LABELS
                     case library.AxisType.Indexed:
                     // CATEGORY BASED LABELS
-                    case library.AxisType.Category:
+                    case library.AxisType.Category: // eslint-disable-line no-fallthrough
                     default:
                       return iXIndex => {
                         const oLabel = this.getXAxisLabelByIndex(iXIndex)
@@ -798,31 +822,31 @@ sap.ui.define(
               show: oYAxis.getVisible(),
               // inner: false,
               // default: max = highest y axis value
-              max:
-                this.getMaxValueByAxis(oYAxis) ||
-                oYAxis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.max(
-                      pre === undefined ? -Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
-                  ),
+              max: this.getMaxValueByAxis(oYAxis),
+              // oYAxis
+              //     .getLabels()
+              //     .filter(o => o.getVisible())
+              //     .reduce(
+              //       (pre, curr) =>
+              //         Math.max(
+              //           pre === undefined ? -Infinity : pre,
+              //           parseInt(curr.getValue(), 10)
+              //         ),
+              //       undefined
+              //     ),
               // default: min = lowest y axis value
-              min:
-                this.getMinValueByAxis(oYAxis) ||
-                oYAxis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.min(
-                      pre === undefined ? Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
-                  ),
+              min: this.getMinValueByAxis(oYAxis),
+              // oYAxis
+              //     .getLabels()
+              //     .filter(o => o.getVisible())
+              //     .reduce(
+              //       (pre, curr) =>
+              //         Math.min(
+              //           pre === undefined ? Infinity : pre,
+              //           parseInt(curr.getValue(), 10)
+              //         ),
+              //       undefined
+              //     ),
               // inverted: false,
               // center: 0,
               padding: {
@@ -832,39 +856,43 @@ sap.ui.define(
               default: [
                 // identify min and max value to set default range
                 oYAxis.getMinValue() ||
-                oYAxis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.min(
-                      pre === undefined ? Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
+                  oYAxis
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
                     ),
-                  undefined
-                  ),
                 oYAxis.getMaxValue() ||
-                oYAxis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.max(
-                      pre === undefined ? -Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
-                  )
+                  oYAxis
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oYAxis.getLabels().length > 0
+                  oYAxis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oYAxis
-                      .getLabels()
-                      .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
+                        .getLabels()
+                        .filter(o => o.getVisible())
+                        .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
                     : null,
                 format: iYValue => {
                   const oLabel = oYAxis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .find(oLabel => parseInt(oLabel.getValue(), 10) === iYValue)
 
                   if (!oLabel) {
@@ -900,41 +928,45 @@ sap.ui.define(
               default: [
                 // identify min and max value to set default range
                 oY2Axis.getMinValue() ||
-                oY2Axis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.min(
-                      pre === undefined ? Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
+                  oY2Axis
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.min(
+                          pre === undefined ? Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
                     ),
-                  undefined
-                  ),
                 oY2Axis.getMaxValue() ||
-                oY2Axis
-                  .getLabels()
-                  .reduce(
-                  (pre, curr) =>
-                    Math.max(
-                      pre === undefined ? -Infinity : pre,
-                      parseInt(curr.getValue(), 10) || undefined
-                    ),
-                  undefined
-                  )
+                  oY2Axis
+                    .getLabels()
+                    .filter(o => o.getVisible())
+                    .reduce(
+                      (pre, curr) =>
+                        Math.max(
+                          pre === undefined ? -Infinity : pre,
+                          parseInt(curr.getValue(), 10)
+                        ),
+                      undefined
+                    )
               ],
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oY2Axis.getLabels().length > 0
+                  oY2Axis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oY2Axis
-                      .getLabels()
-                      .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
+                        .getLabels()
+                        .filter(o => o.getVisible())
+                        .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
                     : null,
                 format: iY2Value => {
                   const oLabel = oY2Axis
                     .getLabels()
+                    .filter(o => o.getVisible())
                     .find(
-                    oLabel => parseInt(oLabel.getValue(), 10) === iY2Value
+                      oLabel => parseInt(oLabel.getValue(), 10) === iY2Value
                     )
                   if (!oLabel) {
                     // if no label exist, show value
@@ -961,8 +993,8 @@ sap.ui.define(
               show: oXAxis.getShowGridLines(),
               lines: this.getLines()
                 .filter(
-                oLine =>
-                  oLine.getVisible() && oLine.getAxis() === library.Axis.X
+                  oLine =>
+                    oLine.getVisible() && oLine.getAxis() === library.Axis.X
                 )
                 .map(oLine => {
                   return this._mapChartLineToC3Line(oLine)
@@ -972,8 +1004,8 @@ sap.ui.define(
               show: oYAxis.getShowGridLines(),
               lines: this.getLines()
                 .filter(
-                oLine =>
-                  oLine.getVisible() && oLine.getAxis() !== library.Axis.X
+                  oLine =>
+                    oLine.getVisible() && oLine.getAxis() !== library.Axis.X
                 )
                 .map(oLine => {
                   return this._mapChartLineToC3Line(oLine)
@@ -987,7 +1019,7 @@ sap.ui.define(
                 id: oArea.getId(),
                 start: oArea.getStartValue(),
                 end: oArea.getEndValue(),
-                axis: oArea.getAxis(),
+                axis: oArea.getAxis().toLowerCase(),
                 text: oArea.getTitle(),
                 // position: oArea.getTitlePosition(),
                 // add three classes: general line class, line style class and line identifier
@@ -1004,14 +1036,15 @@ sap.ui.define(
           }
         }
 
-        console.log(options)
+        // for debugging purposes
+        // console.log(options)
 
         // initialize c3 chart
         this._chart = c3.generate(options)
 
         // >>> continue styling
 
-        // highlight data ponts
+        // highlight data points
         d3
           .selectAll(`#${this.getId()} g.c3-circles circle.c3-circle`)
           .classed(this.CSS_HIGHLIGHT_PULSATE, false)
@@ -1019,9 +1052,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-              `#${this.getId()} g.c3-circles-${
-              oHighlightInfo.series
-              } circle.c3-circle-${oHighlightInfo.point}`
+                `#${this.getId()} g.c3-circles-${
+                  oHighlightInfo.series
+                } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -1068,7 +1101,7 @@ sap.ui.define(
        * @private
        * @override
        */
-      exit() { },
+      exit() {},
 
       /* =========================================================== */
       /* override methods                                            */
@@ -1244,7 +1277,6 @@ sap.ui.define(
        */
       setLegendPosition(sLegendPosition) {
         // live update by c3 API is not working, yet, therefore we must rerender the chart
-        // TODO: check if custom modification is possible: c3.chart.fn.legend.position = function (position) { ... }
         // if (this._chart) this._chart.legend.position = sLegendPosition;
         return this.setProperty('legendPosition', sLegendPosition, false) // force rerender
       },
@@ -1330,7 +1362,7 @@ sap.ui.define(
        * @override
        */
       getXAxis() {
-        let iSeriesTicks, iAxisTicks, iDeltaTicks, oXAxis
+        let oXAxis
 
         oXAxis = this.getAggregation('xAxis')
         if (!oXAxis) {
@@ -1705,7 +1737,7 @@ sap.ui.define(
        * @public
        * @override
        */
-      setModel(oModel, sName) {
+      setModel(/* oModel, sName */) {
         // to improve performance, we disable chart update until the complete model was assigned
         this._getChartUpdateHandler().halt()
 
@@ -1746,6 +1778,37 @@ sap.ui.define(
       },
 
       /**
+       * Get respective X axis index by value.
+       *
+       * @param {string|int|null} [vValue] Index.
+       * @return {any} Value depending on axis type.
+       * @public
+       */
+      getXAxisIndexByValue(vValue) {
+        const oXAxis = this.getXAxis()
+        const sXAxisType = this.getXAxisType()
+        const aLabels = oXAxis.getLabels() || []
+        const iLabels = aLabels.length
+
+        // return value if axis is from type Indexed
+        if (sXAxisType === library.AxisType.Indexed) {
+          return parseInt(vValue, 10) || null
+        }
+
+        // find respective label and return index
+        for (let iIndex = 0; iIndex < iLabels; iIndex++) {
+          const oLabel = aLabels[iIndex]
+
+          if (oLabel.getValue() === vValue) {
+            return iIndex
+          }
+        }
+
+        // return fallback
+        return null
+      },
+
+      /**
        * Getter for property <code>minValue</code> of an axis.
        *
        * @param {ui5.viz.ChartAxis} [oAxis] Axis.
@@ -1756,21 +1819,23 @@ sap.ui.define(
         const sXAxisType = this.getXAxisType()
         const sAxisType = oAxis.getProperty('_axisType')
         const isXAxis = sAxisType === library.Axis.X
-        const sMinValue = oAxis.getMinValue() || undefined
+        const vMinValue = oAxis.getMinValue()
+        const iMinValue = parseInt(vMinValue, 10)
+        const isZero = iMinValue === 0
 
         if (isXAxis) {
-          switch (this.getXAxisType()) {
+          switch (sXAxisType) {
             case library.AxisType.Time:
-              return sMinValue
+              return /^\d{4}-\d{2}-\d{2}$/.test(vMinValue) ? vMinValue : undefined
             case library.AxisType.Indexed:
             case library.AxisType.Category:
             default:
-              return parseInt(sMinValue, 10) || undefined
+              return isZero ? iMinValue : iMinValue || undefined
           }
         }
 
         // fallback for Y and Y2 axis
-        return parseInt(sMinValue, 10) || undefined
+        return isZero ? iMinValue : iMinValue || undefined
       },
 
       /**
@@ -1784,21 +1849,23 @@ sap.ui.define(
         const sXAxisType = this.getXAxisType()
         const sAxisType = oAxis.getProperty('_axisType')
         const isXAxis = sAxisType === library.Axis.X
-        const sMaxValue = oAxis.getMaxValue() || undefined
+        const vMaxValue = oAxis.getMaxValue()
+        const iMaxValue = parseInt(vMaxValue, 10)
+        const isZero = iMaxValue === 0
 
         if (isXAxis) {
-          switch (this.getXAxisType()) {
+          switch (sXAxisType) {
             case library.AxisType.Time:
-              return sMaxValue
+              return /^\d{4}-\d{2}-\d{2}$/.test(vMaxValue) ? vMaxValue : undefined
             case library.AxisType.Indexed:
             case library.AxisType.Category:
             default:
-              return parseInt(sMaxValue, 10) || undefined
+              return isZero ? iMaxValue : iMaxValue || undefined
           }
         }
 
         // fallback for Y and Y2 axis
-        return parseInt(sMaxValue, 10) || undefined
+        return isZero ? iMaxValue : iMaxValue || undefined
       },
 
       /* =========================================================== */
@@ -1921,7 +1988,7 @@ sap.ui.define(
                 if (
                   isVisible &&
                   oDataPoint.getHighlightAnimation() !==
-                  library.DataPointAnimation.None
+                    library.DataPointAnimation.None
                 ) {
                   aHighlightedDataPoints.push({
                     series: oSeries.getKey(),
@@ -1939,43 +2006,43 @@ sap.ui.define(
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
-                oTypes[oSeries.getKey()] = oSeries.getYAxis()
-                return oTypes
-              }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
+                  oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase()
+                  return oTypes
+                }, {}),
 
           // update series types
           types:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                // return a map with the structure: { @seriesKey: @seriesType, ... }
-                oTypes[oSeries.getKey()] = oSeries.getType()
-                return oTypes
-              }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesType, ... }
+                  oTypes[oSeries.getKey()] = oSeries.getType()
+                  return oTypes
+                }, {}),
 
           // update series names
           names:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                // return a map with the structure: { @seriesKey: @seriesName, ... }
-                oTypes[oSeries.getKey()] =
-                  oSeries.getName() || oSeries.getKey()
-                return oTypes
-              }, {}),
+                  // return a map with the structure: { @seriesKey: @seriesName, ... }
+                  oTypes[oSeries.getKey()] =
+                    oSeries.getName() || oSeries.getKey()
+                  return oTypes
+                }, {}),
 
           // update series colors
           colors:
             aSeries.length === 0
               ? []
               : aSeries.reduce((oTypes, oSeries) => {
-                // return a map with the structure: { @seriesKey: @seriesColor, ... }
-                if (oSeries.getColor()) {
-                  oTypes[oSeries.getKey()] = oSeries.getColor()
-                }
-                return oTypes
-              }, {})
+                  // return a map with the structure: { @seriesKey: @seriesColor, ... }
+                  if (oSeries.getColor()) {
+                    oTypes[oSeries.getKey()] = oSeries.getColor()
+                  }
+                  return oTypes
+                }, {})
         })
 
         // highlight data points
@@ -1986,9 +2053,9 @@ sap.ui.define(
           aHighlightedDataPoints.forEach(oHighlightInfo => {
             d3
               .select(
-              `#${this.getId()} g.c3-circles-${
-              oHighlightInfo.series
-              } circle.c3-circle-${oHighlightInfo.point}`
+                `#${this.getId()} g.c3-circles-${
+                  oHighlightInfo.series
+                } circle.c3-circle-${oHighlightInfo.point}`
               )
               .classed(this.CSS_HIGHLIGHT_PULSATE, true)
           })
@@ -1999,23 +2066,23 @@ sap.ui.define(
           aSeries.length === 0
             ? []
             : aSeries
-              .reduce((aGroups, oSeries) => {
-                // collect all group keys
-                if (
-                  oSeries &&
-                  oSeries.getGroupKey() &&
-                  !aGroups.includes(oSeries.getGroupKey())
-                ) {
-                  aGroups.push(oSeries.getGroupKey())
-                }
-                return aGroups
-              }, [])
-              .map(sGroupKey => {
-                // return for each group key the list of respective series keys (['data1', 'data2'])
-                return aSeries
-                  .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
-                  .map(oSeries => oSeries.getKey())
-              })
+                .reduce((aGroups, oSeries) => {
+                  // collect all group keys
+                  if (
+                    oSeries &&
+                    oSeries.getGroupKey() &&
+                    !aGroups.includes(oSeries.getGroupKey())
+                  ) {
+                    aGroups.push(oSeries.getGroupKey())
+                  }
+                  return aGroups
+                }, [])
+                .map(sGroupKey => {
+                  // return for each group key the list of respective series keys (['data1', 'data2'])
+                  return aSeries
+                    .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
+                    .map(oSeries => oSeries.getKey())
+                })
         )
 
         // update series styles
@@ -2037,34 +2104,12 @@ sap.ui.define(
         this._chart.axis.range({
           min: {
             X: this.getMinValueByAxis(oXAxis),
-            y:
-              this.getMinValueByAxis(oYAxis) ||
-              oYAxis
-                .getLabels()
-                .reduce(
-                (pre, curr) =>
-                  Math.min(
-                    pre === undefined ? Infinity : pre,
-                    parseInt(curr.getValue(), 10) || undefined
-                  ),
-                undefined
-                ),
+            y: this.getMinValueByAxis(oYAxis),
             y2: this.getMinValueByAxis(oY2Axis)
           },
           max: {
             x: this.getMaxValueByAxis(oXAxis),
-            y:
-              this.getMaxValueByAxis(oYAxis) ||
-              oYAxis
-                .getLabels()
-                .reduce(
-                (pre, curr) =>
-                  Math.max(
-                    pre === undefined ? -Infinity : pre,
-                    parseInt(curr.getValue(), 10) || undefined
-                  ),
-                undefined
-                ),
+            y: this.getMaxValueByAxis(oYAxis),
             y2: this.getMaxValueByAxis(oY2Axis)
           }
         })
@@ -2092,13 +2137,13 @@ sap.ui.define(
 
         const aNewXLines = this.getLines()
           .filter(
-          oLine => oLine.getVisible() && oLine.getAxis() === library.Axis.X
+            oLine => oLine.getVisible() && oLine.getAxis() === library.Axis.X
           )
           .map(oNewLine => this._mapChartLineToC3Line(oNewLine))
 
         const aNewYLines = this.getLines()
           .filter(
-          oLine => oLine.getVisible() && oLine.getAxis() !== library.Axis.X
+            oLine => oLine.getVisible() && oLine.getAxis() !== library.Axis.X
           )
           .map(oNewLine => this._mapChartLineToC3Line(oNewLine))
 
@@ -2106,7 +2151,7 @@ sap.ui.define(
         const aUpdateXList = aNewXLines.filter(oNewLine => {
           const oOldLine = aOldXLines.find(oLine => oLine.id === oNewLine.id)
           // compare old and new line
-          return oOldLine && _.isEqual(oNewLine, oOldLine) === false
+          return oOldLine && lodashIsequal(oNewLine, oOldLine) === false
         })
 
         // if at least one event changed, we must reset all lines at once
@@ -2138,7 +2183,7 @@ sap.ui.define(
         const aUpdateYList = aNewYLines.filter(oNewLine => {
           const oOldLine = aOldYLines.find(oLine => oLine.id === oNewLine.id)
           // compare old and new line
-          return oOldLine && _.isEqual(oNewLine, oOldLine) === false
+          return oOldLine && lodashIsequal(oNewLine, oOldLine) === false
         })
 
         // if at least one event changed, we must reset all lines at once
@@ -2186,13 +2231,13 @@ sap.ui.define(
               id: oArea.getId(),
               start: oArea.getStartValue(),
               end: oArea.getEndValue(),
-              axis: oArea.getAxis(),
+              axis: oArea.getAxis().toLowerCase(),
               text: oArea.getTitle(),
               // position: oArea.getTitlePosition(),
               // add three classes: general line class, line style class and line identifier
               class: `${this.CSS_CLASS_AREA} ${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()}`
+              }-${oArea.getId()}`
             }
           })
 
@@ -2218,7 +2263,7 @@ sap.ui.define(
         const aUpdateList = aNewAreas.filter(oNewArea => {
           const oOldArea = aOldAreas.find(oArea => oArea.id === oNewArea.id)
           // compare old and new area
-          return oOldArea && _.isEqual(oNewArea, oOldArea) === false
+          return oOldArea && lodashIsequal(oNewArea, oOldArea) === false
         })
         if (aUpdateList.length > 0) {
           this._chart.regions(aUpdateList)
@@ -2245,16 +2290,16 @@ sap.ui.define(
         return {
           id: oChartLine.getId(),
           value: oChartLine.getValue(),
-          axis: oChartLine.getAxis(),
+          axis: oChartLine.getAxis().toLowerCase(),
           text: oChartLine.getTitle(),
-          position: oChartLine.getTitlePosition(),
+          position: oChartLine.getTitlePosition().toLowerCase(),
           showSelector: oChartLine.getShowLineSelector() ? true : false,
           // add three classes: general line class, line style class and line identifier
           class: `${this.CSS_CLASS_LINE} ${
             this.CSS_CLASS_LINE
-            }-${oChartLine.getStyle()} ${
+          }-${oChartLine.getStyle()} ${
             this.CSS_CLASS_LINE
-            }-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
+          }-${oChartLine.getId()} ${sShowSelectorClass} ${sIconOnlyClass}`
         }
       },
 
@@ -2286,7 +2331,7 @@ sap.ui.define(
             // set solid style if series type (e.g. bar) is not supporting line styles
             sShapeStyle = this._isShapeType(oSeries.getType())
               ? oSeries.getShapeStyle()
-              : library.ShapeStyle.Default
+              : library.ShapeStyle.Solid
 
           switch (sShapeStyle) {
             case library.ShapeStyle.Striped:
@@ -2336,7 +2381,7 @@ sap.ui.define(
                                 }`
               )
               break
-            case library.ShapeStyle.Default:
+            case library.ShapeStyle.Solid:
             default:
               // remove pattern style from shape area
               oPatternStyle = d3.select(
@@ -2356,7 +2401,7 @@ sap.ui.define(
             // set solid style if series type (e.g. bar) is not supporting line styles
             sLineStyle = this._isLineType(oSeries.getType())
               ? oSeries.getLineStyle()
-              : library.LineStyle.Default,
+              : library.LineStyle.Solid,
             iAnimationSpeed
 
           // set animation speed
@@ -2380,7 +2425,10 @@ sap.ui.define(
             case library.LineStyle.Dashed:
             case library.LineStyle.Dotted:
               // calculate dash array
-              sDashArray = oSeries.getLineStyle() === 'dotted' ? '1 5' : '5'
+              sDashArray =
+                oSeries.getLineStyle() === library.LineStyle.Dotted
+                  ? '1 5'
+                  : '5'
 
               // add css to svg definitions
               oStrokeStyle = d3.select(
@@ -2397,34 +2445,24 @@ sap.ui.define(
               }
               // update svg pattern style
               oStrokeStyle.text(
-                `#${this.getId()} .c3-target-${oSeries.getKey()} .c3-shape {
+                `#${this.getId()} .c3-target-${oSeries.getKey()} path.c3-shape {
                                     stroke-dashoffset: ${
-                oSeries.getLineAnimationForwards()
-                  ? ''
-                  : '-'
-                }50rem;
+                                      oSeries.getLineAnimationForwards()
+                                        ? ''
+                                        : '-'
+                                    }50rem;
                                     stroke-dasharray: ${sDashArray};
                                     stroke-linecap: round;
 
-                                    -webkit-animation: ui5-viz-chart-dash-animation ${
-                iAnimationSpeed
-                }s 0s linear infinite forwards;
-                                    -moz-animation: ui5-viz-chart-dash-animation ${
-                iAnimationSpeed
-                }s 0s linear infinite forwards;
-                                    -ms-animation: ui5-viz-chart-dash-animation ${
-                iAnimationSpeed
-                }s 0s linear infinite forwards;
-                                    -o-animation: ui5-viz-chart-dash-animation ${
-                iAnimationSpeed
-                }s 0s linear infinite forwards;
-                                    animation: ui5-viz-chart-dash-animation ${
-                iAnimationSpeed
-                }s 0s linear infinite forwards;
+                                    -webkit-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    -moz-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    -ms-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    -o-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
+                                    animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
                                 }`
               )
               break
-            case library.LineStyle.Default:
+            case library.LineStyle.Solid:
             default:
               // remove pattern style from shape area
               oStrokeStyle = d3.select(
@@ -2462,33 +2500,67 @@ sap.ui.define(
 
         // get all chart lines  and concatenate color rules
         this.getLines().forEach(oLine => {
-          let sColor = oLine.getColor()
+          const sColor = oLine.getColor()
+          const sLineStyle = oLine.getStyle()
+          const sCSSLineSelector = `#${this.getId()} .${
+            this.CSS_CLASS_LINE
+          }-${oLine.getId()}`
+          const sUID = `${this.getId()}-${oLine.getId()}`
+          let oStrokeStyle
+          let sDashArray
 
           if (sColor) {
             // update svg area style
-            sCSS += `#${this.getId()} .${
-              this.CSS_CLASS_LINE
-              }-${oLine.getId()} line {
-                                stroke: ${sColor};
-                            }
+            sCSS += `${sCSSLineSelector} line {
+                stroke: ${sColor};
+            }
 
-                            #${this.getId()} .${
-              this.CSS_CLASS_LINE
-              }-${oLine.getId()} circle {
-                                stroke: ${sColor};
-                            }
+            ${sCSSLineSelector} circle {
+                stroke: ${sColor};
+            }
 
-                            #${this.getId()} .${
-              this.CSS_CLASS_LINE
-              }-${oLine.getId()} text {
-                                fill: ${sColor};
-                            }`
+            ${sCSSLineSelector} text {
+                fill: ${sColor};
+            }`
+          }
+
+          switch (sLineStyle) {
+            case library.LineStyle.Dashed:
+            case library.LineStyle.Dotted:
+              // calculate dash array
+              sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5'
+
+              // add css to svg definitions
+              oStrokeStyle = d3.select(`#${this.getId()} defs #${sUID}`)
+              if (oStrokeStyle.empty()) {
+                oStrokeStyle = d3
+                  .select(`#${this.getId()} defs`)
+                  .append('style')
+                  .attr({
+                    id: `${sUID}`,
+                    type: 'text/css'
+                  })
+              }
+              // update svg pattern style
+              oStrokeStyle.text(
+                `${sCSSLineSelector} line {
+                    stroke-dasharray: ${sDashArray};
+                    stroke-linecap: round;
+                }`
+              )
+              break
+            case library.LineStyle.Solid:
+            default:
+              // remove pattern style from shape area
+              oStrokeStyle = d3.select(`#${this.getId()} defs #${sUID}`)
+              if (!oStrokeStyle.empty()) {
+                oStrokeStyle.text('')
+              }
+              break
           }
 
           // update line selector icon and selector press event
-          let oLineHook = d3.select(
-            `#${this.getId()} .ui5-viz-chart-line-${oLine.getId()}`
-          ),
+          let oLineHook = d3.select(sCSSLineSelector),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(
               oLine.getLineSelectorIcon()
             )
@@ -2503,7 +2575,7 @@ sap.ui.define(
             // set click event
             oLineHook
               .select('.c3-grid-lines-circle-hover')
-              .on('click', function () {
+              .on('click', function() {
                 oLine.fireSelectorPress({
                   line: oLine,
                   selectorDomRef: this.previousSibling // return circle instead of hover-circle
@@ -2513,7 +2585,7 @@ sap.ui.define(
             // unregister click event
             oLineHook
               .select('.c3-grid-lines-circle-hover')
-              .on('click', function () { })
+              .on('click', function() {})
           }
         })
 
@@ -2544,9 +2616,9 @@ sap.ui.define(
 
         // get all chart areas and concatenate style rules
         this.getAreas().forEach(oArea => {
-          let sColor = oArea.getColor() || '#000000',
-            sShapeStyle = oArea.getStyle(),
-            oPattern
+          const sColor = oArea.getColor() || '#000000'
+          const sShapeStyle = oArea.getStyle()
+          let oPattern
 
           switch (sShapeStyle) {
             case library.ShapeStyle.Striped:
@@ -2577,33 +2649,33 @@ sap.ui.define(
                                 }
                                 #${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} rect.c3-region-stripe,
+              }-${oArea.getId()} rect.c3-region-stripe,
                                 #${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} text.c3-region-text {
+              }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
                                 #${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} rect.c3-region-area {
+              }-${oArea.getId()} rect.c3-region-area {
                                     fill: url(#${this.getId()}-area-stripe-pattern-${oArea.getId()}) !important;
                                 }`
               break
 
-            case library.ShapeStyle.Default:
+            case library.ShapeStyle.Solid:
             default:
               // update svg area style
               sCSS += `#${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} rect.c3-region-stripe,
+              }-${oArea.getId()} rect.c3-region-stripe,
                                 #${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} text.c3-region-text {
+              }-${oArea.getId()} text.c3-region-text {
                                     fill: ${sColor};
                                 }
                                 #${this.getId()} .${
                 this.CSS_CLASS_AREA
-                }-${oArea.getId()} rect.c3-region-area {
+              }-${oArea.getId()} rect.c3-region-area {
                                     fill: ${sColor};
                                 }`
               break
@@ -2637,7 +2709,7 @@ sap.ui.define(
        * Check if a style is valid for lines
        *
        * @param {string} [sSeriesType] style to be validated
-       * @return {boolean} returns true if style is valid for shape tzpe
+       * @return {boolean} returns true if style is valid for shape type
        * @private
        */
       _isLineType(sSeriesType) {
@@ -2661,9 +2733,14 @@ sap.ui.define(
         return bTypeValid
       },
 
-      // ===== START OPAL EXTENSION =====
-      // TODO: jsdoc missing!
-      _isRibbonType: function _isRibbonType(sSeriesType) {
+      /**
+       * Check if a series type is from type ribbon
+       *
+       * @param {string} [sSeriesType] style to be validated
+       * @return {boolean} returns true if style is a ribbon
+       * @private
+       */
+      _isRibbonType(sSeriesType) {
         return (
           sSeriesType ===
           (library.ChartSeriesType.RibbonLine ||
@@ -2671,7 +2748,6 @@ sap.ui.define(
             library.ChartSeriesType.RibbonStep)
         )
       },
-      // ===== END OPAL EXTENSION =====
 
       /**
        * Get available size in pixel of parent element.
@@ -2790,9 +2866,9 @@ sap.ui.define(
           // continue with 'auto:'
           case 'initial':
           // continue with 'auto:'
-          case 'inherit':
+          case 'inherit': // eslint-disable-line no-fallthrough
           // continue with 'auto:'
-          case 'auto':
+          case 'auto': // eslint-disable-line no-fallthrough
             // continue with 'auto:'
             iCalculatedWidth = this._getAvailableSize(sSizeType)
             break
@@ -2801,11 +2877,10 @@ sap.ui.define(
             // check: https://developer.mozilla.org/de/docs/Web/CSS/length#Interpolation
             jQuery.sap.log.warning(
               'CSS unit ' +
-              mCSS.unit +
-              ' is not supported, yet. Fallback to "auto" (max. width).'
+                mCSS.unit +
+                ' is not supported, yet. Fallback to "auto" (max. width).'
             )
             iCalculatedWidth = this._getAvailableSize(sSizeType)
-            break
         }
 
         return iCalculatedWidth

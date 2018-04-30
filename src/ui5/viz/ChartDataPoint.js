@@ -15,22 +15,22 @@
  */
 sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
   /**
-     * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
-     *
-     * @param {string} [sId] Id for the new control, generated automatically if no id is given
-     * @param {object} [mSettings] Initial settings for the new control
-     *
-     * @class
-     * The <code>ChartDataPoint</code> control: ChartDataPoint container for bar, line and other chart types. Based on C3.js..
-     *
-     * @extends sap.ui.core.Element
-     *
-     * @author PulseShift GmbH
-     *
-     * @constructor
-     * @public
-     * @alias ui5.viz.ChartDataPoint
-     */
+   * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
+   *
+   * @param {string} [sId] Id for the new control, generated automatically if no id is given
+   * @param {object} [mSettings] Initial settings for the new control
+   *
+   * @class
+   * The <code>ChartDataPoint</code> control: ChartDataPoint container for bar, line and other chart types. Based on C3.js..
+   *
+   * @extends sap.ui.core.Element
+   *
+   * @author PulseShift GmbH
+   *
+   * @constructor
+   * @public
+   * @alias ui5.viz.ChartDataPoint
+   */
   return Element.extend('ui5.viz.ChartDataPoint', {
     /* =========================================================== */
     /* meta data definition                                        */
@@ -55,9 +55,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
          * Sets the type of the data point.
          */
         type: {
-          type: 'ui5.viz.ChartDataPointType',
+          type: 'ui5.viz.DataPointType',
           group: 'Appearance',
-          defaultValue: library.ChartDataPointType.SingleValue
+          defaultValue: library.DataPointType.SingleValue
         },
 
         /* === Data === */
@@ -193,8 +193,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      * @public
      */
     getVisible() {
-      var v = undefined
-      if (this.getType() === library.ChartDataPointType.SingleValue) {
+      if (this.getType() === library.DataPointType.SingleValue) {
         var v = this.getValue()
         return (
           this.getProperty('visible') &&
@@ -226,7 +225,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      */
     getValue() {
       var v = this.getProperty('value')
-      return !isNaN(v) && v !== null ? parseInt(v, 10) : null
+      return !isNaN(v) && v !== null ? parseFloat(v) : null
     },
 
     /**
@@ -235,7 +234,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      */
     getHigh() {
       var h = this.getProperty('high')
-      return !isNaN(h) && h !== null ? parseInt(h, 10) : null
+      return !isNaN(h) && h !== null ? parseFloat(h) : null
     },
 
     /**
@@ -244,13 +243,17 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
      */
     getLow() {
       var l = this.getProperty('low')
-      return !isNaN(l) && l !== null ? parseInt(l, 10) : null
+      return !isNaN(l) && l !== null ? parseFloat(l) : null
     },
 
-    // FIXME: add jsdoc
+    /**
+     * Unified method to get correct value object based on data point type.
+     * @returns {string|int|{high: string|int, low: string|int}}
+     * @public
+     */
     getValueOrValuePair() {
       const isVisible = this.getVisible()
-      if (this.getType() === library.ChartDataPointType.SingleValue) {
+      if (this.getType() === library.DataPointType.SingleValue) {
         return isVisible ? this.getValue() : null
       } else {
         var highValue = this.getHigh()

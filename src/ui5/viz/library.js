@@ -6,8 +6,7 @@
 sap.ui.define(
   [
     // library dependency
-    'sap/ui/thirdparty/d3',
-    'vendor/c3'
+    'sap/ui/thirdparty/d3'
   ],
   function() {
     /**
@@ -31,13 +30,12 @@ sap.ui.define(
         'int',
         'object',
         'string',
-        'void',
 
         // public simple types and enums
         'ui5.viz.ChartLegendPosition',
         'ui5.viz.ChartTitlePosition',
         'ui5.viz.ChartSeriesType',
-        'ui5.viz.ChartDataPointType',
+        'ui5.viz.DataPointType',
         'ui5.viz.LineStyle',
         'ui5.viz.ShapeStyle',
         'ui5.viz.AnimationSpeed',
@@ -66,8 +64,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ChartLegendPosition = {
-      Right: 'right',
-      Bottom: 'bottom'
+      Right: 'Right',
+      Bottom: 'Bottom'
     }
 
     /**
@@ -77,9 +75,9 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ChartTitlePosition = {
-      Start: 'start',
-      Middle: 'middle',
-      End: 'end'
+      Start: 'Start',
+      Middle: 'Middle',
+      End: 'End'
     }
 
     /**
@@ -107,9 +105,9 @@ sap.ui.define(
      * @enum {string}
      * @public
      */
-    ui5.viz.ChartDataPointType = {
-      SingleValue: 'single-value',
-      ValuePair: 'value-pair'
+    ui5.viz.DataPointType = {
+      SingleValue: 'SingleValue',
+      ValuePair: 'ValuePair'
     }
 
     /**
@@ -119,9 +117,9 @@ sap.ui.define(
      * @public
      */
     ui5.viz.LineStyle = {
-      Default: 'default',
-      Dashed: 'dashed',
-      Dotted: 'dotted'
+      Solid: 'Solid',
+      Dashed: 'Dashed',
+      Dotted: 'Dotted'
     }
 
     /**
@@ -131,8 +129,8 @@ sap.ui.define(
      * @public
      */
     ui5.viz.ShapeStyle = {
-      Default: 'default',
-      Striped: 'striped'
+      Solid: 'Solid',
+      Striped: 'Striped'
     }
 
     /**
@@ -142,10 +140,10 @@ sap.ui.define(
      * @public
      */
     ui5.viz.AnimationSpeed = {
-      None: 'none',
-      Slow: 'slow',
-      Medium: 'medium',
-      Fast: 'faste'
+      None: 'None',
+      Slow: 'Slow',
+      Medium: 'Medium',
+      Fast: 'Fast'
     }
 
     /**
@@ -155,10 +153,10 @@ sap.ui.define(
      * @public
      */
     ui5.viz.Axis = {
-      Y: 'y',
-      Y2: 'y2',
-      X: 'x',
-      Z: 'z'
+      Y: 'Y',
+      Y2: 'Y2',
+      X: 'X',
+      Z: 'Z'
     }
 
     /**
@@ -276,6 +274,154 @@ sap.ui.define(
     }
 
     /**
+     * Transform hexadecimal color to RGBA color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [alpha] Alpha (0-1).
+     * @return {sap.ui.core.CSSColor} RGBA color.
+     * @public
+     */
+    ui5.viz.hexToRgba = function(hex, alpha = 1) {
+      const a = alpha >= 0 && alpha <= 1 ? alpha : 1
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      return `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${a})`
+    }
+
+    /**
+     * Transform hexadecimal color to RGB color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {sap.ui.core.CSSColor} RGB color.
+     * @public
+     */
+    ui5.viz.hexToRgb = function(hex) {
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      return `rgb(${rgbColor.r},${rgbColor.g},${rgbColor.b})`
+    }
+
+    /**
+     * Lighten hexadecimal color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [percent] Percentage of lighten intensity (0-100).
+     * @return {sap.ui.core.CSSColor} Hexadecimal color.
+     * @public
+     */
+    ui5.viz.lightenHexColor = function(hex, percent = 0) {
+      // parse hex color to RGB
+      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+
+      // lighten RGB colors
+      const lightenRed = parseInt(red * (100 + percent) / 100)
+      const lightenGreen = parseInt(green * (100 + percent) / 100)
+      const lightenBlue = parseInt(blue * (100 + percent) / 100)
+
+      // normalize RGB colors
+      const r = lightenRed < 255 ? lightenRed : 255
+      const g = lightenGreen < 255 ? lightenGreen : 255
+      const b = lightenBlue < 255 ? lightenBlue : 255
+
+      // transform RGB to hex
+      const lightenRedHex =
+        r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16)
+      const lightenGreenHex =
+        g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16)
+      const lightenBlueHex =
+        b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16)
+
+      return `#${lightenRedHex}${lightenGreenHex}${lightenBlueHex}`
+    }
+
+    /**
+     * Darken hexadecimal color.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @param {float} [alpha] Percentage of darken intensity (0-100).
+     * @return {sap.ui.core.CSSColor} Hexadecimal color.
+     * @public
+     */
+    ui5.viz.darkenHexColor = function(hex, percent = 0) {
+      // parse hex color to RGB
+      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+
+      // darken RGB colors
+      const darkenRed = parseInt(red * (100 - percent) / 100)
+      const darkenGreen = parseInt(green * (100 - percent) / 100)
+      const darkenBlue = parseInt(blue * (100 - percent) / 100)
+
+      // normalize RGB colors
+      const r = darkenRed < 255 ? darkenRed : 255
+      const g = darkenGreen < 255 ? darkenGreen : 255
+      const b = darkenBlue < 255 ? darkenBlue : 255
+
+      // transform RGB to hex
+      const darkenRedHex =
+        r.toString(16).length == 1 ? '0' + r.toString(16) : r.toString(16)
+      const darkenGreenHex =
+        g.toString(16).length == 1 ? '0' + g.toString(16) : g.toString(16)
+      const darkenBlueHex =
+        b.toString(16).length == 1 ? '0' + b.toString(16) : b.toString(16)
+
+      return `#${darkenRedHex}${darkenGreenHex}${darkenBlueHex}`
+    }
+
+    /**
+     * Get black or white contrast color based on hexadecimal background color.
+     * Useful to determine font color based on background.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {sap.ui.core.CSSColor} Foreground contrast color (either black or white).
+     * @public
+     */
+    ui5.viz.hexToBWContrastColor = function(hex) {
+      const rgbColor = ui5.viz.hexToRgbObject(hex)
+      const brightness = Math.round(
+        (parseInt(rgbColor.r, 10) * 299 +
+          parseInt(rgbColor.g, 10) * 587 +
+          parseInt(rgbColor.b, 10) * 114) /
+          1000
+      )
+      const BLACK = '#000000'
+      const WHITE = '#ffffff'
+
+      return brightness > 125 ? BLACK : WHITE
+    }
+
+    /**
+     * Transform hexadecimal color to RGB object.
+     *
+     * @function
+     * @param {sap.ui.core.CSSColor} [hex] Hexadecimal color.
+     * @return {{r: int, g: int, b: int}} RGB object.
+     * @public
+     */
+    ui5.viz.hexToRgbObject = function(hex) {
+      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+      const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+      hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+        return r + r + g + g + b + b
+      })
+
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result
+        ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+          }
+        : {
+            r: 0,
+            g: 0,
+            b: 0
+          }
+    }
+
+    /**
      * Define default color palette.
      *
      * @function
@@ -292,7 +438,7 @@ sap.ui.define(
      * Parse CSS size.
      *
      * @function
-     * @param {string} sCSSSize
+     * @param {sap.ui.core.CSSColor} sCSSSize
      * @return { value: {string}, unit: {string} }
      * @protected
      */
@@ -315,146 +461,6 @@ sap.ui.define(
       DataPoint: 'DataPoint',
       Line: 'Line',
       Area: 'Area'
-    }
-
-    /* =========================================================== */
-    /* c3js library extension                                      */
-    /* =========================================================== */
-
-    // add toggle function to show/hide Y2 axis by API
-    if (!c3.chart.fn.axis.showY2) {
-      // show/hide Y2 axis
-      c3.chart.fn.axis.showY2 = function(shown) {
-        let $$ = this.internal,
-          config = $$.config
-        config.axis_y2_show = !!shown
-        $$.axes.y2.style(
-          'visibility',
-          config.axis_y2_show ? 'visible' : 'hidden'
-        )
-        $$.redraw()
-      }
-    }
-
-    // add toggle function to show/hide Y axis by API
-    if (!c3.chart.fn.axis.showY) {
-      // show/hide Y axis
-      c3.chart.fn.axis.showY = function(shown) {
-        let $$ = this.internal,
-          config = $$.config
-        config.axis_y_show = !!shown
-        $$.axes.y.style('visibility', config.axis_y_show ? 'visible' : 'hidden')
-        $$.redraw()
-      }
-    }
-
-    // add toggle function to show/hide X axis by API
-    if (!c3.chart.fn.axis.showX) {
-      // show/hide X axis
-      c3.chart.fn.axis.showX = function(shown) {
-        let $$ = this.internal,
-          config = $$.config
-        config.axis_x_show = !!shown
-        $$.axes.x.style('visibility', config.axis_x_show ? 'visible' : 'hidden')
-        $$.redraw()
-      }
-    }
-
-    /* =========================================================== */
-    /* Polyfills                                                   */
-    /* =========================================================== */
-
-    /**
-     * Polyfill: [Array.prototype.includes()]
-     *
-     * This method has been added to the ECMAScript 6 specification and may not be available in all JavaScript implementations yet.
-     * However, this polyfill should enable the feature in IE.
-     */
-    if (!Array.prototype.includes) {
-      Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-        if (this == null) {
-          throw new TypeError(
-            'Array.prototype.includes called on null or undefined'
-          )
-        }
-
-        var O = Object(this)
-        var len = parseInt(O.length, 10) || 0
-        if (len === 0) {
-          return false
-        }
-        var n = parseInt(arguments[1], 10) || 0
-        var k
-        if (n >= 0) {
-          k = n
-        } else {
-          k = len + n
-          if (k < 0) {
-            k = 0
-          }
-        }
-        var currentElement
-        while (k < len) {
-          currentElement = O[k]
-          if (
-            searchElement === currentElement ||
-            (searchElement !== searchElement &&
-              currentElement !== currentElement)
-          ) {
-            // NaN !== NaN
-            return true
-          }
-          k++
-        }
-        return false
-      }
-    }
-
-    /**
-     * Polyfill: [Array.prototype.find()]
-     *
-     * This method has been added to the ECMAScript 6 specification and may not be available in all JavaScript implementations yet.
-     * However, this polyfill should enable the feature in IE.
-     */
-    if (!Array.prototype.find) {
-      Object.defineProperty(Array.prototype, 'find', {
-        value: function(predicate) {
-          // 1. Let O be ? ToObject(this value).
-          if (this == null) {
-            throw new TypeError('"this" is null or not defined')
-          }
-
-          var o = Object(this)
-
-          // 2. Let len be ? ToLength(? Get(O, "length")).
-          var len = o.length >>> 0
-
-          // 3. If IsCallable(predicate) is false, throw a TypeError exception.
-          if (typeof predicate !== 'function') {
-            throw new TypeError('predicate must be a function')
-          }
-
-          // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-          var thisArg = arguments[1]
-
-          // 5. Let k be 0.
-          var k = 0
-
-          // 6. Repeat, while k < len
-          while (k < len) {
-            // a. Let Pk be ! ToString(k).
-            // b. Let kValue be ? Get(O, Pk).
-            // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
-            // d. If testResult is true, return kValue.
-            var kValue = o[k]
-            if (predicate.call(thisArg, kValue, k, o)) {
-              return kValue
-            } // e. Increase k by 1.
-            k++
-          } // 7. Return undefined.
-          return undefined
-        }
-      })
     }
 
     return ui5.viz

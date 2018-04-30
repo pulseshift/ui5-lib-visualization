@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta http-equiv="X-UA-Compatible"
+      content="IE=edge" />
+    <meta charset="UTF-8">
+
+    <title>{{secure indexTitle}}</title>
+
+    <script id="sap-ui-bootstrap"
+      src="{{secure src}}"
+      data-sap-ui-libs="sap.m,ui5.viz"
+      data-sap-ui-theme="{{secure theme}}"
+      data-sap-ui-frameOptions="deny"
+      data-sap-ui-compatVersion="edge"
+      data-sap-ui-bindingSyntax="complex"
+      data-sap-ui-preload="async"
+      data-sap-ui-resourceroots='{{secure resourceroots}}'
+      data-sap-ui-theme-roots='{{secure themeroots}}'>
+
+      </script>
+
+    <script>
+      sap.ui.getCore().attachInit(function () {
+        "use strict";
+        new sap.ui.xmlview('ui5.demo.playground').placeAt("content");
+      });
+    </script>
+  </head>
+
+  <body class="sapUiBody sapUiSizeCompact">
+
+    <div id="content"
+      style="height: 100vh;"></div>
+
+    {{!-- <h1>UI5 Visualization Library Demo</h1>
+
+  <p>Final demo is coming soon.</p>
+
+  <p>Deprecated demos:</p>
+
+  <h3>1. Chart types</h3>
+  <h4>1.1 Area charts</h4>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_area-line.html">Area line</a></li>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_area-spline.html">Area spline</a></li>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_area-step.html">Area step</a></li>
+  </ul>
+
+  <h4>1.2 Line charts</h4>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_line.html">Line</a></li>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_spline.html">Spline</a></li>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_step.html">Step</a></li>
+  </ul>
+
+  <h4>1.3 Other charts</h4>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_bar.html">Bar</a></li>
+  </ul>
+
+  <h3>2. Axis options</h3>
+  <h4>2.1 Tick options</h4>
+  <h4>2.2 Other options</h4>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_addyaxis.html">Additional y axis</a></li>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_axis_rotated.html">Rotated axis</a></li>
+  </ul>
+
+  <h3>3. Interaction</h3>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/index_demo_subchart_zoom.html">Subchart & Zoom</a></li>
+  </ul>
+
+  <h2>4. C3 extension charts</h2>
+  <ul>
+    <li><a href="/demo/todo_refactor_to_final_demo/c3-viz-fusion.html">C3 viz fusion</a></li>
+  </ul> --}}
+  </body>

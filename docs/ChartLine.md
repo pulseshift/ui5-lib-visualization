@@ -18,7 +18,7 @@ All properties have corresponding getters and setters. ([read which property met
 | --- | --- | --- | --- |
 | `title` | `string` | `null` | Sets the ttitleext of the ChartLine. |
 | `titlePosition` | `ui5.viz.ChartTitlePosition` | `library.ChartTitlePosition.Start` | Sets the position of the title. |
-| `style` | `ui5.viz.LineStyle` | `library.LineStyle.Default` | Sets the style of the line. |
+| `style` | `ui5.viz.LineStyle` | `library.LineStyle.Solid` | Sets the style of the line. |
 | `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null` | Sets a custom color for the line. |
 | `axis` | `ui5.viz.Axis` | `library.Axis.Y` | Sets the referenced y axis the line value property is related to. |
 | `showLineSelector` | `boolean` | `false` | Sets the visibility of a line selector. |

@@ -79,6 +79,7 @@ Data was updated.
 
 ## Methods
 * <a href="#getXAxisLabelByIndex">getXAxisLabelByIndex</a> Get respective X axis label by index.
+* <a href="#getXAxisIndexByValue">getXAxisIndexByValue</a> Get respective X axis index by value.
 * <a href="#getMinValueByAxis">getMinValueByAxis</a> Getter for property <code>minValue</code> of an axis.
 * <a href="#getMaxValueByAxis">getMaxValueByAxis</a> Getter for property <code>maxValue</code> of an axis.
 
@@ -94,6 +95,19 @@ Returns: `any` Value depending on axis type.
 getXAxisLabelByIndex(iIndex?)
 ```
 * `iIndex` (`int`) Index.
+
+<br/>
+
+<a name="getXAxisIndexByValue"></a>
+
+### `getXAxisIndexByValue`
+Get respective X axis index by value.
+
+Returns: `any` Value depending on axis type.
+```js
+getXAxisIndexByValue(vValue?)
+```
+* `vValue` (`string``int`) Index.
 
 <br/>
 
