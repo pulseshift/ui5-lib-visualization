@@ -768,7 +768,7 @@ sap.ui.define(
                 // count: 10, >> this value should be set automatically
                 // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
                 values:
-                  oXAxis.getAutoTickValues() &&
+                  oXAxis.getAutoTickValues() === false &&
                   oXAxis.getLabels().length > 0
                     ? oXAxis.getLabels().map((oLabel, iIndex) => {
                         const vValue = oLabel.getValue()
@@ -884,7 +884,7 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oYAxis.getAutoTickValues() &&
+                  oYAxis.getAutoTickValues() === false &&
                   oYAxis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oYAxis
                         .getLabels()
@@ -957,7 +957,7 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
-                  oY2Axis.getAutoTickValues() &&
+                  oY2Axis.getAutoTickValues() === false &&
                   oY2Axis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oY2Axis
                         .getLabels()

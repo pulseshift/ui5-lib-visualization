@@ -21,6 +21,7 @@ All properties have corresponding getters and setters. ([read which property met
 | `showGridLines` | `boolean` | `false` | Sets visibility of grid lines Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
 | `minValue` | `string` | `null` | Sets the minimal value of the axis. (use index/position for category X-axis, too). |
 | `maxValue` | `string` | `null` | Sets the maximal value of the axis. (use index/position for category X-axis, too). |
+| `autoTickValues` | `boolean` | `false` | Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values. |
 | `visible` | `boolean` | `true` | Sets visibility of the element. |
 
 ## Aggregations

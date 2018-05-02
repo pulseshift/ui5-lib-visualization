@@ -88,6 +88,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         maxValue: { type: 'string', group: 'Appereance', defaultValue: null },
 
         /**
+         * Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values.
+         */
+        autoTickValues: { type: 'boolean', group: 'Appereance', defaultValue: false },
+
+        /**
          * Sets visibility of the element.
          */
         visible: {

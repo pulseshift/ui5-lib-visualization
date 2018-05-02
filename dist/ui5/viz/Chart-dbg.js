@@ -702,7 +702,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               centered: false,
               // count: 10, >> this value should be set automatically
               // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
-              values: oXAxis.getLabels().length > 0 ? oXAxis.getLabels().map(function (oLabel, iIndex) {
+              values: oXAxis.getAutoTickValues() === false && oXAxis.getLabels().length > 0 ? oXAxis.getLabels().map(function (oLabel, iIndex) {
                 var vValue = oLabel.getValue();
 
                 switch (_this.getXAxisType()) {
@@ -715,7 +715,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                   default:
                     return iIndex;
                 }
-              }) : null,
+              }) : undefined,
               format: function () {
                 // check if an index based formatter function must be used or a time based formatter
                 switch (_this.getXAxisType()) {
@@ -794,13 +794,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
-              values: oYAxis.getLabels().filter(function (o) {
+              values: oYAxis.getAutoTickValues() === false && oYAxis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).length > 0 ? oYAxis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).map(function (oLabel) {
                 return parseInt(oLabel.getValue(), 10) || 0;
-              }) : null,
+              }) : undefined,
               format: function format(iYValue) {
                 var oLabel = oYAxis.getLabels().filter(function (o) {
                   return o.getVisible();
@@ -848,13 +848,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
-              values: oY2Axis.getLabels().filter(function (o) {
+              values: oY2Axis.getAutoTickValues() === false && oY2Axis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).length > 0 ? oY2Axis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).map(function (oLabel) {
                 return parseInt(oLabel.getValue(), 10) || null;
-              }) : null,
+              }) : undefined,
               format: function format(iY2Value) {
                 var oLabel = oY2Axis.getLabels().filter(function (o) {
                   return o.getVisible();
