@@ -768,6 +768,7 @@ sap.ui.define(
                 // count: 10, >> this value should be set automatically
                 // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
                 values:
+                  oXAxis.getAutoTickValues() &&
                   oXAxis.getLabels().length > 0
                     ? oXAxis.getLabels().map((oLabel, iIndex) => {
                         const vValue = oLabel.getValue()
@@ -782,7 +783,7 @@ sap.ui.define(
                             return iIndex
                         }
                       })
-                    : null,
+                    : undefined,
                 format: (() => {
                   // check if an index based formatter function must be used or a time based formatter
                   switch (this.getXAxisType()) {
@@ -883,12 +884,13 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
+                  oYAxis.getAutoTickValues() &&
                   oYAxis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oYAxis
                         .getLabels()
                         .filter(o => o.getVisible())
                         .map(oLabel => parseInt(oLabel.getValue(), 10) || 0)
-                    : null,
+                    : undefined,
                 format: iYValue => {
                   const oLabel = oYAxis
                     .getLabels()
@@ -955,12 +957,13 @@ sap.ui.define(
               tick: {
                 // count: 5, >> this value should be set automatically
                 values:
+                  oY2Axis.getAutoTickValues() &&
                   oY2Axis.getLabels().filter(o => o.getVisible()).length > 0
                     ? oY2Axis
                         .getLabels()
                         .filter(o => o.getVisible())
                         .map(oLabel => parseInt(oLabel.getValue(), 10) || null)
-                    : null,
+                    : undefined,
                 format: iY2Value => {
                   const oLabel = oY2Axis
                     .getLabels()
