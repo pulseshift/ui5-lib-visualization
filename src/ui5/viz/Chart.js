@@ -2826,7 +2826,7 @@ sap.ui.define(
         switch (mCSS.unit) {
           case 'rem':
             // calculate pixel dependant on font size of root element
-            iCalculatedWidth =
+            iCalculatedWidth = mCSS.value *
               parseInt(
                 getComputedStyle(document.body, '').fontSize.match(
                   /(\d*(\.\d*)?)/,
@@ -2836,7 +2836,7 @@ sap.ui.define(
             break
           case 'em':
             // calculate pixel dependant on font size of parent
-            iCalculatedWidth =
+            iCalculatedWidth = mCSS.value *
               parseInt(
                 getComputedStyle(this._getParentDomRef(), '').fontSize.match(
                   /(\d*(\.\d*)?)/,
