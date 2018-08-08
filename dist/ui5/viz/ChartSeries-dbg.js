@@ -421,11 +421,33 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       }
 
       return this;
-    }
+    },
+
 
     /* =========================================================== */
     /* public methods                                              */
     /* =========================================================== */
+
+    /**
+     * Getter for property <code>key</code>.
+     * @return {string} Key as valid HTML ID.
+     * @public
+     */
+    getKey: function getKey() {
+      var sKey = this.getProperty('key');
+      return this.toValidHtmlID(sKey);
+    },
+
+
+    /**
+     * Takes a string and returns a valid HTML ID.
+     * @param {string} [sValue] Any string.
+     * @return {string} Valid HTML ID.
+     * @public
+     */
+    toValidHtmlID: function toValidHtmlID(sID) {
+      return sID.replace(/^\d*|\W|\s/g, '_');
+    }
 
     /* =========================================================== */
     /* private methods                                             */

@@ -487,6 +487,7 @@ sap.ui.define(
       /**
        * Getter for property <code>key</code>.
        * @return {string} Key as valid HTML ID.
+       * @public
        */
       getKey() {
         const sKey = this.getProperty('key')
@@ -497,6 +498,7 @@ sap.ui.define(
        * Takes a string and returns a valid HTML ID.
        * @param {string} [sValue] Any string.
        * @return {string} Valid HTML ID.
+       * @public
        */
       toValidHtmlID(sID) {
         return sID.replace(/^\d*|\W|\s/g, '_')

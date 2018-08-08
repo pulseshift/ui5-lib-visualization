@@ -2490,11 +2490,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       switch (mCSS.unit) {
         case 'rem':
           // calculate pixel dependant on font size of root element
-          iCalculatedWidth = parseInt(getComputedStyle(document.body, '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
+          iCalculatedWidth = mCSS.value * parseInt(getComputedStyle(document.body, '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
           break;
         case 'em':
           // calculate pixel dependant on font size of parent
-          iCalculatedWidth = parseInt(getComputedStyle(this._getParentDomRef(), '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
+          iCalculatedWidth = mCSS.value * parseInt(getComputedStyle(this._getParentDomRef(), '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
           break;
         case 'px':
           // if width value is negative or not supposed, then we take the full browser width
