@@ -478,11 +478,29 @@ sap.ui.define(
         }
 
         return this
-      }
+      },
 
       /* =========================================================== */
       /* public methods                                              */
       /* =========================================================== */
+
+      /**
+       * Getter for property <code>key</code>.
+       * @return {string} Key as valid HTML ID.
+       */
+      getKey() {
+        const sKey = this.getProperty('key')
+        return this.toValidHtmlID(sKey)
+      },
+
+      /**
+       * Takes a string and returns a valid HTML ID.
+       * @param {string} [sValue] Any string.
+       * @return {string} Valid HTML ID.
+       */
+      toValidHtmlID(sID) {
+        return sID.replace(/^\d*|\W|\s/g, '_')
+      }
 
       /* =========================================================== */
       /* private methods                                             */
