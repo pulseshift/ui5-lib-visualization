@@ -1798,12 +1798,25 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       Control.prototype.setProperty.call(oYAxis, 'visible', !this.getMicroMode(), true);
       Control.prototype.setProperty.call(oY2Axis, 'visible', !this.getMicroMode(), true);
 
-      // 1. unload series, not used anymore
-      this._chart.unload(aObsoleteSeries);
+      // update x axis tick values before load (see: https://github.com/c3js/c3/issues/827)
+      this._chart.internal.config.axis_x_tick_values = oXAxis.getAutoTickValues() === false && oXAxis.getLabels().length > 0 ? oXAxis.getLabels().map(function (oLabel, iIndex) {
+        var vValue = oLabel.getValue();
 
-      // 2. load new series and new data
-      this._chart.load({
-        // update series data
+        switch (_this5.getXAxisType()) {
+          case library.AxisType.Time:
+            return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
+            );
+          case library.AxisType.Indexed:
+            return parseInt(vValue, 10) || 0;
+          case library.AxisType.Category:
+          default:
+            return iIndex;
+        }
+      }) : undefined;
+
+      // update series data
+      var aUpdateSeries = {
+        // if data that has the same target id is given, the chart will be updated, otherwise, new target will be added
         x: 'x',
         columns: [
         // add x axis values first
@@ -1854,8 +1867,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oTypes[oSeries.getKey()] = oSeries.getColor();
           }
           return oTypes;
-        }, {})
-      });
+        }, {}),
+
+        // unload series, not used anymore (data will be unloaded before loading new data)
+        unload: aObsoleteSeries
+      };
+      this._chart.load(aUpdateSeries);
 
       // highlight data points
       d3.selectAll('#' + this.getId() + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
