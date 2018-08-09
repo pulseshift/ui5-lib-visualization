@@ -1,6 +1,6 @@
 {
   "name": "ui5-lib-visualization",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "scripts": {
     "test": "yarn eslint ./src/ui5/viz  --ext .js --cache ",
     "start": "NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --silent",
