@@ -548,8 +548,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 return oSeries.getKey() === seriesKey;
               });
               var oDataPoint = oSeries ? oSeries.getData()[index] : null;
-              var sLabel = oDataPoint ? oDataPoint.getTooltipLabel() : oDataPoint.getLabel() || _value;
-              return sLabel ? sLabel : _value;
+              var sTooltipLabel = oDataPoint ? oDataPoint.getTooltipLabel() : null;
+              var sLabel = oDataPoint ? oDataPoint.geLabel() : null;
+              var sFinalLabel = sTooltipLabel || sLabel || _value;
+              return sFinalLabel;
             },
             title: function () {
               // check if an index based formatter function must be used or a time based formatter

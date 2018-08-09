@@ -569,10 +569,10 @@ sap.ui.define(
                   oSeries => oSeries.getKey() === seriesKey
                 )
                 const oDataPoint = oSeries ? oSeries.getData()[index] : null
-                var sLabel = oDataPoint
-                  ? oDataPoint.getTooltipLabel()
-                  : oDataPoint.getLabel() || value
-                return sLabel ? sLabel : value
+                const sTooltipLabel = oDataPoint ? oDataPoint.getTooltipLabel() : null
+                const sLabel = oDataPoint ? oDataPoint.geLabel() : null
+                const sFinalLabel = sTooltipLabel || sLabel || value
+                return sFinalLabel
               },
               title: (() => {
                 // check if an index based formatter function must be used or a time based formatter
