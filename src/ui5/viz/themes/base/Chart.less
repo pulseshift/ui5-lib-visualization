@@ -206,6 +206,7 @@
       rgba(0, 0, 0, 0.23) 0px 6px 10px;
   }
   .c3-tooltip th {
+    padding: 1.5rem 1rem 0.5rem 1rem;
     color: #000000;
     background-color: transparent;
   }
@@ -216,10 +217,15 @@
   }
   .c3-tooltip td.name {
     color: #333333;
+    padding: 0.5rem 1rem 0.5rem 0rem;
   }
   .c3-tooltip td.value {
-    font-weight: bold;
     text-align: left;
+    padding: 0.5rem 0rem 0.5rem 1rem;
+  }
+  .c3-tooltip tr:last-child td.name,
+  .c3-tooltip tr:last-child td.value {
+    padding-bottom: 1.5rem;
   }
 
   // enable transition for color switching

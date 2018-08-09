@@ -569,7 +569,9 @@ sap.ui.define(
                   oSeries => oSeries.getKey() === seriesKey
                 )
                 const oDataPoint = oSeries ? oSeries.getData()[index] : null
-                const sLabel = oDataPoint ? oDataPoint.getLabel() : value
+                var sLabel = oDataPoint
+                  ? oDataPoint.getTooltipLabel()
+                  : oDataPoint.getLabel() || value
                 return sLabel ? sLabel : value
               },
               title: (() => {

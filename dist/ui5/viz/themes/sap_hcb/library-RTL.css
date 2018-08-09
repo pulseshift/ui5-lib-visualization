@@ -181,6 +181,7 @@
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 30px, rgba(0, 0, 0, 0.23) 0px 6px 10px;
 }
 .ui5-viz-chart .c3-tooltip th {
+  padding: 1.5rem 1rem 0.5rem 1rem;
   color: #000000;
   background-color: transparent;
 }
@@ -191,10 +192,15 @@
 }
 .ui5-viz-chart .c3-tooltip td.name {
   color: #333333;
+  padding: 0.5rem 0rem 0.5rem 1rem;
 }
 .ui5-viz-chart .c3-tooltip td.value {
-  font-weight: bold;
   text-align: left;
+  padding: 0.5rem 1rem 0.5rem 0rem;
+}
+.ui5-viz-chart .c3-tooltip tr:last-child td.name,
+.ui5-viz-chart .c3-tooltip tr:last-child td.value {
+  padding-bottom: 1.5rem;
 }
 .ui5-viz-chart.ui5-viz-chart-noclippath svg {
   overflow: visible !important;

@@ -548,7 +548,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 return oSeries.getKey() === seriesKey;
               });
               var oDataPoint = oSeries ? oSeries.getData()[index] : null;
-              var sLabel = oDataPoint ? oDataPoint.getLabel() : _value;
+              var sLabel = oDataPoint ? oDataPoint.getTooltipLabel() : oDataPoint.getLabel() || _value;
               return sLabel ? sLabel : _value;
             },
             title: function () {

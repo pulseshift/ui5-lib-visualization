@@ -65,24 +65,29 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /* === Data === */
 
         /**
-         * Sets the representation of value as formatted text
+         * Sets the representation of value as formatted text.
          */
         label: { type: 'string', group: 'Data', defaultValue: null },
 
         /**
-         * Sets the value the data point should represent
+         * Sets the representation of value as formatted text in the tooltip.
+         */
+        tooltipLabel: { type: 'string', group: 'Data', defaultValue: null },
+
+        /**
+         * Sets the value the data point should represent.
          * Hint: To support null as value, the type must be "any"
          */
         value: { type: 'any', group: 'Data', defaultValue: null },
 
         /**
-         * Sets the high value the data point should represent in case of ribbon type
+         * Sets the high value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
         high: { type: 'any', group: 'Data', defaultValue: null },
 
         /**
-         * Sets the low value the data point should represent in case of ribbon type
+         * Sets the low value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
         low: { type: 'any', group: 'Data', defaultValue: null },
@@ -166,7 +171,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @override
      */
     setProperty: function setProperty(sName, vValue, bSuppressInvalidation) {
-      if (['value', 'high', 'low', 'label', 'visible', 'highlightAnimation'].includes(sName)) {
+      if (['value', 'high', 'low', 'label', 'tooltipLabel', 'visible', 'highlightAnimation'].includes(sName)) {
         // important: update value, before fire event
         Element.prototype.setProperty.call(this, sName, vValue, true);
 
