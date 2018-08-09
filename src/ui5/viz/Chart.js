@@ -570,7 +570,7 @@ sap.ui.define(
                 )
                 const oDataPoint = oSeries ? oSeries.getData()[index] : null
                 const sTooltipLabel = oDataPoint ? oDataPoint.getTooltipLabel() : null
-                const sLabel = oDataPoint ? oDataPoint.geLabel() : null
+                const sLabel = oDataPoint ? oDataPoint.getLabel() : null
                 const sFinalLabel = sTooltipLabel || sLabel || value
                 return sFinalLabel
               },
