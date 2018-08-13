@@ -214,40 +214,61 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         /**
          * Chart axis (if no chart axis is supposed here, a default x axis is generated)
          */
-        xAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
+        xAxis: {
+          type: 'ui5.viz.ChartAxis',
+          multiple: false
+        },
 
         /**
          * Chart axis (if no chart axis is supposed here, a default y axis is generated)
          * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
          */
-        yAxis: { type: 'ui5.viz.ChartAxis', multiple: false },
+        yAxis: {
+          type: 'ui5.viz.ChartAxis',
+          multiple: false
+        },
 
         /**
          * Chart axis (if no chart axis is provided, axis is not visible axis is generated)
          * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
          */
-        y2Axis: { type: 'ui5.viz.ChartAxis', multiple: false },
+        y2Axis: {
+          type: 'ui5.viz.ChartAxis',
+          multiple: false
+        },
 
         /**
          * Custom color for series, if not supposed, default theme colors are used
          * Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart
          */
-        colors: { type: 'ui5.viz.Color', multiple: true },
+        colors: {
+          type: 'ui5.viz.Color',
+          multiple: true
+        },
 
         /**
          * Set of lines to be displayed on the chart grid
          */
-        lines: { type: 'ui5.viz.ChartLine', multiple: true },
+        lines: {
+          type: 'ui5.viz.ChartLine',
+          multiple: true
+        },
 
         /**
          * Set of areas to be displayed on the chart grid
          */
-        areas: { type: 'ui5.viz.ChartArea', multiple: true },
+        areas: {
+          type: 'ui5.viz.ChartArea',
+          multiple: true
+        },
 
         /**
          * Defines the data series on our chart grid
          */
-        series: { type: 'ui5.viz.ChartSeries', multiple: true }
+        series: {
+          type: 'ui5.viz.ChartSeries',
+          multiple: true
+        }
       },
       defaultAggregation: 'series',
       associations: {},
@@ -497,11 +518,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     onAfterRendering: function onAfterRendering() {
       var _this = this;
 
-      var oXAxis = this.getXAxis(),
-          oYAxis = this.getYAxis(),
-          oY2Axis = this.getY2Axis(),
-          aSeries = this.getSeries(),
-          aHighlightedDataPoints = [];
+      var oXAxis = this.getXAxis();
+      var oYAxis = this.getYAxis();
+      var oY2Axis = this.getY2Axis();
+      var aSeries = this.getSeries();
+      var sChartHtmlID = this.getId();
+      var aHighlightedDataPoints = [];
 
       // enable/disable axis depending on microMode is active or not
       if (this.getMicroMode()) {
@@ -515,7 +537,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // create c3js options
       var options = {
-        bindto: '#' + this.getId(),
+        bindto: '#' + sChartHtmlID,
         size: {
           width: this.getWidth(),
           // the x-axis title needs 15px more space, this must be calculated here
@@ -559,7 +581,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 // TIME BASED LABELS
                 case library.AxisType.Time:
                   return function (oDate) {
-                    return DateFormat.getInstance({ style: 'long' }).format(oDate);
+                    return DateFormat.getInstance({
+                      style: 'long'
+                    }).format(oDate);
                   };
 
                 // INDEX BASED LABELS
@@ -925,10 +949,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // >>> continue styling
 
       // highlight data points
-      d3.selectAll('#' + this.getId() + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
+      d3.selectAll('#' + sChartHtmlID + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
       if (aHighlightedDataPoints.length > 0) {
         aHighlightedDataPoints.forEach(function (oHighlightInfo) {
-          d3.select('#' + _this.getId() + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this.CSS_HIGHLIGHT_PULSATE, true);
+          d3.select('#' + sChartHtmlID + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this.CSS_HIGHLIGHT_PULSATE, true);
         });
       }
 
@@ -1004,7 +1028,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     setWidth: function setWidth(sWidth) {
       this.setProperty('width', sWidth, true); // do not rerender
-      this._chart ? this._chart.resize({ width: this.getWidth() }) : undefined;
+      this._chart ? this._chart.resize({
+        width: this.getWidth()
+      }) : undefined;
       return this;
     },
 
@@ -1019,7 +1045,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     setHeight: function setHeight(sHeight) {
       this.setProperty('height', sHeight, true); // do not rerender
-      this._chart ? this._chart.resize({ height: this.getHeigth() }) : undefined;
+      this._chart ? this._chart.resize({
+        height: this.getHeigth()
+      }) : undefined;
       return this;
     },
 
@@ -1608,7 +1636,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       }) : aLabels[iIndex];
 
       // return an invisible label if no label was found
-      return oLabel || new ChartAxisLabel({ visible: false });
+      return oLabel || new ChartAxisLabel({
+        visible: false
+      });
     },
 
 
@@ -1765,7 +1795,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var _this5 = this;
 
       // console.error('UPDATE THE CHART');
-
+      var sChartHtmlID = this.getId();
       var aSeries = this.getSeries();
       var aSeriesKeys = aSeries.map(function (oSeries) {
         return oSeries.getKey();
@@ -1877,10 +1907,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       this._chart.load(aUpdateSeries);
 
       // highlight data points
-      d3.selectAll('#' + this.getId() + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
+      d3.selectAll('#' + sChartHtmlID + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
       if (aHighlightedDataPoints.length > 0) {
         aHighlightedDataPoints.forEach(function (oHighlightInfo) {
-          d3.select('#' + _this5.getId() + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
+          d3.select('#' + sChartHtmlID + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
         });
       }
 
@@ -1987,7 +2017,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             return oNewLine.id !== oLine.id;
           });
         }).forEach(function (oLine) {
-          _this6._chart.xgrids.remove({ class: oLine.class });
+          _this6._chart.xgrids.remove({
+            class: oLine.class
+          });
         });
 
         // add x grid lines
@@ -2023,7 +2055,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             return oNewLine.id !== oLine.id;
           });
         }).forEach(function (oLine) {
-          _this6._chart.ygrids.remove({ class: oLine.class });
+          _this6._chart.ygrids.remove({
+            class: oLine.class
+          });
         });
 
         // add y grid lines
@@ -2077,7 +2111,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         return _this7.CSS_CLASS_AREA + '-' + oArea.id;
       }); // c3 is expecting a list of classes to remove respective areas
       if (aRemoveList.length > 0) {
-        this._chart.regions.remove({ classes: aRemoveList });
+        this._chart.regions.remove({
+          classes: aRemoveList
+        });
       }
 
       // add areas
@@ -2138,9 +2174,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _onSeriesVisibilityUpdate: function _onSeriesVisibilityUpdate(oEvent) {
       var oSeries = oEvent.getParameter('chartSeries');
       if (oSeries.getVisible()) {
-        this._chart.show(oSeries.getKey(), { withLegend: true });
+        this._chart.show(oSeries.getKey(), {
+          withLegend: true
+        });
       } else {
-        this._chart.hide(oSeries.getKey(), { withLegend: true });
+        this._chart.hide(oSeries.getKey(), {
+          withLegend: true
+        });
       }
     },
 
@@ -2153,8 +2193,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateSeriesStyles: function _updateSeriesStyles() {
       var _this8 = this;
 
+      var sChartHtmlID = this.getId();
+
       // 1. get all series with a chart type that is relevant for shape AREA styles
       this.getSeries().forEach(function (oSeries) {
+        var sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey());
         var oPatternStyle = void 0,
             sCurrentColor = void 0,
             oPattern = void 0,
@@ -2168,32 +2211,34 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             sCurrentColor = _this8._chart.data.colors()[oSeries.getKey()];
 
             // add pattern to svg definitions
-            oPattern = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-stripe-pattern-' + oSeries.getKey());
+            oPattern = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID);
             if (oPattern.empty()) {
-              oPattern = d3.select('#' + _this8.getId() + ' defs').append('pattern').attr({
-                id: _this8.getId() + '-stripe-pattern-' + oSeries.getKey(),
+              oPattern = d3.select('#' + sChartHtmlID + ' defs').append('pattern').attr({
+                id: sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID,
                 width: '8',
                 height: '8',
                 patternUnits: 'userSpaceOnUse',
-                class: 'stripe-pattern-' + oSeries.getKey()
-              }).append('path').attr({ d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1' });
+                class: 'stripe-pattern-' + sSeriesHtmlID
+              }).append('path').attr({
+                d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
+              });
             }
 
             // add css to svg definitions
-            oPatternStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-stripe-style-' + oSeries.getKey());
+            oPatternStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-style-' + sSeriesHtmlID);
             if (oPatternStyle.empty()) {
-              oPatternStyle = d3.select('#' + _this8.getId() + ' defs').append('style').attr({
-                id: _this8.getId() + '-stripe-style-' + oSeries.getKey(),
+              oPatternStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
+                id: sChartHtmlID + '-stripe-style-' + sSeriesHtmlID,
                 type: 'text/css'
               });
             }
             // update svg pattern style
-            oPatternStyle.text('#' + _this8.getId() + ' .stripe-pattern-' + oSeries.getKey() + ' path {\n                                    fill: ' + sCurrentColor + ';\n                                    stroke: none;\n                                }\n                                #' + _this8.getId() + ' .c3-target-' + oSeries.getKey() + ' .c3-shape {\n                                    fill: url(#' + _this8.getId() + '-stripe-pattern-' + oSeries.getKey() + ') !important;\n                                }');
+            oPatternStyle.text('#' + sChartHtmlID + ' .stripe-pattern-' + sSeriesHtmlID + ' path {\n                fill: ' + sCurrentColor + ';\n                stroke: none;\n              }\n              #' + sChartHtmlID + ' .c3-target-' + sSeriesHtmlID + ' .c3-shape {\n                fill: url(#' + sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID + ') !important;\n              }');
             break;
           case library.ShapeStyle.Solid:
           default:
             // remove pattern style from shape area
-            oPatternStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-stripe-style-' + oSeries.getKey());
+            oPatternStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-style-' + sSeriesHtmlID);
             if (!oPatternStyle.empty()) {
               oPatternStyle.text('');
             }
@@ -2203,6 +2248,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // 2. get all series with a chart type that is relevant for shape LINE styles
       this.getSeries().forEach(function (oSeries) {
+        var sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey());
         var oStrokeStyle = void 0,
             sDashArray = void 0,
 
@@ -2234,20 +2280,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5';
 
             // add css to svg definitions
-            oStrokeStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-dashdot-style-' + oSeries.getKey());
+            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID);
             if (oStrokeStyle.empty()) {
-              oStrokeStyle = d3.select('#' + _this8.getId() + ' defs').append('style').attr({
-                id: _this8.getId() + '-dashdot-style-' + oSeries.getKey(),
+              oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
+                id: sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID,
                 type: 'text/css'
               });
             }
             // update svg pattern style
-            oStrokeStyle.text('#' + _this8.getId() + ' .c3-target-' + oSeries.getKey() + ' path.c3-shape {\n                                    stroke-dashoffset: ' + (oSeries.getLineAnimationForwards() ? '' : '-') + '50rem;\n                                    stroke-dasharray: ' + sDashArray + ';\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                }');
+            oStrokeStyle.text('#' + sChartHtmlID + ' .c3-target-' + sSeriesHtmlID + ' path.c3-shape {\n                                    stroke-dashoffset: ' + (oSeries.getLineAnimationForwards() ? '' : '-') + '50rem;\n                                    stroke-dasharray: ' + sDashArray + ';\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                }');
             break;
           case library.LineStyle.Solid:
           default:
             // remove pattern style from shape area
-            oStrokeStyle = d3.select('#' + _this8.getId() + ' defs #' + _this8.getId() + '-dashdot-style-' + oSeries.getKey());
+            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID);
             if (!oStrokeStyle.empty()) {
               oStrokeStyle.text('');
             }
@@ -2265,23 +2311,25 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateLineStyles: function _updateLineStyles() {
       var _this9 = this;
 
+      var sChartHtmlID = this.getId();
       var sCSS = '',
-          oLineStyle = d3.select('#' + this.getId() + ' defs #' + this.getId() + '-line-style');
+          oLineStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-line-style');
 
       // create style element if not exist
       if (oLineStyle.empty()) {
-        oLineStyle = d3.select('#' + this.getId() + ' defs').append('style').attr({
-          id: this.getId() + '-line-style',
+        oLineStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
+          id: sChartHtmlID + '-line-style',
           type: 'text/css'
         });
       }
 
       // get all chart lines  and concatenate color rules
       this.getLines().forEach(function (oLine) {
+        var sLineHtmlID = oLine.getId();
         var sColor = oLine.getColor();
         var sLineStyle = oLine.getStyle();
-        var sCSSLineSelector = '#' + _this9.getId() + ' .' + _this9.CSS_CLASS_LINE + '-' + oLine.getId();
-        var sUID = _this9.getId() + '-' + oLine.getId();
+        var sCSSLineSelector = '#' + sChartHtmlID + ' .' + _this9.CSS_CLASS_LINE + '-' + sLineHtmlID;
+        var sUID = sChartHtmlID + '-' + sLineHtmlID;
         var oStrokeStyle = void 0;
         var sDashArray = void 0;
 
@@ -2297,9 +2345,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5';
 
             // add css to svg definitions
-            oStrokeStyle = d3.select('#' + _this9.getId() + ' defs #' + sUID);
+            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sUID);
             if (oStrokeStyle.empty()) {
-              oStrokeStyle = d3.select('#' + _this9.getId() + ' defs').append('style').attr({
+              oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
                 id: '' + sUID,
                 type: 'text/css'
               });
@@ -2310,7 +2358,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           case library.LineStyle.Solid:
           default:
             // remove pattern style from shape area
-            oStrokeStyle = d3.select('#' + _this9.getId() + ' defs #' + sUID);
+            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sUID);
             if (!oStrokeStyle.empty()) {
               oStrokeStyle.text('');
             }
@@ -2350,19 +2398,21 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateAreaStyles: function _updateAreaStyles() {
       var _this10 = this;
 
+      var sChartHtmlID = this.getId();
       var sCSS = '',
-          oAreaStyle = d3.select('#' + this.getId() + ' defs #' + this.getId() + '-area-style');
+          oAreaStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-area-style');
 
       // create style element if not exist
       if (oAreaStyle.empty()) {
-        oAreaStyle = d3.select('#' + this.getId() + ' defs').append('style').attr({
-          id: this.getId() + '-area-style',
+        oAreaStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
+          id: sChartHtmlID + '-area-style',
           type: 'text/css'
         });
       }
 
       // get all chart areas and concatenate style rules
       this.getAreas().forEach(function (oArea) {
+        var sAreaHtmlID = oArea.getId();
         var sColor = oArea.getColor() || '#000000';
         var sShapeStyle = oArea.getStyle();
         var oPattern = void 0;
@@ -2370,26 +2420,28 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         switch (sShapeStyle) {
           case library.ShapeStyle.Striped:
             // add pattern to svg definitions
-            oPattern = d3.select('#' + _this10.getId() + ' defs #' + _this10.getId() + '-area-stripe-pattern-' + oArea.getId());
+            oPattern = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID);
 
             if (oPattern.empty()) {
-              oPattern = d3.select('#' + _this10.getId() + ' defs').append('pattern').attr({
-                id: _this10.getId() + '-area-stripe-pattern-' + oArea.getId(),
+              oPattern = d3.select('#' + sChartHtmlID + ' defs').append('pattern').attr({
+                id: sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID,
                 width: '8',
                 height: '8',
                 patternUnits: 'userSpaceOnUse',
-                class: 'area-stripe-pattern-' + oArea.getId()
-              }).append('path').attr({ d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1' });
+                class: 'area-stripe-pattern-' + sAreaHtmlID
+              }).append('path').attr({
+                d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
+              });
             }
 
             // update svg area style
-            sCSS += '#' + _this10.getId() + ' .area-stripe-pattern-' + oArea.getId() + ' path {\n                                    fill: ' + sColor + ';\n                                    stroke: none;\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-stripe,\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-area {\n                                    fill: url(#' + _this10.getId() + '-area-stripe-pattern-' + oArea.getId() + ') !important;\n                                }';
+            sCSS += '#' + sChartHtmlID + ' .area-stripe-pattern-' + sAreaHtmlID + ' path {\n                                    fill: ' + sColor + ';\n                                    stroke: none;\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-stripe,\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-area {\n                                    fill: url(#' + sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID + ') !important;\n                                }';
             break;
 
           case library.ShapeStyle.Solid:
           default:
             // update svg area style
-            sCSS += '#' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-stripe,\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + _this10.getId() + ' .' + _this10.CSS_CLASS_AREA + '-' + oArea.getId() + ' rect.c3-region-area {\n                                    fill: ' + sColor + ';\n                                }';
+            sCSS += '#' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-stripe,\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-area {\n                                    fill: ' + sColor + ';\n                                }';
             break;
         }
       });
@@ -2585,4 +2637,5 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     }
   });
 },
-/* bExport= */true);
+/* bExport= */
+true);

@@ -61,33 +61,7 @@ Series visibility have changed. Providing parameters:
 
 
 ## Methods
-* <a href="#getKey">getKey</a> Getter for property <code>key</code>.
-* <a href="#toValidHtmlID">toValidHtmlID</a> Takes a string and returns a valid HTML ID.
-
-<br/>
-
-<a name="getKey"></a>
-
-### `getKey`
-Getter for property <code>key</code>.
-
-Returns: `string` Key as valid HTML ID.
-```js
-getKey()
-```
-
-<br/>
-
-<a name="toValidHtmlID"></a>
-
-### `toValidHtmlID`
-Takes a string and returns a valid HTML ID.
-
-Returns: `string` Valid HTML ID.
-```js
-toValidHtmlID(sValue?)
-```
-* `sValue` (`string`) Any string.
+There are no public methods defined for `ui5.viz.ChartSeries`.
 
 <br/>
 

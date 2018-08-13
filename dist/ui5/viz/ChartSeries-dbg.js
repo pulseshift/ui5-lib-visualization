@@ -55,7 +55,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Name of the series
          */
-        name: { type: 'string', group: 'Appearance', defaultValue: null },
+        name: {
+          type: 'string',
+          group: 'Appearance',
+          defaultValue: null
+        },
 
         /**
          * Sets a custom color for the series, overwriting the default color palette
@@ -114,7 +118,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * ChartSeries with the same group key are displayed as a cluster (e.g. stacked bar)
          */
-        groupKey: { type: 'string', group: 'Appearance', defaultValue: null },
+        groupKey: {
+          type: 'string',
+          group: 'Appearance',
+          defaultValue: null
+        },
 
         /**
          * Sets the referenced y axis the ChartSeriesData value property is related to
@@ -139,13 +147,20 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Unique key for the series
          */
-        key: { type: 'string', group: 'Data', defaultValue: null }
+        key: {
+          type: 'string',
+          group: 'Data',
+          defaultValue: null
+        }
       },
       aggregations: {
         /**
          * Defines the data points of our series
          */
-        data: { type: 'ui5.viz.ChartDataPoint', multiple: true }
+        data: {
+          type: 'ui5.viz.ChartDataPoint',
+          multiple: true
+        }
       },
       defaultAggregation: 'data',
       associations: {},
@@ -160,7 +175,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
              * Chart update event code.
              * @event seriesDataUpdate
              */
-            code: { type: 'ui5.viz.ChartUpdateCode' }
+            code: {
+              type: 'ui5.viz.ChartUpdateCode'
+            }
           }
         },
 
@@ -174,7 +191,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
              * Reference to respective series.
              * @event seriesVisibilityChange
              */
-            chartSeries: { type: 'ui5.viz.ChartSeries' }
+            chartSeries: {
+              type: 'ui5.viz.ChartSeries'
+            }
           }
         }
       }
@@ -421,38 +440,17 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       }
 
       return this;
-    },
-
-
-    /* =========================================================== */
-    /* public methods                                              */
-    /* =========================================================== */
-
-    /**
-     * Getter for property <code>key</code>.
-     * @return {string} Key as valid HTML ID.
-     * @public
-     */
-    getKey: function getKey() {
-      var sKey = this.getProperty('key');
-      return this.toValidHtmlID(sKey);
-    },
-
-
-    /**
-     * Takes a string and returns a valid HTML ID.
-     * @param {string} [sValue] Any string.
-     * @return {string} Valid HTML ID.
-     * @public
-     */
-    toValidHtmlID: function toValidHtmlID(sID) {
-      return sID.replace(/^\d*|\W|\s/g, '_');
     }
+  }
 
-    /* =========================================================== */
-    /* private methods                                             */
-    /* =========================================================== */
+  /* =========================================================== */
+  /* public methods                                              */
+  /* =========================================================== */
 
-  });
+  /* =========================================================== */
+  /* private methods                                             */
+  /* =========================================================== */
+  );
 },
-/* bExport= */true);
+/* bExport= */
+true);

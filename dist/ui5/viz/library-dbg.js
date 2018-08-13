@@ -373,6 +373,15 @@ sap.ui.define([
     DataPoint: 'DataPoint',
     Line: 'Line',
     Area: 'Area'
+
+    /**
+     * Takes a string and returns a valid HTML ID.
+     * @param {string} [sValue] Any string.
+     * @return {string} Valid HTML ID.
+     * @public
+     */
+  };ui5.viz.toValidHtmlID = function (sID) {
+    return sID.replace(/(^\d*)|\s/g, '_').replace(/\W/g, 'x');
   };
 
   return ui5.viz;

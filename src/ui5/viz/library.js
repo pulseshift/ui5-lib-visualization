@@ -8,7 +8,7 @@ sap.ui.define(
     // library dependency
     'sap/ui/thirdparty/d3'
   ],
-  function() {
+  function () {
     /**
      * PulseShift OpenUI5 library with visualization functionalities.
      *
@@ -282,7 +282,7 @@ sap.ui.define(
      * @return {sap.ui.core.CSSColor} RGBA color.
      * @public
      */
-    ui5.viz.hexToRgba = function(hex, alpha = 1) {
+    ui5.viz.hexToRgba = (hex, alpha = 1) => {
       const a = alpha >= 0 && alpha <= 1 ? alpha : 1
       const rgbColor = ui5.viz.hexToRgbObject(hex)
       return `rgba(${rgbColor.r},${rgbColor.g},${rgbColor.b},${a})`
@@ -296,7 +296,7 @@ sap.ui.define(
      * @return {sap.ui.core.CSSColor} RGB color.
      * @public
      */
-    ui5.viz.hexToRgb = function(hex) {
+    ui5.viz.hexToRgb = (hex) => {
       const rgbColor = ui5.viz.hexToRgbObject(hex)
       return `rgb(${rgbColor.r},${rgbColor.g},${rgbColor.b})`
     }
@@ -310,9 +310,13 @@ sap.ui.define(
      * @return {sap.ui.core.CSSColor} Hexadecimal color.
      * @public
      */
-    ui5.viz.lightenHexColor = function(hex, percent = 0) {
+    ui5.viz.lightenHexColor = (hex, percent = 0) => {
       // parse hex color to RGB
-      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+      const {
+        r: red,
+        g: green,
+        b: blue
+      } = ui5.viz.hexToRgbObject(hex)
 
       // lighten RGB colors
       const lightenRed = parseInt(red * (100 + percent) / 100)
@@ -344,9 +348,13 @@ sap.ui.define(
      * @return {sap.ui.core.CSSColor} Hexadecimal color.
      * @public
      */
-    ui5.viz.darkenHexColor = function(hex, percent = 0) {
+    ui5.viz.darkenHexColor = (hex, percent = 0) => {
       // parse hex color to RGB
-      const { r: red, g: green, b: blue } = ui5.viz.hexToRgbObject(hex)
+      const {
+        r: red,
+        g: green,
+        b: blue
+      } = ui5.viz.hexToRgbObject(hex)
 
       // darken RGB colors
       const darkenRed = parseInt(red * (100 - percent) / 100)
@@ -378,13 +386,13 @@ sap.ui.define(
      * @return {sap.ui.core.CSSColor} Foreground contrast color (either black or white).
      * @public
      */
-    ui5.viz.hexToBWContrastColor = function(hex) {
+    ui5.viz.hexToBWContrastColor = (hex) => {
       const rgbColor = ui5.viz.hexToRgbObject(hex)
       const brightness = Math.round(
         (parseInt(rgbColor.r, 10) * 299 +
           parseInt(rgbColor.g, 10) * 587 +
           parseInt(rgbColor.b, 10) * 114) /
-          1000
+        1000
       )
       const BLACK = '#000000'
       const WHITE = '#ffffff'
@@ -400,7 +408,7 @@ sap.ui.define(
      * @return {{r: int, g: int, b: int}} RGB object.
      * @public
      */
-    ui5.viz.hexToRgbObject = function(hex) {
+    ui5.viz.hexToRgbObject = (hex) => {
       // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
       const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
       hex = hex.replace(shorthandRegex, (m, r, g, b) => {
@@ -408,17 +416,17 @@ sap.ui.define(
       })
 
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-      return result
-        ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-          }
-        : {
-            r: 0,
-            g: 0,
-            b: 0
-          }
+      return result ?
+        {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } :
+        {
+          r: 0,
+          g: 0,
+          b: 0
+        }
     }
 
     /**
@@ -428,10 +436,10 @@ sap.ui.define(
      * @param {Array[String]} [aColorPalette] Ordered list with plain CSS colors.
      * @protected
      */
-    ui5.viz.setDefaultColorPalette = function(aColorPalette) {
-      ui5.viz.ColorPalette.custom = Array.isArray(aColorPalette)
-        ? aColorPalette
-        : null
+    ui5.viz.setDefaultColorPalette = (aColorPalette) => {
+      ui5.viz.ColorPalette.custom = Array.isArray(aColorPalette) ?
+        aColorPalette :
+        null
     }
 
     /**
@@ -442,7 +450,7 @@ sap.ui.define(
      * @return { value: {string}, unit: {string} }
      * @protected
      */
-    ui5.viz.parseCSSSize = function(sCSSSize) {
+    ui5.viz.parseCSSSize = (sCSSSize) => {
       var aUnitMatches =
         sCSSSize.match(/^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/i) || []
       return {
@@ -461,6 +469,17 @@ sap.ui.define(
       DataPoint: 'DataPoint',
       Line: 'Line',
       Area: 'Area'
+    }
+
+    /**
+     * Takes a string and returns a valid HTML ID.
+     * @param {string} [sValue] Any string.
+     * @return {string} Valid HTML ID.
+     * @public
+     */
+    ui5.viz.toValidHtmlID = (sID) => {
+      return sID.replace(/(^\d*)|\s/g, '_')
+        .replace(/\W/g, 'x')
     }
 
     return ui5.viz
