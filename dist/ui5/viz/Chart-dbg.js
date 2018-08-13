@@ -634,7 +634,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               var isVisible = oDataPoint.getVisible();
               if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
                 aHighlightedDataPoints.push({
-                  series: oSeries.getKey(),
+                  series: library.toValidHtmlID(oSeries.getKey()),
                   point: iIndex,
                   animation: oDataPoint.getHighlightAnimation()
                 });
@@ -1862,7 +1862,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             var isVisible = oDataPoint.getVisible();
             if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
               aHighlightedDataPoints.push({
-                series: oSeries.getKey(),
+                series: library.toValidHtmlID(oSeries.getKey()),
                 point: iIndex,
                 animation: oDataPoint.getHighlightAnimation()
               });

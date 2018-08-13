@@ -673,7 +673,7 @@ sap.ui.define(
                       library.DataPointAnimation.None
                     ) {
                       aHighlightedDataPoints.push({
-                        series: oSeries.getKey(),
+                        series: library.toValidHtmlID(oSeries.getKey()),
                         point: iIndex,
                         animation: oDataPoint.getHighlightAnimation()
                       })
@@ -2039,7 +2039,7 @@ sap.ui.define(
                   library.DataPointAnimation.None
                 ) {
                   aHighlightedDataPoints.push({
-                    series: oSeries.getKey(),
+                    series: library.toValidHtmlID(oSeries.getKey()),
                     point: iIndex,
                     animation: oDataPoint.getHighlightAnimation()
                   })
