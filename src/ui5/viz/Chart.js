@@ -673,7 +673,7 @@ sap.ui.define(
                       library.DataPointAnimation.None
                     ) {
                       aHighlightedDataPoints.push({
-                        series: library.toValidHtmlID(oSeries.getKey()),
+                        series: oSeries.getKey(),
                         point: iIndex,
                         animation: oDataPoint.getHighlightAnimation()
                       })
@@ -2039,7 +2039,7 @@ sap.ui.define(
                   library.DataPointAnimation.None
                 ) {
                   aHighlightedDataPoints.push({
-                    series: library.toValidHtmlID(oSeries.getKey()),
+                    series: oSeries.getKey(),
                     point: iIndex,
                     animation: oDataPoint.getHighlightAnimation()
                   })
@@ -2390,7 +2390,7 @@ sap.ui.define(
 
         // 1. get all series with a chart type that is relevant for shape AREA styles
         this.getSeries().forEach(oSeries => {
-          const sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey())
+          const sSeriesHtmlID = oSeries.getKey()
           let oPatternStyle,
             sCurrentColor,
             oPattern,
@@ -2464,7 +2464,7 @@ sap.ui.define(
 
         // 2. get all series with a chart type that is relevant for shape LINE styles
         this.getSeries().forEach(oSeries => {
-          const sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey())
+          const sSeriesHtmlID = oSeries.getKey()
           let oStrokeStyle,
             sDashArray,
             // set solid style if series type (e.g. bar) is not supporting line styles

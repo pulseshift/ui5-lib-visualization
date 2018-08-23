@@ -478,8 +478,10 @@ sap.ui.define(
      * @public
      */
     ui5.viz.toValidHtmlID = (sID) => {
-      return sID.replace(/(^\d*)|\s/g, '_')
-        .replace(/\W/g, 'x')
+      return sID
+      .replace(/^\d+/g, 'x$&')
+      .replace(/\s/g, '-')
+      .replace(/\W/g, '-')
     }
 
     return ui5.viz

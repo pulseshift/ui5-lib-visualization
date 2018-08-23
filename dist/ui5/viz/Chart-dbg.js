@@ -634,7 +634,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               var isVisible = oDataPoint.getVisible();
               if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
                 aHighlightedDataPoints.push({
-                  series: library.toValidHtmlID(oSeries.getKey()),
+                  series: oSeries.getKey(),
                   point: iIndex,
                   animation: oDataPoint.getHighlightAnimation()
                 });
@@ -1862,7 +1862,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             var isVisible = oDataPoint.getVisible();
             if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
               aHighlightedDataPoints.push({
-                series: library.toValidHtmlID(oSeries.getKey()),
+                series: oSeries.getKey(),
                 point: iIndex,
                 animation: oDataPoint.getHighlightAnimation()
               });
@@ -2197,7 +2197,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // 1. get all series with a chart type that is relevant for shape AREA styles
       this.getSeries().forEach(function (oSeries) {
-        var sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey());
+        var sSeriesHtmlID = oSeries.getKey();
         var oPatternStyle = void 0,
             sCurrentColor = void 0,
             oPattern = void 0,
@@ -2248,7 +2248,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // 2. get all series with a chart type that is relevant for shape LINE styles
       this.getSeries().forEach(function (oSeries) {
-        var sSeriesHtmlID = library.toValidHtmlID(oSeries.getKey());
+        var sSeriesHtmlID = oSeries.getKey();
         var oStrokeStyle = void 0,
             sDashArray = void 0,
 

@@ -250,6 +250,18 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     /* =========================================================== */
 
     /**
+     * Getter for property <code>key</code>.
+     * @returns {string} Key formatted as valid HTML CSS and ID string.
+     * @override
+     */
+    getKey: function getKey() {
+      var sKey = this.getProperty('key');
+
+      return library.toValidHtmlID(sKey);
+    },
+
+
+    /**
      * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
      *
      * @param {string} [sAggregationName] the string identifying the aggregation the managed object oObject should be inserted into.
