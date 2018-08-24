@@ -621,7 +621,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 );
               // INDEX BASED LABELS
               case library.AxisType.Indexed:
-                return parseInt(vValue, 10) || iIndex;
+                return parseFloat(vValue) || iIndex;
               // CATEGORY BASED LABELS
               case library.AxisType.Category:
               default:
@@ -736,7 +736,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                     return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
                     );
                   case library.AxisType.Indexed:
-                    return parseInt(vValue, 10) || 0;
+                    return parseFloat(vValue) || 0;
                   case library.AxisType.Category:
                   default:
                     return iIndex;
@@ -784,7 +784,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             //       (pre, curr) =>
             //         Math.max(
             //           pre === undefined ? -Infinity : pre,
-            //           parseInt(curr.getValue(), 10)
+            //           parseFloat(curr.getValue())
             //         ),
             //       undefined
             //     ),
@@ -797,7 +797,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             //       (pre, curr) =>
             //         Math.min(
             //           pre === undefined ? Infinity : pre,
-            //           parseInt(curr.getValue(), 10)
+            //           parseFloat(curr.getValue())
             //         ),
             //       undefined
             //     ),
@@ -812,11 +812,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oYAxis.getMinValue() || oYAxis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
-              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+              return Math.min(pre === undefined ? Infinity : pre, parseFloat(curr.getValue()));
             }, undefined), oYAxis.getMaxValue() || oYAxis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
-              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
+              return Math.max(pre === undefined ? -Infinity : pre, parseFloat(curr.getValue()));
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
@@ -825,13 +825,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               }).length > 0 ? oYAxis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).map(function (oLabel) {
-                return parseInt(oLabel.getValue(), 10) || 0;
+                return parseFloat(oLabel.getValue()) || 0;
               }) : undefined,
               format: function format(iYValue) {
                 var oLabel = oYAxis.getLabels().filter(function (o) {
                   return o.getVisible();
                 }).find(function (oLabel) {
-                  return parseInt(oLabel.getValue(), 10) === iYValue;
+                  return parseFloat(oLabel.getValue()) === iYValue;
                 });
 
                 if (!oLabel) {
@@ -866,11 +866,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oY2Axis.getMinValue() || oY2Axis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
-              return Math.min(pre === undefined ? Infinity : pre, parseInt(curr.getValue(), 10));
+              return Math.min(pre === undefined ? Infinity : pre, parseFloat(curr.getValue()));
             }, undefined), oY2Axis.getMaxValue() || oY2Axis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
-              return Math.max(pre === undefined ? -Infinity : pre, parseInt(curr.getValue(), 10));
+              return Math.max(pre === undefined ? -Infinity : pre, parseFloat(curr.getValue()));
             }, undefined)],
             tick: {
               // count: 5, >> this value should be set automatically
@@ -879,13 +879,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               }).length > 0 ? oY2Axis.getLabels().filter(function (o) {
                 return o.getVisible();
               }).map(function (oLabel) {
-                return parseInt(oLabel.getValue(), 10) || null;
+                return parseFloat(oLabel.getValue()) || null;
               }) : undefined,
               format: function format(iY2Value) {
                 var oLabel = oY2Axis.getLabels().filter(function (o) {
                   return o.getVisible();
                 }).find(function (oLabel) {
-                  return parseInt(oLabel.getValue(), 10) === iY2Value;
+                  return parseFloat(oLabel.getValue()) === iY2Value;
                 });
                 if (!oLabel) {
                   // if no label exist, show value
@@ -1632,7 +1632,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // on an indexed axis, the label index is representing the labels value and not its position index
       var oLabel = sXAxisType === library.AxisType.Indexed ? aLabels.find(function (oLabel) {
-        return parseInt(oLabel.getValue(), 10) === iIndex;
+        return parseFloat(oLabel.getValue()) === iIndex;
       }) : aLabels[iIndex];
 
       // return an invisible label if no label was found
@@ -1657,7 +1657,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       // return value if axis is from type Indexed
       if (sXAxisType === library.AxisType.Indexed) {
-        return parseInt(vValue, 10) || null;
+        return parseFloat(vValue) || null;
       }
 
       // find respective label and return index
@@ -1686,7 +1686,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var sAxisType = oAxis.getProperty('_axisType');
       var isXAxis = sAxisType === library.Axis.X;
       var vMinValue = oAxis.getMinValue();
-      var iMinValue = parseInt(vMinValue, 10);
+      var iMinValue = parseFloat(vMinValue);
       var isZero = iMinValue === 0;
 
       if (isXAxis) {
@@ -1718,7 +1718,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var sAxisType = oAxis.getProperty('_axisType');
       var isXAxis = sAxisType === library.Axis.X;
       var vMaxValue = oAxis.getMaxValue();
-      var iMaxValue = parseInt(vMaxValue, 10);
+      var iMaxValue = parseFloat(vMaxValue);
       var isZero = iMaxValue === 0;
 
       if (isXAxis) {
@@ -1839,7 +1839,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
             );
           case library.AxisType.Indexed:
-            return parseInt(vValue, 10) || 0;
+            return parseFloat(vValue) || 0;
           case library.AxisType.Category:
           default:
             return iIndex;
@@ -1960,8 +1960,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       });
 
       // not supported by c3js API, yet
-      // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseInt(oLabel.getValue(), 10)) : null;
-      // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseInt(oLabel.getValue(), 10)) : null;
+      // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+      // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
 
       // not supported by c3js API, yet
       // this._chart.grid.x.show = oXAxis.getShowGridLines();

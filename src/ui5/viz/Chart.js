@@ -652,7 +652,7 @@ sap.ui.define(
                         vValue : undefined
                       // INDEX BASED LABELS
                     case library.AxisType.Indexed:
-                      return parseInt(vValue, 10) || iIndex
+                      return parseFloat(vValue) || iIndex
                       // CATEGORY BASED LABELS
                     case library.AxisType.Category:
                     default:
@@ -794,7 +794,7 @@ sap.ui.define(
                         return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ?
                           vValue : undefined
                       case library.AxisType.Indexed:
-                        return parseInt(vValue, 10) || 0
+                        return parseFloat(vValue) || 0
                       case library.AxisType.Category:
                       default:
                         return iIndex
@@ -848,7 +848,7 @@ sap.ui.define(
               //       (pre, curr) =>
               //         Math.max(
               //           pre === undefined ? -Infinity : pre,
-              //           parseInt(curr.getValue(), 10)
+              //           parseFloat(curr.getValue())
               //         ),
               //       undefined
               //     ),
@@ -861,7 +861,7 @@ sap.ui.define(
               //       (pre, curr) =>
               //         Math.min(
               //           pre === undefined ? Infinity : pre,
-              //           parseInt(curr.getValue(), 10)
+              //           parseFloat(curr.getValue())
               //         ),
               //       undefined
               //     ),
@@ -881,7 +881,7 @@ sap.ui.define(
                   (pre, curr) =>
                   Math.min(
                     pre === undefined ? Infinity : pre,
-                    parseInt(curr.getValue(), 10)
+                    parseFloat(curr.getValue())
                   ),
                   undefined
                 ),
@@ -893,7 +893,7 @@ sap.ui.define(
                   (pre, curr) =>
                   Math.max(
                     pre === undefined ? -Infinity : pre,
-                    parseInt(curr.getValue(), 10)
+                    parseFloat(curr.getValue())
                   ),
                   undefined
                 )
@@ -906,13 +906,13 @@ sap.ui.define(
                   oYAxis
                   .getLabels()
                   .filter(o => o.getVisible())
-                  .map(oLabel => parseInt(oLabel.getValue(), 10) || 0) :
+                  .map(oLabel => parseFloat(oLabel.getValue()) || 0) :
                   undefined,
                 format: iYValue => {
                   const oLabel = oYAxis
                     .getLabels()
                     .filter(o => o.getVisible())
-                    .find(oLabel => parseInt(oLabel.getValue(), 10) ===
+                    .find(oLabel => parseFloat(oLabel.getValue()) ===
                       iYValue)
 
                   if (!oLabel) {
@@ -955,7 +955,7 @@ sap.ui.define(
                   (pre, curr) =>
                   Math.min(
                     pre === undefined ? Infinity : pre,
-                    parseInt(curr.getValue(), 10)
+                    parseFloat(curr.getValue())
                   ),
                   undefined
                 ),
@@ -967,7 +967,7 @@ sap.ui.define(
                   (pre, curr) =>
                   Math.max(
                     pre === undefined ? -Infinity : pre,
-                    parseInt(curr.getValue(), 10)
+                    parseFloat(curr.getValue())
                   ),
                   undefined
                 )
@@ -980,14 +980,14 @@ sap.ui.define(
                   oY2Axis
                   .getLabels()
                   .filter(o => o.getVisible())
-                  .map(oLabel => parseInt(oLabel.getValue(), 10) ||
+                  .map(oLabel => parseFloat(oLabel.getValue()) ||
                     null) : undefined,
                 format: iY2Value => {
                   const oLabel = oY2Axis
                     .getLabels()
                     .filter(o => o.getVisible())
                     .find(
-                      oLabel => parseInt(oLabel.getValue(), 10) ===
+                      oLabel => parseFloat(oLabel.getValue()) ===
                       iY2Value
                     )
                   if (!oLabel) {
@@ -1798,7 +1798,7 @@ sap.ui.define(
         // on an indexed axis, the label index is representing the labels value and not its position index
         const oLabel =
           sXAxisType === library.AxisType.Indexed ?
-          aLabels.find(oLabel => parseInt(oLabel.getValue(), 10) ===
+          aLabels.find(oLabel => parseFloat(oLabel.getValue()) ===
             iIndex) :
           aLabels[iIndex]
 
@@ -1823,7 +1823,7 @@ sap.ui.define(
 
         // return value if axis is from type Indexed
         if (sXAxisType === library.AxisType.Indexed) {
-          return parseInt(vValue, 10) || null
+          return parseFloat(vValue) || null
         }
 
         // find respective label and return index
@@ -1851,7 +1851,7 @@ sap.ui.define(
         const sAxisType = oAxis.getProperty('_axisType')
         const isXAxis = sAxisType === library.Axis.X
         const vMinValue = oAxis.getMinValue()
-        const iMinValue = parseInt(vMinValue, 10)
+        const iMinValue = parseFloat(vMinValue)
         const isZero = iMinValue === 0
 
         if (isXAxis) {
@@ -1882,7 +1882,7 @@ sap.ui.define(
         const sAxisType = oAxis.getProperty('_axisType')
         const isXAxis = sAxisType === library.Axis.X
         const vMaxValue = oAxis.getMaxValue()
-        const iMaxValue = parseInt(vMaxValue, 10)
+        const iMaxValue = parseFloat(vMaxValue)
         const isZero = iMaxValue === 0
 
         if (isXAxis) {
@@ -2010,7 +2010,7 @@ sap.ui.define(
                   vValue :
                   undefined
               case library.AxisType.Indexed:
-                return parseInt(vValue, 10) || 0
+                return parseFloat(vValue) || 0
               case library.AxisType.Category:
               default:
                 return iIndex
@@ -2160,8 +2160,8 @@ sap.ui.define(
         })
 
         // not supported by c3js API, yet
-        // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseInt(oLabel.getValue(), 10)) : null;
-        // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseInt(oLabel.getValue(), 10)) : null;
+        // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+        // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
 
         // not supported by c3js API, yet
         // this._chart.grid.x.show = oXAxis.getShowGridLines();
