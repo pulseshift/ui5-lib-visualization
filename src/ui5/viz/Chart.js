@@ -532,6 +532,11 @@ sap.ui.define(
        * @override
        */
       onAfterRendering() {
+        // exit if chart is not availale in DOM
+        if (!this.getDomRef()) {
+          return
+        }
+
         const oXAxis = this.getXAxis()
         const oYAxis = this.getYAxis()
         const oY2Axis = this.getY2Axis()
@@ -1912,10 +1917,14 @@ sap.ui.define(
        * @private
        */
       _onDataUpdateByCode(sCode) {
-        // don't call update routine if it is halted by someone or chart is not initialized, yet
         if (this._getChartUpdateHandler().isHalted()) {
+          // don't call update routine if it is halted
+          return
+        } else if (!this.getDomRef()) {
+          // exit if chart is not availale in DOM
           return
         } else if (!this._chart) {
+          // trigger rerender if chart instance is not available, yet
           this.rerender()
           return
         }
@@ -1954,6 +1963,11 @@ sap.ui.define(
        * @private
        */
       _onDataUpdate() {
+        // exit if chart is not availalein DOM
+        if (!this.getDomRef()) {
+          return
+        }
+
         // console.error('UPDATE THE CHART');
         const sChartHtmlID = this.getId()
         const aSeries = this.getSeries()

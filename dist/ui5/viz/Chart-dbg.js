@@ -518,6 +518,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     onAfterRendering: function onAfterRendering() {
       var _this = this;
 
+      // exit if chart is not availale in DOM
+      if (!this.getDomRef()) {
+        return;
+      }
+
       var oXAxis = this.getXAxis();
       var oYAxis = this.getYAxis();
       var oY2Axis = this.getY2Axis();
@@ -1749,10 +1754,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @private
      */
     _onDataUpdateByCode: function _onDataUpdateByCode(sCode) {
-      // don't call update routine if it is halted by someone or chart is not initialized, yet
       if (this._getChartUpdateHandler().isHalted()) {
+        // don't call update routine if it is halted
+        return;
+      } else if (!this.getDomRef()) {
+        // exit if chart is not availale in DOM
         return;
       } else if (!this._chart) {
+        // trigger rerender if chart instance is not available, yet
         this.rerender();
         return;
       }
@@ -1793,6 +1802,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _onDataUpdate: function _onDataUpdate() {
       var _this5 = this;
+
+      // exit if chart is not availalein DOM
+      if (!this.getDomRef()) {
+        return;
+      }
 
       // console.error('UPDATE THE CHART');
       var sChartHtmlID = this.getId();
