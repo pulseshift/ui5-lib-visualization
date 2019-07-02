@@ -74,7 +74,7 @@
     "browser-sync": "^2.18.13",
     "browserify": "^16.1.1",
     "connect-gzip-static": "^2.1.1",
-    "del": "^4.0.0",
+    "del": "^5.0.0",
     "dox": "^0.9.0",
     "eslint": "^6.0.0",
     "eslint-config-prettier": "^6.0.0",
