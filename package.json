@@ -83,7 +83,7 @@
     "fs-es6-promise": "^0.0.3",
     "gulp": "4.0",
     "gulp-babel": "^7.0.0",
-    "gulp-brotli": "^1.2.1",
+    "gulp-brotli": "^2.0.0",
     "gulp-clean-css": "^4.0.0",
     "gulp-favicons": "^2.2.7",
     "gulp-gzip": "^1.4.2",
