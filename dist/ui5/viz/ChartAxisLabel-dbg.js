@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -35,9 +33,10 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
    */
   return Element.extend('ui5.viz.ChartAxisLabel', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -46,12 +45,20 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
         /**
          * Sets axis value
          */
-        value: { type: 'any', group: 'Appereance', defaultValue: null },
+        value: {
+          type: 'any',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Sets axis label title
          */
-        title: { type: 'string', group: 'Appereance', defaultValue: null },
+        title: {
+          type: 'string',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Sets axis label icon
@@ -79,15 +86,21 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -100,7 +113,6 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -108,7 +120,6 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
      * @override
      */
     init: function init() {},
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -121,9 +132,10 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
       this.fireAxisLabelUpdate();
     },
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -144,9 +156,8 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
 
       if (['value', 'title', 'visible'].includes(sName)) {
         // important: update value, before fire event
-        Element.prototype.setProperty.call(this, sName, vValue, true);
+        Element.prototype.setProperty.call(this, sName, vValue, true); // inform observers about data update
 
-        // inform observers about data update
         this.fireAxisLabelUpdate();
       } else {
         Element.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
@@ -154,15 +165,19 @@ sap.ui.define(['sap/ui/core/Element'], function (Element) {
 
       return this;
     }
-
     /* =========================================================== */
+
     /* public methods                                              */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* private methods                                             */
+
     /* =========================================================== */
 
   });
 },
-/* bExport= */true);
+/* bExport= */
+true);

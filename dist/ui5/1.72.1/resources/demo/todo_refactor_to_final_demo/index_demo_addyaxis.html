@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Chart Test</title>
+
+    <script id="sap-ui-bootstrap" src="https://openui5.hana.ondemand.com/1.38.6/resources/sap-ui-core.js"
+      data-sap-ui-theme="sap_belize" data-sap-ui-libs="sap.m" data-sap-ui-bindingSyntax="complex"
+      data-sap-ui-compactVersion="edge" data-sap-ui-preload="async" data-sap-ui-resourceroots='{
+            "ui5": "../../ui5",
+            "vendor": "../../vendor",
+            "sap.ui.demo.db" : "./"
+        }' data-sap-ui-frameOptions="allow">
+
+
+    </script>
+
+
+
+    <script>
+      sap.ui.getCore().attachInit(function () {
+        "use strict";
+
+        new sap.ui.xmlview({
+          viewContent: jQuery("#myView").html()
+        }).placeAt("content");
+      });
+
+    </script>
+
+    <script id="myView" type="text/xml">
+      <mvc:View controllerName="sap.ui.demo.db.controller.Demo_AddYAxis" xmlns="sap.m"
+        xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:viz="ui5.viz">
+        <App>
+          <Page title="{store>/title}">
+            <content>
+              <viz:Chart class="sapUiTinyMargin" id="myChart" width="{store>/width}" height="{store>/height}"
+                showTooltip="{store>/showTooltip}" groupedTooltip="{store>/groupedTooltip}"
+                showLegend="{store>/showLegend}" xAxisType="Indexed" series="{store>/series}">
+                <viz:series>
+                  <viz:ChartSeries type="{store>type}" name=" {store>name}" data="{ path: 'store>dataPoints', templateShareable: true }">
+                    <viz:data>
+                      <viz:ChartDataPoint value="{store>}" />
+                    </viz:data>
+                  </viz:ChartSeries>
+                </viz:series>
+                <viz:xAxis>
+                  <viz:ChartAxis title="{store>/xAxis/0/title}" labels="{ path: 'store>/xAxis/0/labels'}">
+                    <viz:labels>
+                      <viz:ChartAxisLabel value="{store>}" />
+                    </viz:labels>
+                  </viz:ChartAxis>
+                </viz:xAxis>
+                <viz:y2Axis>
+                  <viz:ChartAxis title="{store>/y2Axis/0/title}">
+                  </viz:ChartAxis>
+                </viz:y2Axis>
+              </viz:Chart>
+            </content>
+          </Page>
+        </App>
+      </mvc:View>
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+    <div id="content"></div>
+  </body>

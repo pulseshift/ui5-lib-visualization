@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -35,9 +33,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
    */
   return Element.extend('ui5.viz.ChartDataPoint', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -67,30 +66,50 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Sets the representation of value as formatted text.
          */
-        label: { type: 'string', group: 'Data', defaultValue: null },
+        label: {
+          type: 'string',
+          group: 'Data',
+          defaultValue: null
+        },
 
         /**
          * Sets the representation of value as formatted text in the tooltip.
          */
-        tooltipLabel: { type: 'string', group: 'Data', defaultValue: null },
+        tooltipLabel: {
+          type: 'string',
+          group: 'Data',
+          defaultValue: null
+        },
 
         /**
          * Sets the value the data point should represent.
          * Hint: To support null as value, the type must be "any"
          */
-        value: { type: 'any', group: 'Data', defaultValue: null },
+        value: {
+          type: 'any',
+          group: 'Data',
+          defaultValue: null
+        },
 
         /**
          * Sets the high value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
-        high: { type: 'any', group: 'Data', defaultValue: null },
+        high: {
+          type: 'any',
+          group: 'Data',
+          defaultValue: null
+        },
 
         /**
          * Sets the low value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
-        low: { type: 'any', group: 'Data', defaultValue: null },
+        low: {
+          type: 'any',
+          group: 'Data',
+          defaultValue: null
+        },
 
         /**
          * Sets visibility of the element.
@@ -113,15 +132,21 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -134,7 +159,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -142,7 +166,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @override
      */
     init: function init() {},
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -155,9 +178,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       this.fireDataPointUpdate();
     },
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -173,9 +197,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     setProperty: function setProperty(sName, vValue, bSuppressInvalidation) {
       if (['value', 'high', 'low', 'label', 'tooltipLabel', 'visible', 'highlightAnimation'].includes(sName)) {
         // important: update value, before fire event
-        Element.prototype.setProperty.call(this, sName, vValue, true);
+        Element.prototype.setProperty.call(this, sName, vValue, true); // inform observers about data update
 
-        // inform observers about data update
         this.fireDataPointUpdate();
       } else {
         Element.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
@@ -183,7 +206,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Overwrites getter in order to make sure it is a valid value. Visible can be false due to different reasons.
@@ -200,7 +222,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       }
     },
 
-
     /**
      * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
      * @public
@@ -209,7 +230,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       var v = this.getProperty('value');
       return !isNaN(v) && v !== null ? parseFloat(v) : null;
     },
-
 
     /**
      * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
@@ -220,7 +240,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       return !isNaN(h) && h !== null ? parseFloat(h) : null;
     },
 
-
     /**
      * Overwrites getter in order to make sure it is a valid value. As the data type is any it might also be a string (for example).
      * @public
@@ -230,7 +249,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       return !isNaN(l) && l !== null ? parseFloat(l) : null;
     },
 
-
     /**
      * Unified method to get correct value object based on data point type.
      * @returns {string|int|{high: string|int, low: string|int}}
@@ -238,6 +256,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getValueOrValuePair: function getValueOrValuePair() {
       var isVisible = this.getVisible();
+
       if (this.getType() === library.DataPointType.SingleValue) {
         return isVisible ? this.getValue() : null;
       } else {
@@ -247,7 +266,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
           high: highValue,
           low: lowValue
         };
-        return isVisible ? result : { high: null, low: null };
+        return isVisible ? result : {
+          high: null,
+          low: null
+        };
       }
     }
   });

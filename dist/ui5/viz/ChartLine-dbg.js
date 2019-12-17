@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -17,7 +15,6 @@
  */
 sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) {
   'use strict';
-
   /**
    * Constructor for a new <code>ui5.viz.ChartLine</code>.
    *
@@ -38,9 +35,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
   return Element.extend('ui5.viz.ChartLine', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -49,7 +47,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Sets the ttitleext of the ChartLine
          */
-        title: { type: 'string', group: 'Appereance', defaultValue: null },
+        title: {
+          type: 'string',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Sets the position of the title
@@ -128,7 +130,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Sets value that is matching a position on the assigned axis
          */
-        value: { type: 'string', group: 'Data', defaultValue: null }
+        value: {
+          type: 'string',
+          group: 'Data',
+          defaultValue: null
+        }
       },
       aggregations: {},
       associations: {},
@@ -143,7 +149,9 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
              * Chart update event code.
              * @event lineUpdate
              */
-            code: { type: 'ui5.viz.ChartUpdateCode' }
+            code: {
+              type: 'ui5.viz.ChartUpdateCode'
+            }
           }
         },
 
@@ -157,28 +165,38 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
              * Chart line that was clicked.
              * @event selectorPress
              */
-            line: { type: 'ui5.viz.ChartLine' },
+            line: {
+              type: 'ui5.viz.ChartLine'
+            },
 
             /**
              * Dom reference of line selector.
              * @event selectorPress
              */
-            selectorDomRef: { type: 'object' }
+            selectorDomRef: {
+              type: 'object'
+            }
           }
         }
       }
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -191,7 +209,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -199,7 +216,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @override
      */
     init: function init() {},
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -214,9 +230,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       });
     },
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -232,9 +249,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     setProperty: function setProperty(sName, vValue, bSuppressInvalidation) {
       if (['title', 'titlePosition', 'style', 'color', 'axis', 'value', 'visible'].includes(sName)) {
         // important: update value, before fire event
-        Element.prototype.setProperty.call(this, sName, vValue, true);
+        Element.prototype.setProperty.call(this, sName, vValue, true); // inform observers about data update
 
-        // inform observers about data update
         this.fireLineUpdate({
           code: library.ChartUpdateCode.Line
         });
@@ -244,15 +260,19 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     }
-
     /* =========================================================== */
+
     /* public methods                                              */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* private methods                                             */
+
     /* =========================================================== */
 
   });
 },
-/* bExport= */true);
+/* bExport= */
+true);

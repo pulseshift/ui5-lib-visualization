@@ -1,0 +1,6 @@
+/*!
+ * OpenUI5
+ * (c) Copyright 2009-2019 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+sap.ui.define(["sap/ui/layout/cssgrid/GridLayoutBase","sap/ui/layout/cssgrid/GridSettings","sap/ui/Device","sap/ui/layout/library"],function(t,e,s){"use strict";var a=t.extend("sap.ui.layout.cssgrid.ResponsiveColumnLayout",{metadata:{library:"sap.ui.layout",properties:{},events:{layoutChange:{parameters:{layout:{type:"string"}}}}}});a.prototype.isResponsive=function(){return true};a.prototype.onGridAfterRendering=function(t){this._setActiveLayoutClassName(t,false)};a.prototype.getActiveGridSettings=function(){return null};a.prototype.onGridResize=function(t){if(!t||t.size.width===0){return}this._setActiveLayoutClassName(t.control,true)};a.prototype._setActiveLayoutClassName=function(t,e){var i=this._sCurrentLayoutClassName,o=t.$(),u=o.parent(),r=u.outerWidth(),n=s.media.getCurrentRange("StdExt",r),p=a.mSizeClasses[n.name];if(i===p){return}this._sCurrentLayoutClassName=p;o.removeClass(i);o.addClass(p);if(e){this.fireLayoutChange({layout:n.name})}};a.mSizeClasses={Phone:"sapUiLayoutCSSResponsiveColumnLayoutS",Tablet:"sapUiLayoutCSSResponsiveColumnLayoutM",Desktop:"sapUiLayoutCSSResponsiveColumnLayoutL",LargeDesktop:"sapUiLayoutCSSResponsiveColumnLayoutXL"};return a});

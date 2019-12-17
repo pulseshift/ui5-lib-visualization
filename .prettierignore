@@ -1,0 +1,3 @@
+# Contains ui5 dependencies / third party code
+/src/resources/ui5-pulseshift/libs/
+/src/resources/ui5-themes/

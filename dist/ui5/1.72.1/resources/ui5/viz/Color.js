@@ -1,0 +1,1 @@
+sap.ui.define(["sap/ui/core/Element","./library"],function(e){return e.extend("ui5.viz.Color",{metadata:{library:"ui5.viz",properties:{color:{type:"sap.ui.core.CSSColor",group:"Appereance",defaultValue:null}},aggregations:{},associations:{},events:{}},constructor(){e.prototype.constructor.apply(this,arguments)},init(){}})},true);

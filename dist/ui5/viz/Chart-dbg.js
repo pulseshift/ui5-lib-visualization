@@ -1,8 +1,12 @@
-'use strict';
+"use strict";
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
-/* @flow */
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 /**
  * @example
@@ -35,9 +39,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
  *   </yAxis>
  * </Chart>
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './libs/lodash.debounce', './libs/lodash.isequal', './libs/c3', './library',
-
-// libs
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './libs/lodash.debounce', './libs/lodash.isequal', './libs/c3', './library', // libs
 'sap/ui/thirdparty/d3'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, lodashDebounce, lodashIsequal, c3, library) {
   /**
    * Constructor for a new <code>ui5.viz.Chart</code>.
@@ -58,9 +60,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
    */
   return Control.extend('ui5.viz.Chart', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -284,7 +287,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /**
@@ -309,12 +314,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return {
         halt: function halt() {
           ++Chart._haltCount;
+
           if (Chart._haltCount !== 0) {
             Chart.setBusy(true);
           }
         },
         release: function release() {
           --Chart._haltCount;
+
           if (Chart._haltCount === 0) {
             Chart.setBusy(false);
           }
@@ -324,7 +331,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         }
       };
     },
-
 
     /**
      * Number range object to set a unique key to series
@@ -344,7 +350,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         }
       };
     },
-
 
     /**
      * Lodash debounce update chart method to increase performance.
@@ -368,7 +373,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _debounceUpdateChartAreas: null,
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /**
@@ -435,7 +442,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     CSS_CLASS_MICRO_MODE: 'ui5-viz-chart-micro-mode',
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -447,18 +456,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     init: function init() {
       // init private attributes
       this._initNumberRangeCreator();
+
       this._initChartUpdateHandler();
-      this._chart = null;
 
-      // don't process update routine during initialization phase of control
-      this._getChartUpdateHandler().halt();
+      this._chart = null; // don't process update routine during initialization phase of control
 
-      // init debounce update function instance
+      this._getChartUpdateHandler().halt(); // init debounce update function instance
+
+
       this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10);
       this._debounceUpdateChartLines = lodashDebounce(this._updateChartLines, 50);
       this._debounceUpdateChartAreas = lodashDebounce(this._updateChartAreas, 50);
     },
-
 
     /**
      * Constructor for a new <code>ui5.viz.Chart</code>.
@@ -467,12 +476,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @param {object} [mSettings] Initial settings for the new control
      */
     constructor: function constructor() {
-      Control.prototype.constructor.apply(this, arguments);
+      Control.prototype.constructor.apply(this, arguments); // initialization phase finished, update routine is enabled again
 
-      // initialization phase finished, update routine is enabled again
       this._getChartUpdateHandler().release();
     },
-
 
     /**
      * Method called before control gets rendered
@@ -481,14 +488,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     onBeforeRendering: function onBeforeRendering() {
       // don't process update routine rendering procedure
-      this._getChartUpdateHandler().halt();
+      this._getChartUpdateHandler().halt(); // destroy chart before rerendering
 
-      // destroy chart before rerendering
+
       if (this._chart) {
         this._chart.destroy();
       }
     },
-
 
     /**
      * Renderer function of control <code>ui5.viz.Chart</code>.
@@ -503,12 +509,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       oRm.writeControlData(oControl);
       oRm.addClass(oControl.CSS_CLASS);
       oRm.writeClasses();
-      oRm.write('>');
+      oRm.write('>'); // end render wrapper div
 
-      // end render wrapper div
       oRm.write('</div>');
     },
-
 
     /**
      * Method called after control gets rendered
@@ -528,21 +532,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var oY2Axis = this.getY2Axis();
       var aSeries = this.getSeries();
       var sChartHtmlID = this.getId();
-      var aHighlightedDataPoints = [];
+      var aHighlightedDataPoints = []; // enable/disable axis depending on microMode is active or not
 
-      // enable/disable axis depending on microMode is active or not
       if (this.getMicroMode()) {
         var suppressRerender = true;
         oXAxis.setProperty('visible', false, suppressRerender);
         oYAxis.setProperty('visible', false, suppressRerender);
         oY2Axis.setProperty('visible', false, suppressRerender);
-      }
-
-      // because properties can't be take into account during rendering, we must process all properties and aggregations manually here
-
+      } // because properties can't be take into account during rendering, we must process all properties and aggregations manually here
       // create c3js options
+
+
       var options = {
-        bindto: '#' + sChartHtmlID,
+        bindto: "#".concat(sChartHtmlID),
         size: {
           width: this.getWidth(),
           // the x-axis title needs 15px more space, this must be calculated here
@@ -590,17 +592,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                       style: 'long'
                     }).format(oDate);
                   };
-
                 // INDEX BASED LABELS
-                case library.AxisType.Indexed:
-                // CATEGORY BASED LABELS
+
+                case library.AxisType.Indexed: // CATEGORY BASED LABELS
+
                 case library.AxisType.Category: // eslint-disable-line no-fallthrough
+
                 default:
                   return function (iXIndex) {
                     var oLabel = _this.getXAxisLabelByIndex(iXIndex);
-                    var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle();
-                    // show nothing if label doesn't exist or if label is invisible
+
+                    var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle(); // show nothing if label doesn't exist or if label is invisible
                     // if title is blank show value instead
+
                     return oLabel && oLabel.getVisible() ? sTitle : undefined; // undefined will result in a hidden label (null is converted to string 'null')
                   };
               }
@@ -613,21 +617,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         },
         data: {
           x: 'x',
-          columns: [
-          // add x axis values first
+          columns: [// add x axis values first
           ['x'].concat(_toConsumableArray(oXAxis.getLabels().map(function (oLabel, iIndex) {
-            var vValue = oLabel.getValue();
+            var vValue = oLabel.getValue(); // check if an index based formatter function must be used or a time based formatter
 
-            // check if an index based formatter function must be used or a time based formatter
             switch (_this.getXAxisType()) {
               // TIME BASED VALUES
               case library.AxisType.Time:
-                return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
-                );
+                return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined;
               // INDEX BASED LABELS
+
               case library.AxisType.Indexed:
                 return parseFloat(vValue) || iIndex;
               // CATEGORY BASED LABELS
+
               case library.AxisType.Category:
               default:
                 return vValue;
@@ -637,6 +640,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             var aData = oSeries.getData().map(function (oDataPoint, iIndex) {
               // check if data point should be highlighted
               var isVisible = oDataPoint.getVisible();
+
               if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
                 aHighlightedDataPoints.push({
                   series: oSeries.getKey(),
@@ -644,13 +648,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                   animation: oDataPoint.getHighlightAnimation()
                 });
               }
+
               return oDataPoint.getValueOrValuePair();
-            }) || [];
+            }) || []; // add key of data series
 
-            // add key of data series
-            aData.unshift(oSeries.getKey());
+            aData.unshift(oSeries.getKey()); // return series structure
 
-            // return series structure
             return aData; // e.g. ['data1', 1, 4, 6, 8, 10, ...]
           }))),
           axes: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
@@ -673,6 +676,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             if (oSeries.getColor()) {
               oTypes[oSeries.getKey()] = oSeries.getColor();
             }
+
             return oTypes;
           }, {}),
           labels: {
@@ -680,10 +684,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               // return a map with the structure: { @seriesKey: @seriesFormatFunction, ... }
               oTypes[oSeries.getKey()] = function (value, seriesKey, index) {
                 var sLabel = oSeries.getData()[index] ? oSeries.getData()[index].getLabel() : null;
-                var sValidatedLabel = sLabel ? sLabel : value;
-                // if showLabels = true then display label or value
+                var sValidatedLabel = sLabel ? sLabel : value; // if showLabels = true then display label or value
+
                 return oSeries.getShowLabels() ? sValidatedLabel : null;
               };
+
               return oTypes;
             }, {})
           },
@@ -692,6 +697,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             if (oSeries && oSeries.getGroupKey() && !aGroups.includes(oSeries.getGroupKey())) {
               aGroups.push(oSeries.getGroupKey());
             }
+
             return aGroups;
           }, []).map(function (sGroupKey) {
             // return for each group key the list of respective series keys (['data1', 'data2'])
@@ -705,8 +711,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         color: {
           pattern: this.getColors().map(function (oColor) {
             return oColor.getColor();
-          }).concat(
-          // retrieve custom color palette first if available
+          }).concat( // retrieve custom color palette first if available
           library.ColorPalette.custom ? library.ColorPalette.custom : library.ColorPalette.Material300)
         },
         axis: {
@@ -717,8 +722,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
               switch (_this.getXAxisType()) {
                 case library.AxisType.Time:
                   return 'timeseries';
+
                 case library.AxisType.Indexed:
                   return 'indexed';
+
                 case library.AxisType.Category:
                 default:
                   return 'category';
@@ -738,10 +745,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
                 switch (_this.getXAxisType()) {
                   case library.AxisType.Time:
-                    return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
-                    );
+                    return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined;
+
                   case library.AxisType.Indexed:
                     return parseFloat(vValue) || 0;
+
                   case library.AxisType.Category:
                   default:
                     return iIndex;
@@ -758,15 +766,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                       }).format(oDate);
                     };
                   // INDEXED BASED LABELS
-                  case library.AxisType.Indexed:
-                  // CATEGORY BASED LABELS
+
+                  case library.AxisType.Indexed: // CATEGORY BASED LABELS
+
                   case library.AxisType.Category: // eslint-disable-line no-fallthrough
+
                   default:
                     return function (iXIndex) {
                       var oLabel = _this.getXAxisLabelByIndex(iXIndex);
-                      var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle();
-                      // show nothing if label doesn't exist or if label is invisible
+
+                      var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle(); // show nothing if label doesn't exist or if label is invisible
                       // if title is blank show value instead
+
                       return oLabel && oLabel.getVisible() ? sTitle : undefined; // undefined will result in a hidden label (null is converted to string 'null')
                     };
                 }
@@ -809,11 +820,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // inverted: false,
             // center: 0,
             padding: {
-              top: this.getMicroMode() ? undefined : 0, // should maybe made configurable
+              top: this.getMicroMode() ? undefined : 0,
+              // should maybe made configurable
               bottom: this.getMicroMode() ? undefined : 0
             },
-            default: [
-            // identify min and max value to set default range
+            default: [// identify min and max value to set default range
             oYAxis.getMinValue() || oYAxis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
@@ -844,9 +855,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                   return iYValue;
                 }
 
-                var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle();
+                var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle(); // show nothing if label is explicit invisible, else show title or value (if title is blank)
 
-                // show nothing if label is explicit invisible, else show title or value (if title is blank)
                 return oLabel.getVisible() ? sTitle : undefined; // undefined will result in a hidden label (null is converted to string 'null')
               }
             },
@@ -863,11 +873,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // inverted: false,
             // center: 0,
             padding: {
-              top: 0, // should maybe made configurable
+              top: 0,
+              // should maybe made configurable
               bottom: 0
             },
-            default: [
-            // identify min and max value to set default range
+            default: [// identify min and max value to set default range
             oY2Axis.getMinValue() || oY2Axis.getLabels().filter(function (o) {
               return o.getVisible();
             }).reduce(function (pre, curr) {
@@ -892,14 +902,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 }).find(function (oLabel) {
                   return parseFloat(oLabel.getValue()) === iY2Value;
                 });
+
                 if (!oLabel) {
                   // if no label exist, show value
                   return iY2Value;
                 }
 
-                var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle();
+                var sTitle = oLabel.getTitle() === '' ? oLabel.getValue() : oLabel.getTitle(); // show nothing if label is explicit invisible, else show title or value (if title is blank)
 
-                // show nothing if label is explicit invisible, else show title or value (if title is blank)
                 return oLabel.getVisible() ? sTitle : undefined; // undefined will result in a hidden label (null is converted to string 'null')
               }
             },
@@ -944,57 +954,51 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         transition: {
           duration: 175
         }
+      }; // for debugging purposes
+      // console.log(options)
+      // initialize c3 chart
 
-        // for debugging purposes
-        // console.log(options)
-
-        // initialize c3 chart
-      };this._chart = c3.generate(options);
-
-      // >>> continue styling
-
+      this._chart = c3.generate(options); // >>> continue styling
       // highlight data points
-      d3.selectAll('#' + sChartHtmlID + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
+
+      d3.selectAll("#".concat(sChartHtmlID, " g.c3-circles circle.c3-circle")).classed(this.CSS_HIGHLIGHT_PULSATE, false);
+
       if (aHighlightedDataPoints.length > 0) {
         aHighlightedDataPoints.forEach(function (oHighlightInfo) {
-          d3.select('#' + sChartHtmlID + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this.CSS_HIGHLIGHT_PULSATE, true);
+          d3.select("#".concat(sChartHtmlID, " g.c3-circles-").concat(oHighlightInfo.series, " circle.c3-circle-").concat(oHighlightInfo.point)).classed(_this.CSS_HIGHLIGHT_PULSATE, true);
         });
-      }
+      } // set series style for shape areas
 
-      // set series style for shape areas
-      this._updateSeriesStyles();
 
-      // update line styles
-      this._updateLineStyles();
+      this._updateSeriesStyles(); // update line styles
 
-      // update area styles
-      this._updateAreaStyles();
 
-      // set clippath of zoom overflow area
+      this._updateLineStyles(); // update area styles
+
+
+      this._updateAreaStyles(); // set clippath of zoom overflow area
+
+
       if (this.getClipZoomOverflow()) {
         this.removeStyleClass(this.CSS_CLASS_NOCLIP);
       } else {
         this.addStyleClass(this.CSS_CLASS_NOCLIP);
-      }
+      } // set background color
 
-      // set background color
-      if (this.getDomRef()) $(this.getDomRef()).css('background-color', this.getBackgroundColor());
 
-      // attach on window resize handler
-      $(window).resize(this._resize.bind(this));
+      if (this.getDomRef()) $(this.getDomRef()).css('background-color', this.getBackgroundColor()); // attach on window resize handler
 
-      // call resize after a little delay, because sometimes the parent view needs some time until transition to full size finished
+      $(window).resize(this._resize.bind(this)); // call resize after a little delay, because sometimes the parent view needs some time until transition to full size finished
+
       setTimeout(function () {
         _this._resize();
       }, 150);
       setTimeout(function () {
         _this._resize();
-      }, 1500);
+      }, 1500); // enable update loop, again
 
-      // enable update loop, again
       this._getChartUpdateHandler().release();
     },
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -1004,9 +1008,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     exit: function exit() {},
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -1022,7 +1027,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('dataVisible', bDataVisible, true); // do not rerender
     },
 
-
     /**
      * Setter for property <code>width</code>.
      *
@@ -1033,12 +1037,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     setWidth: function setWidth(sWidth) {
       this.setProperty('width', sWidth, true); // do not rerender
+
       this._chart ? this._chart.resize({
         width: this.getWidth()
       }) : undefined;
       return this;
     },
-
 
     /**
      * Setter for property <code>height</code>.
@@ -1050,12 +1054,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     setHeight: function setHeight(sHeight) {
       this.setProperty('height', sHeight, true); // do not rerender
+
       this._chart ? this._chart.resize({
         height: this.getHeigth()
       }) : undefined;
       return this;
     },
-
 
     /**
      * Getter for property <code>width</code>.
@@ -1068,7 +1072,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this._getComputedSize(this.getProperty('width'), 'width');
     },
 
-
     /**
      * Getter for property <code>height</code>.
      *
@@ -1079,7 +1082,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     getHeigth: function getHeigth() {
       return this._getComputedSize(this.getProperty('height'), 'height');
     },
-
 
     /**
      * Setter for property <code>showSubchart</code>.
@@ -1095,7 +1097,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('showSubchart', bShowSubchart, false); // force rerender
     },
 
-
     /**
      * Setter for property <code>microMode</code>.
      *
@@ -1109,13 +1110,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         this.addStyleClass(this.CSS_CLASS_MICRO_MODE);
       } else {
         this.removeStyleClass(this.CSS_CLASS_MICRO_MODE);
-      }
+      } // Hint: disable/enable all axis is done in update and onAfterRendering method
 
-      // Hint: disable/enable all axis is done in update and onAfterRendering method
 
       return this.setProperty('microMode', bMicroMode, false); // force rerender
     },
-
 
     /**
      * Setter for property <code>zoomEnabled</code>.
@@ -1129,7 +1128,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (this._chart) this._chart.zoom.enable(bZoomEnabled);
       return this.setProperty('zoomEnabled', bZoomEnabled, true); // do not rerender
     },
-
 
     /**
      * Setter for property <code>clipZoomOverflow</code>.
@@ -1145,9 +1143,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       } else {
         this.addStyleClass(this.CSS_CLASS_NOCLIP);
       }
+
       return this.setProperty('clipZoomOverflow', bClipZoomOverflow, true); // do not rerender
     },
-
 
     /**
      * Setter for property <code>showDataPoints</code>.
@@ -1163,9 +1161,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       } else {
         this.addStyleClass(this.CSS_CLASS_NO_POINTS);
       }
+
       return this.setProperty('showDataPoints', bShowDataPoints, true); // do not rerender
     },
-
 
     /**
      * Setter for property <code>backgroundColor</code>.
@@ -1179,7 +1177,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (this.getDomRef()) $(this.getDomRef()).css('background-color', sBackgroundColor);
       return this.setProperty('backgroundColor', sBackgroundColor, true); // do not rerender
     },
-
 
     /**
      * Setter for property <code>legendPosition</code>.
@@ -1195,7 +1192,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('legendPosition', sLegendPosition, false); // force rerender
     },
 
-
     /**
      * Setter for property <code>showLegend</code>.
      *
@@ -1208,7 +1204,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (this._chart) bShowLegend ? this._chart.legend.show() : this._chart.legend.hide();
       return this.setProperty('showLegend', bShowLegend, true); // do not rerender
     },
-
 
     /**
      * Setter for property <code>showTooltip</code>.
@@ -1224,7 +1219,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('showTooltip', bShowTooltip, false); // force rerender
     },
 
-
     /**
      * Setter for property <code>groupedTooltip</code>.
      *
@@ -1238,7 +1232,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // if (this._chart) this._chart.tooltip.grouped = bGroupedTooltip;
       return this.setProperty('groupedTooltip', bGroupedTooltip, false); // force rerender
     },
-
 
     /**
      * Setter for property <code>switchAxisPosition</code>.
@@ -1254,7 +1247,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('switchAxisPosition', bSwitchAxisPosition, false); // force rerender
     },
 
-
     /**
      * Setter for property <code>xAxisType</code>.
      *
@@ -1268,7 +1260,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this.setProperty('xAxisType', bXAxisType, false); // force rerender
     },
 
-
     /**
      * Getter for aggregation <code>xAxis</code>.
      *
@@ -1277,9 +1268,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     getXAxis: function getXAxis() {
-      var oXAxis = void 0;
-
+      var oXAxis;
       oXAxis = this.getAggregation('xAxis');
+
       if (!oXAxis) {
         oXAxis = new ChartAxis();
         this.setAggregation('xAxis', oXAxis, true); // do not rerender
@@ -1287,7 +1278,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return oXAxis;
     },
-
 
     /**
      * Getter for aggregation <code>yAxis</code>.
@@ -1297,9 +1287,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     getYAxis: function getYAxis() {
-      var oYAxis = void 0;
-
+      var oYAxis;
       oYAxis = this.getAggregation('yAxis');
+
       if (!oYAxis) {
         oYAxis = new ChartAxis();
         this.setAggregation('yAxis', oYAxis, true); // do not rerender
@@ -1307,7 +1297,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return oYAxis;
     },
-
 
     /**
      * Getter for aggregation <code>y2Axis</code>.
@@ -1317,9 +1306,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     getY2Axis: function getY2Axis() {
-      var oY2Axis = void 0;
-
+      var oY2Axis;
       oY2Axis = this.getAggregation('y2Axis');
+
       if (!oY2Axis) {
         oY2Axis = new ChartAxis({
           visible: false
@@ -1329,7 +1318,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return oY2Axis;
     },
-
 
     /**
      * Sets a new object in the named 0..1 aggregation of this ManagedObject and marks this ManagedObject as changed.
@@ -1350,12 +1338,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           case 'xAxis':
             oObject.setProperty('_axisType', library.Axis.X, true);
             break;
+
           case 'yAxis':
             oObject.setProperty('_axisType', library.Axis.Y, true);
             break;
+
           case 'y2Axis':
             oObject.setProperty('_axisType', library.Axis.Y2, true);
             break;
+
           default:
             break;
         }
@@ -1364,8 +1355,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (['xAxis', 'yAxis', 'y2Axis'].includes(sAggregationName)) {
         // other than the CHartSeries, we must rerender the chart when an Axis is added, because not all attributes/aggregations can be updated via c3js API, yet
         Control.prototype.setAggregation.call(this, sAggregationName, oObject, false); // force rerender
-
         // forward dataUpdate event
+
         if (oObject) {
           oObject.attachAxisUpdate(function (oEvent) {
             return _this2._onDataUpdateByCode(oEvent.getParameter('code'));
@@ -1377,7 +1368,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return this;
     },
-
 
     /**
      * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
@@ -1396,14 +1386,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // set initial unique key if not happened, yet
       if (sAggregationName === 'series' && !oObject.getKey()) {
         oObject.setKey(this._getNumberRangeCreator().getNext());
-      }
+      } // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
 
-      // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
+
       if (['lines', 'areas'].includes(sAggregationName)) {
         // important: update value, before fire event
-        Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, true);
+        Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, true); // forward aggregation update events & inform observers about data update
 
-        // forward aggregation update events & inform observers about data update
         switch (sAggregationName) {
           // case 'series':
           //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
@@ -1414,14 +1403,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oObject.attachLineUpdate(function (oEvent) {
               return _this3._onDataUpdateByCode(oEvent.getParameter('code'));
             });
+
             this._onDataUpdateByCode(library.ChartUpdateCode.Line);
+
             break;
+
           case 'areas':
             oObject.attachAreaUpdate(function (oEvent) {
               return _this3._onDataUpdateByCode(oEvent.getParameter('code'));
             });
+
             this._onDataUpdateByCode(library.ChartUpdateCode.Area);
+
             break;
+
           default:
             break;
         }
@@ -1431,7 +1426,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return this;
     },
-
 
     /**
      * Adds some entity oObject to the aggregation identified by sAggregationName.
@@ -1449,14 +1443,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // set initial unique key if not happened, yet
       if (sAggregationName === 'series' && !oObject.getKey()) {
         oObject.setKey(this._getNumberRangeCreator().getNext());
-      }
+      } // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
 
-      // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
+
       if (['lines', 'areas'].includes(sAggregationName)) {
         // important: update value, before fire event
-        Control.prototype.addAggregation.call(this, sAggregationName, oObject, true);
+        Control.prototype.addAggregation.call(this, sAggregationName, oObject, true); // forward aggregation update events & inform observers about data update
 
-        // forward aggregation update events & inform observers about data update
         switch (sAggregationName) {
           // case 'series':
           //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
@@ -1467,14 +1460,20 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             oObject.attachLineUpdate(function (oEvent) {
               return _this4._onDataUpdateByCode(oEvent.getParameter('code'));
             });
+
             this._onDataUpdateByCode(library.ChartUpdateCode.Line);
+
             break;
+
           case 'areas':
             oObject.attachAreaUpdate(function (oEvent) {
               return _this4._onDataUpdateByCode(oEvent.getParameter('code'));
             });
+
             this._onDataUpdateByCode(library.ChartUpdateCode.Area);
+
             break;
+
           default:
             break;
         }
@@ -1484,7 +1483,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return this;
     },
-
 
     /**
      * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
@@ -1499,19 +1497,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     removeAggregation: function removeAggregation(sAggregationName, oObject, bSuppressInvalidate) {
       if (['series', 'lines', 'areas'].includes(sAggregationName)) {
         // important: update value, before fire event
-        Control.prototype.removeAggregation.call(this, sAggregationName, oObject, true);
+        Control.prototype.removeAggregation.call(this, sAggregationName, oObject, true); // forward aggregation update events & inform observers about data update
 
-        // forward aggregation update events & inform observers about data update
         switch (sAggregationName) {
           case 'series':
             this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
+
             break;
+
           case 'lines':
             this._onDataUpdateByCode(library.ChartUpdateCode.Line);
+
             break;
+
           case 'areas':
             this._onDataUpdateByCode(library.ChartUpdateCode.Area);
+
             break;
+
           default:
             break;
         }
@@ -1521,7 +1524,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return this;
     },
-
 
     /**
      * Removes all objects from the 0..n-aggregation named sAggregationName.
@@ -1535,19 +1537,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     removeAllAggregation: function removeAllAggregation(sAggregationName, bSuppressInvalidate) {
       if (['series', 'lines', 'areas'].includes(sAggregationName)) {
         // important: update value, before fire event
-        Control.prototype.removeAllAggregation.call(this, sAggregationName, true);
+        Control.prototype.removeAllAggregation.call(this, sAggregationName, true); // forward aggregation update events & inform observers about data update
 
-        // forward aggregation update events & inform observers about data update
         switch (sAggregationName) {
           case 'series':
             this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
+
             break;
+
           case 'lines':
             this._onDataUpdateByCode(library.ChartUpdateCode.Line);
+
             break;
+
           case 'areas':
             this._onDataUpdateByCode(library.ChartUpdateCode.Area);
+
             break;
+
           default:
             break;
         }
@@ -1557,7 +1564,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return this;
     },
-
 
     /**
      * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
@@ -1571,19 +1577,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     destroyAggregation: function destroyAggregation(sAggregationName, bSuppressInvalidate) {
       if (['series', 'lines', 'areas'].includes(sAggregationName)) {
         // important: update value, before fire event
-        Control.prototype.destroyAggregation.call(this, sAggregationName, true);
+        Control.prototype.destroyAggregation.call(this, sAggregationName, true); // forward aggregation update events & inform observers about data update
 
-        // forward aggregation update events & inform observers about data update
         switch (sAggregationName) {
           case 'series':
             this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
+
             break;
+
           case 'lines':
             this._onDataUpdateByCode(library.ChartUpdateCode.Line);
+
             break;
+
           case 'areas':
             this._onDataUpdateByCode(library.ChartUpdateCode.Area);
+
             break;
+
           default:
             break;
         }
@@ -1594,7 +1605,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return this;
     },
 
-
     /**
      * Sets or unsets a model for the given model name for this ManagedObject.
      *
@@ -1604,23 +1614,26 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @public
      * @override
      */
-    setModel: function setModel() /* oModel, sName */{
+    setModel: function setModel()
+    /* oModel, sName */
+    {
       // to improve performance, we disable chart update until the complete model was assigned
       this._getChartUpdateHandler().halt();
 
       Control.prototype.setModel.apply(this, arguments);
 
-      this._getChartUpdateHandler().release();
+      this._getChartUpdateHandler().release(); // trigger update method manually
 
-      // trigger update method manually
+
       this._onDataUpdateByCode();
 
       return this;
     },
 
-
     /* =========================================================== */
+
     /* public methods                                              */
+
     /* =========================================================== */
 
     /**
@@ -1633,19 +1646,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     getXAxisLabelByIndex: function getXAxisLabelByIndex(iIndex) {
       var oXAxis = this.getXAxis();
       var sXAxisType = this.getXAxisType();
-      var aLabels = oXAxis.getLabels();
+      var aLabels = oXAxis.getLabels(); // on an indexed axis, the label index is representing the labels value and not its position index
 
-      // on an indexed axis, the label index is representing the labels value and not its position index
       var oLabel = sXAxisType === library.AxisType.Indexed ? aLabels.find(function (oLabel) {
         return parseFloat(oLabel.getValue()) === iIndex;
-      }) : aLabels[iIndex];
+      }) : aLabels[iIndex]; // return an invisible label if no label was found
 
-      // return an invisible label if no label was found
       return oLabel || new ChartAxisLabel({
         visible: false
       });
     },
-
 
     /**
      * Get respective X axis index by value.
@@ -1658,26 +1668,24 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       var oXAxis = this.getXAxis();
       var sXAxisType = this.getXAxisType();
       var aLabels = oXAxis.getLabels() || [];
-      var iLabels = aLabels.length;
+      var iLabels = aLabels.length; // return value if axis is from type Indexed
 
-      // return value if axis is from type Indexed
       if (sXAxisType === library.AxisType.Indexed) {
         return parseFloat(vValue) || null;
-      }
+      } // find respective label and return index
 
-      // find respective label and return index
+
       for (var iIndex = 0; iIndex < iLabels; iIndex++) {
         var oLabel = aLabels[iIndex];
 
         if (oLabel.getValue() === vValue) {
           return iIndex;
         }
-      }
+      } // return fallback
 
-      // return fallback
+
       return null;
     },
-
 
     /**
      * Getter for property <code>minValue</code> of an axis.
@@ -1697,19 +1705,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return (/^\d{4}-\d{2}-\d{2}$/.test(vMinValue) ? vMinValue : undefined
-            );
+            return /^\d{4}-\d{2}-\d{2}$/.test(vMinValue) ? vMinValue : undefined;
+
           case library.AxisType.Indexed:
           case library.AxisType.Category:
           default:
             return isZero ? iMinValue : iMinValue || undefined;
         }
-      }
+      } // fallback for Y and Y2 axis
 
-      // fallback for Y and Y2 axis
+
       return isZero ? iMinValue : iMinValue || undefined;
     },
-
 
     /**
      * Getter for property <code>maxValue</code> of an axis.
@@ -1729,22 +1736,23 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       if (isXAxis) {
         switch (sXAxisType) {
           case library.AxisType.Time:
-            return (/^\d{4}-\d{2}-\d{2}$/.test(vMaxValue) ? vMaxValue : undefined
-            );
+            return /^\d{4}-\d{2}-\d{2}$/.test(vMaxValue) ? vMaxValue : undefined;
+
           case library.AxisType.Indexed:
           case library.AxisType.Category:
           default:
             return isZero ? iMaxValue : iMaxValue || undefined;
         }
-      }
+      } // fallback for Y and Y2 axis
 
-      // fallback for Y and Y2 axis
+
       return isZero ? iMaxValue : iMaxValue || undefined;
     },
 
-
     /* =========================================================== */
+
     /* private methods                                             */
+
     /* =========================================================== */
 
     /**
@@ -1764,36 +1772,35 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         // trigger rerender if chart instance is not available, yet
         this.rerender();
         return;
-      }
+      } // TODO: Finish switch case statement to check which part should be updated
 
-      // TODO: Finish switch case statement to check which part should be updated
+
       switch (sCode) {
         case library.ChartUpdateCode.Line:
           // update chart lines only
-          this._debounceUpdateChartLines();
+          this._debounceUpdateChartLines(); // inform observers about data update
 
-          // inform observers about data update
+
           this.fireChartDataUpdate();
           break;
 
         case library.ChartUpdateCode.Area:
           // update chart areas only
-          this._debounceUpdateChartAreas();
+          this._debounceUpdateChartAreas(); // inform observers about data update
 
-          // inform observers about data update
+
           this.fireChartDataUpdate();
           break;
 
         default:
           // update almost everything but debounced, to collect several update requests
-          this._debounceUpdate();
+          this._debounceUpdate(); // inform observers about data update
 
-          // inform observers about data update
+
           this.fireChartDataUpdate();
           break;
       }
     },
-
 
     /**
      * Update chart data. This method shoud only be called in a debounced mode.
@@ -1806,9 +1813,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // exit if chart is not availalein DOM
       if (!this.getDomRef()) {
         return;
-      }
+      } // console.error('UPDATE THE CHART');
 
-      // console.error('UPDATE THE CHART');
+
       var sChartHtmlID = this.getId();
       var aSeries = this.getSeries();
       var aSeriesKeys = aSeries.map(function (oSeries) {
@@ -1821,6 +1828,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return sId === sKey;
         }) === false;
       });
+
       var aObsoleteSeries = this._chart.data().map(function (oSeries) {
         return oSeries.id;
       }).filter(function (sId) {
@@ -1828,52 +1836,50 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return sKey === sId;
         }) === false;
       });
+
       var aHighlightedDataPoints = [];
       var oXAxis = this.getXAxis();
       var oYAxis = this.getYAxis();
-      var oY2Axis = this.getY2Axis();
+      var oY2Axis = this.getY2Axis(); // check if new series have been added, if yes, we must stop update method and rerender control, because data.format can't be updated by c3js api, yet
 
-      // check if new series have been added, if yes, we must stop update method and rerender control, because data.format can't be updated by c3js api, yet
       if (aNewSeries.length > 0 || aObsoleteSeries.length > 0) {
         this.rerender();
         return;
-      }
+      } // enable/disable axis depending on microMode is active or not (call on Control to prevent fire update event)
 
-      // enable/disable axis depending on microMode is active or not (call on Control to prevent fire update event)
+
       Control.prototype.setProperty.call(oXAxis, 'visible', !this.getMicroMode(), true);
       Control.prototype.setProperty.call(oYAxis, 'visible', !this.getMicroMode(), true);
-      Control.prototype.setProperty.call(oY2Axis, 'visible', !this.getMicroMode(), true);
+      Control.prototype.setProperty.call(oY2Axis, 'visible', !this.getMicroMode(), true); // update x axis tick values before load (see: https://github.com/c3js/c3/issues/827)
 
-      // update x axis tick values before load (see: https://github.com/c3js/c3/issues/827)
       this._chart.internal.config.axis_x_tick_values = oXAxis.getAutoTickValues() === false && oXAxis.getLabels().length > 0 ? oXAxis.getLabels().map(function (oLabel, iIndex) {
         var vValue = oLabel.getValue();
 
         switch (_this5.getXAxisType()) {
           case library.AxisType.Time:
-            return (/^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined
-            );
+            return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined;
+
           case library.AxisType.Indexed:
             return parseFloat(vValue) || 0;
+
           case library.AxisType.Category:
           default:
             return iIndex;
         }
-      }) : undefined;
+      }) : undefined; // update series data
 
-      // update series data
       var aUpdateSeries = {
         // if data that has the same target id is given, the chart will be updated, otherwise, new target will be added
         x: 'x',
-        columns: [
-        // add x axis values first
+        columns: [// add x axis values first
         ['x'].concat(_toConsumableArray(oXAxis.getLabels().map(function (oLabel) {
           return oLabel.getValue();
         })))].concat(_toConsumableArray(aSeries.map(function (oSeries) {
-          return [
-          // get key (e.g. 'data1')
+          return [// get key (e.g. 'data1')
           oSeries.getKey()].concat(_toConsumableArray(oSeries.getData().map(function (oDataPoint, iIndex) {
             // check if data point should be highlighted
             var isVisible = oDataPoint.getVisible();
+
             if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
               aHighlightedDataPoints.push({
                 series: oSeries.getKey(),
@@ -1881,59 +1887,59 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
                 animation: oDataPoint.getHighlightAnimation()
               });
             }
+
             return oDataPoint.getValueOrValuePair();
           })));
         }))),
-
         // update axis assignment
         axes: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
           // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
           oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase();
           return oTypes;
         }, {}),
-
         // update series types
         types: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
           // return a map with the structure: { @seriesKey: @seriesType, ... }
           oTypes[oSeries.getKey()] = oSeries.getType();
           return oTypes;
         }, {}),
-
         // update series names
         names: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
           // return a map with the structure: { @seriesKey: @seriesName, ... }
           oTypes[oSeries.getKey()] = oSeries.getName() || oSeries.getKey();
           return oTypes;
         }, {}),
-
         // update series colors
         colors: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
           // return a map with the structure: { @seriesKey: @seriesColor, ... }
           if (oSeries.getColor()) {
             oTypes[oSeries.getKey()] = oSeries.getColor();
           }
+
           return oTypes;
         }, {}),
-
         // unload series, not used anymore (data will be unloaded before loading new data)
         unload: aObsoleteSeries
       };
-      this._chart.load(aUpdateSeries);
 
-      // highlight data points
-      d3.selectAll('#' + sChartHtmlID + ' g.c3-circles circle.c3-circle').classed(this.CSS_HIGHLIGHT_PULSATE, false);
+      this._chart.load(aUpdateSeries); // highlight data points
+
+
+      d3.selectAll("#".concat(sChartHtmlID, " g.c3-circles circle.c3-circle")).classed(this.CSS_HIGHLIGHT_PULSATE, false);
+
       if (aHighlightedDataPoints.length > 0) {
         aHighlightedDataPoints.forEach(function (oHighlightInfo) {
-          d3.select('#' + sChartHtmlID + ' g.c3-circles-' + oHighlightInfo.series + ' circle.c3-circle-' + oHighlightInfo.point).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
+          d3.select("#".concat(sChartHtmlID, " g.c3-circles-").concat(oHighlightInfo.series, " circle.c3-circle-").concat(oHighlightInfo.point)).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
         });
-      }
+      } // update groups
 
-      // update groups
+
       this._chart.groups(aSeries.length === 0 ? [] : aSeries.reduce(function (aGroups, oSeries) {
         // collect all group keys
         if (oSeries && oSeries.getGroupKey() && !aGroups.includes(oSeries.getGroupKey())) {
           aGroups.push(oSeries.getGroupKey());
         }
+
         return aGroups;
       }, []).map(function (sGroupKey) {
         // return for each group key the list of respective series keys (['data1', 'data2'])
@@ -1942,12 +1948,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         }).map(function (oSeries) {
           return oSeries.getKey();
         });
-      }));
+      })); // update series styles
 
-      // update series styles
-      this._updateSeriesStyles();
 
-      // update axis titles
+      this._updateSeriesStyles(); // update axis titles
+
+
       this._chart.axis.labels({
         x: oXAxis.getShowTitle() ? oXAxis.getTitle() : null,
         y: oYAxis.getShowTitle() ? oYAxis.getTitle() : null,
@@ -1955,11 +1961,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       });
 
       this._chart.axis.showX(oXAxis.getVisible());
-      this._chart.axis.showY(oYAxis.getVisible());
-      this._chart.axis.showY2(oY2Axis.getVisible());
 
-      // update min/max for y axis
+      this._chart.axis.showY(oYAxis.getVisible());
+
+      this._chart.axis.showY2(oY2Axis.getVisible()); // update min/max for y axis
       // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
+
+
       this._chart.axis.range({
         min: {
           X: this.getMinValueByAxis(oXAxis),
@@ -1971,20 +1979,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           y: this.getMaxValueByAxis(oYAxis),
           y2: this.getMaxValueByAxis(oY2Axis)
         }
-      });
-
-      // not supported by c3js API, yet
+      }); // not supported by c3js API, yet
       // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
       // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
-
       // not supported by c3js API, yet
       // this._chart.grid.x.show = oXAxis.getShowGridLines();
       // this._chart.grid.y.show = oYAxis.getShowGridLines();
-
       // inform observers about data update
+
+
       this.fireChartDataUpdate();
     },
-
 
     /**
      * Update chart lines
@@ -1996,29 +2001,25 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       var aOldXLines = [].concat(this._chart.xgrids());
       var aOldYLines = [].concat(this._chart.ygrids());
-
       var aNewXLines = this.getLines().filter(function (oLine) {
         return oLine.getVisible() && oLine.getAxis() === library.Axis.X;
       }).map(function (oNewLine) {
         return _this6._mapChartLineToC3Line(oNewLine);
       });
-
       var aNewYLines = this.getLines().filter(function (oLine) {
         return oLine.getVisible() && oLine.getAxis() !== library.Axis.X;
       }).map(function (oNewLine) {
         return _this6._mapChartLineToC3Line(oNewLine);
-      });
+      }); // update x grid lines
 
-      // update x grid lines
       var aUpdateXList = aNewXLines.filter(function (oNewLine) {
         var oOldLine = aOldXLines.find(function (oLine) {
           return oLine.id === oNewLine.id;
-        });
-        // compare old and new line
-        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
-      });
+        }); // compare old and new line
 
-      // if at least one event changed, we must reset all lines at once
+        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
+      }); // if at least one event changed, we must reset all lines at once
+
       if (aUpdateXList.length > 0) {
         // OVERRIDE ALL
         // in difference to areas, it is not possible to update existing lines via c3js API
@@ -2034,29 +2035,28 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           _this6._chart.xgrids.remove({
             class: oLine.class
           });
-        });
+        }); // add x grid lines
 
-        // add x grid lines
         var aAddXList = aNewXLines.filter(function (oNewLine) {
           return aOldXLines.every(function (oLine) {
             return oLine.id !== oNewLine.id;
           });
         });
+
         if (aAddXList.length > 0) {
           this._chart.xgrids.add(aAddXList);
         }
-      }
+      } // update y grid lines
 
-      // update y grid lines
+
       var aUpdateYList = aNewYLines.filter(function (oNewLine) {
         var oOldLine = aOldYLines.find(function (oLine) {
           return oLine.id === oNewLine.id;
-        });
-        // compare old and new line
-        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
-      });
+        }); // compare old and new line
 
-      // if at least one event changed, we must reset all lines at once
+        return oOldLine && lodashIsequal(oNewLine, oOldLine) === false;
+      }); // if at least one event changed, we must reset all lines at once
+
       if (aUpdateYList.length > 0) {
         // OVERRIDE ALL
         // in difference to areas, it is not possible to update existing lines via c3js API
@@ -2072,23 +2072,22 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           _this6._chart.ygrids.remove({
             class: oLine.class
           });
-        });
+        }); // add y grid lines
 
-        // add y grid lines
         var aAddYList = aNewYLines.filter(function (oNewLine) {
           return aOldYLines.every(function (oLine) {
             return oLine.id !== oNewLine.id;
           });
         });
+
         if (aAddYList.length > 0) {
           this._chart.ygrids.add(aAddYList);
         }
-      }
+      } // update line styles
 
-      // update line styles
+
       this._updateLineStyles();
     },
-
 
     /**
      * Update chart areas
@@ -2098,8 +2097,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateChartAreas: function _updateChartAreas() {
       var _this7 = this;
 
-      var areas = this._chart.regions() || [];
-      // if only one area exist it may be returned as object and not wrapped in an arry, so we must do this manually
+      var areas = this._chart.regions() || []; // if only one area exist it may be returned as object and not wrapped in an arry, so we must do this manually
+
       var aOldAreas = Array.isArray(areas) ? areas : [areas];
       var aNewAreas = this.getAreas().filter(function (oArea) {
         return oArea.getVisible();
@@ -2112,50 +2111,51 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           text: oArea.getTitle(),
           // position: oArea.getTitlePosition(),
           // add three classes: general line class, line style class and line identifier
-          class: _this7.CSS_CLASS_AREA + ' ' + _this7.CSS_CLASS_AREA + '-' + oArea.getId()
+          class: "".concat(_this7.CSS_CLASS_AREA, " ").concat(_this7.CSS_CLASS_AREA, "-").concat(oArea.getId())
         };
-      });
+      }); // remove areas (attention: providing a single unique class is sufficient)
 
-      // remove areas (attention: providing a single unique class is sufficient)
       var aRemoveList = aOldAreas.filter(function (oArea) {
         return aNewAreas.every(function (oNewArea) {
           return oNewArea.id !== oArea.id;
         });
       }).map(function (oArea) {
-        return _this7.CSS_CLASS_AREA + '-' + oArea.id;
+        return "".concat(_this7.CSS_CLASS_AREA, "-").concat(oArea.id);
       }); // c3 is expecting a list of classes to remove respective areas
+
       if (aRemoveList.length > 0) {
         this._chart.regions.remove({
           classes: aRemoveList
         });
-      }
+      } // add areas
 
-      // add areas
+
       var aAddList = aNewAreas.filter(function (oNewArea) {
         return aOldAreas.every(function (oArea) {
           return oArea.id !== oNewArea.id;
         });
       });
+
       if (aAddList.length > 0) {
         this._chart.regions.add(aAddList);
-      }
+      } // update areas
 
-      // update areas
+
       var aUpdateList = aNewAreas.filter(function (oNewArea) {
         var oOldArea = aOldAreas.find(function (oArea) {
           return oArea.id === oNewArea.id;
-        });
-        // compare old and new area
+        }); // compare old and new area
+
         return oOldArea && lodashIsequal(oNewArea, oOldArea) === false;
       });
+
       if (aUpdateList.length > 0) {
         this._chart.regions(aUpdateList);
-      }
+      } // update area styles
 
-      // update area styles
+
       this._updateAreaStyles();
     },
-
 
     /**
      * Map properties of ChartLine to an object compatible with c3js
@@ -2175,10 +2175,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         position: oChartLine.getTitlePosition().toLowerCase(),
         showSelector: oChartLine.getShowLineSelector() ? true : false,
         // add three classes: general line class, line style class and line identifier
-        class: this.CSS_CLASS_LINE + ' ' + this.CSS_CLASS_LINE + '-' + oChartLine.getStyle() + ' ' + this.CSS_CLASS_LINE + '-' + oChartLine.getId() + ' ' + sShowSelectorClass + ' ' + sIconOnlyClass
+        class: "".concat(this.CSS_CLASS_LINE, " ").concat(this.CSS_CLASS_LINE, "-").concat(oChartLine.getStyle(), " ").concat(this.CSS_CLASS_LINE, "-").concat(oChartLine.getId(), " ").concat(sShowSelectorClass, " ").concat(sIconOnlyClass)
       };
     },
-
 
     /**
      * Update chart series visibility
@@ -2187,6 +2186,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _onSeriesVisibilityUpdate: function _onSeriesVisibilityUpdate(oEvent) {
       var oSeries = oEvent.getParameter('chartSeries');
+
       if (oSeries.getVisible()) {
         this._chart.show(oSeries.getKey(), {
           withLegend: true
@@ -2198,7 +2198,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       }
     },
 
-
     /**
      * Update chart shape area styles
      *
@@ -2207,80 +2206,83 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateSeriesStyles: function _updateSeriesStyles() {
       var _this8 = this;
 
-      var sChartHtmlID = this.getId();
+      var sChartHtmlID = this.getId(); // 1. get all series with a chart type that is relevant for shape AREA styles
 
-      // 1. get all series with a chart type that is relevant for shape AREA styles
       this.getSeries().forEach(function (oSeries) {
         var sSeriesHtmlID = oSeries.getKey();
-        var oPatternStyle = void 0,
-            sCurrentColor = void 0,
-            oPattern = void 0,
-
-        // set solid style if series type (e.g. bar) is not supporting line styles
+        var oPatternStyle,
+            sCurrentColor,
+            oPattern,
+            // set solid style if series type (e.g. bar) is not supporting line styles
         sShapeStyle = _this8._isShapeType(oSeries.getType()) ? oSeries.getShapeStyle() : library.ShapeStyle.Solid;
 
         switch (sShapeStyle) {
           case library.ShapeStyle.Striped:
             // read current color
-            sCurrentColor = _this8._chart.data.colors()[oSeries.getKey()];
+            sCurrentColor = _this8._chart.data.colors()[oSeries.getKey()]; // add pattern to svg definitions
 
-            // add pattern to svg definitions
-            oPattern = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID);
+            oPattern = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-stripe-pattern-").concat(sSeriesHtmlID));
+
             if (oPattern.empty()) {
-              oPattern = d3.select('#' + sChartHtmlID + ' defs').append('pattern').attr({
-                id: sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID,
+              oPattern = d3.select("#".concat(sChartHtmlID, " defs")).append('pattern').attr({
+                id: "".concat(sChartHtmlID, "-stripe-pattern-").concat(sSeriesHtmlID),
                 width: '8',
                 height: '8',
                 patternUnits: 'userSpaceOnUse',
-                class: 'stripe-pattern-' + sSeriesHtmlID
+                class: "stripe-pattern-".concat(sSeriesHtmlID)
               }).append('path').attr({
                 d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
               });
-            }
+            } // add css to svg definitions
 
-            // add css to svg definitions
-            oPatternStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-style-' + sSeriesHtmlID);
+
+            oPatternStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-stripe-style-").concat(sSeriesHtmlID));
+
             if (oPatternStyle.empty()) {
-              oPatternStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
-                id: sChartHtmlID + '-stripe-style-' + sSeriesHtmlID,
+              oPatternStyle = d3.select("#".concat(sChartHtmlID, " defs")).append('style').attr({
+                id: "".concat(sChartHtmlID, "-stripe-style-").concat(sSeriesHtmlID),
                 type: 'text/css'
               });
-            }
-            // update svg pattern style
-            oPatternStyle.text('#' + sChartHtmlID + ' .stripe-pattern-' + sSeriesHtmlID + ' path {\n                fill: ' + sCurrentColor + ';\n                stroke: none;\n              }\n              #' + sChartHtmlID + ' .c3-target-' + sSeriesHtmlID + ' .c3-shape {\n                fill: url(#' + sChartHtmlID + '-stripe-pattern-' + sSeriesHtmlID + ') !important;\n              }');
+            } // update svg pattern style
+
+
+            oPatternStyle.text("#".concat(sChartHtmlID, " .stripe-pattern-").concat(sSeriesHtmlID, " path {\n                fill: ").concat(sCurrentColor, ";\n                stroke: none;\n              }\n              #").concat(sChartHtmlID, " .c3-target-").concat(sSeriesHtmlID, " .c3-shape {\n                fill: url(#").concat(sChartHtmlID, "-stripe-pattern-").concat(sSeriesHtmlID, ") !important;\n              }"));
             break;
+
           case library.ShapeStyle.Solid:
           default:
             // remove pattern style from shape area
-            oPatternStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-stripe-style-' + sSeriesHtmlID);
+            oPatternStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-stripe-style-").concat(sSeriesHtmlID));
+
             if (!oPatternStyle.empty()) {
               oPatternStyle.text('');
             }
+
             break;
         }
-      });
+      }); // 2. get all series with a chart type that is relevant for shape LINE styles
 
-      // 2. get all series with a chart type that is relevant for shape LINE styles
       this.getSeries().forEach(function (oSeries) {
         var sSeriesHtmlID = oSeries.getKey();
-        var oStrokeStyle = void 0,
-            sDashArray = void 0,
-
-        // set solid style if series type (e.g. bar) is not supporting line styles
+        var oStrokeStyle,
+            sDashArray,
+            // set solid style if series type (e.g. bar) is not supporting line styles
         sLineStyle = _this8._isLineType(oSeries.getType()) ? oSeries.getLineStyle() : library.LineStyle.Solid,
-            iAnimationSpeed = void 0;
+            iAnimationSpeed; // set animation speed
 
-        // set animation speed
         switch (oSeries.getLineAnimationSpeed()) {
           case library.AnimationSpeed.Fast:
             iAnimationSpeed = 20;
             break;
+
           case library.AnimationSpeed.Medium:
             iAnimationSpeed = 50;
             break;
+
           case library.AnimationSpeed.Slow:
             iAnimationSpeed = 150;
             break;
+
           case library.AnimationSpeed.None:
           default:
             iAnimationSpeed = 0;
@@ -2291,31 +2293,34 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           case library.LineStyle.Dashed:
           case library.LineStyle.Dotted:
             // calculate dash array
-            sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5';
+            sDashArray = oSeries.getLineStyle() === library.LineStyle.Dotted ? '1 5' : '5'; // add css to svg definitions
 
-            // add css to svg definitions
-            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID);
+            oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-dashdot-style-").concat(sSeriesHtmlID));
+
             if (oStrokeStyle.empty()) {
-              oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
-                id: sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID,
+              oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs")).append('style').attr({
+                id: "".concat(sChartHtmlID, "-dashdot-style-").concat(sSeriesHtmlID),
                 type: 'text/css'
               });
-            }
-            // update svg pattern style
-            oStrokeStyle.text('#' + sChartHtmlID + ' .c3-target-' + sSeriesHtmlID + ' path.c3-shape {\n                                    stroke-dashoffset: ' + (oSeries.getLineAnimationForwards() ? '' : '-') + '50rem;\n                                    stroke-dasharray: ' + sDashArray + ';\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ' + iAnimationSpeed + 's 0s linear infinite forwards;\n                                }');
+            } // update svg pattern style
+
+
+            oStrokeStyle.text("#".concat(sChartHtmlID, " .c3-target-").concat(sSeriesHtmlID, " path.c3-shape {\n                                    stroke-dashoffset: ").concat(oSeries.getLineAnimationForwards() ? '' : '-', "50rem;\n                                    stroke-dasharray: ").concat(sDashArray, ";\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                }"));
             break;
+
           case library.LineStyle.Solid:
           default:
             // remove pattern style from shape area
-            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-dashdot-style-' + sSeriesHtmlID);
+            oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-dashdot-style-").concat(sSeriesHtmlID));
+
             if (!oStrokeStyle.empty()) {
               oStrokeStyle.text('');
             }
+
             break;
         }
       });
     },
-
 
     /**
      * Update chart line styles
@@ -2327,71 +2332,74 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       var sChartHtmlID = this.getId();
       var sCSS = '',
-          oLineStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-line-style');
+          oLineStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-line-style")); // create style element if not exist
 
-      // create style element if not exist
       if (oLineStyle.empty()) {
-        oLineStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
-          id: sChartHtmlID + '-line-style',
+        oLineStyle = d3.select("#".concat(sChartHtmlID, " defs")).append('style').attr({
+          id: "".concat(sChartHtmlID, "-line-style"),
           type: 'text/css'
         });
-      }
+      } // get all chart lines  and concatenate color rules
 
-      // get all chart lines  and concatenate color rules
+
       this.getLines().forEach(function (oLine) {
         var sLineHtmlID = oLine.getId();
         var sColor = oLine.getColor();
         var sLineStyle = oLine.getStyle();
-        var sCSSLineSelector = '#' + sChartHtmlID + ' .' + _this9.CSS_CLASS_LINE + '-' + sLineHtmlID;
-        var sUID = sChartHtmlID + '-' + sLineHtmlID;
-        var oStrokeStyle = void 0;
-        var sDashArray = void 0;
+        var sCSSLineSelector = "#".concat(sChartHtmlID, " .").concat(_this9.CSS_CLASS_LINE, "-").concat(sLineHtmlID);
+        var sUID = "".concat(sChartHtmlID, "-").concat(sLineHtmlID);
+        var oStrokeStyle;
+        var sDashArray;
 
         if (sColor) {
           // update svg area style
-          sCSS += sCSSLineSelector + ' line {\n                stroke: ' + sColor + ';\n            }\n\n            ' + sCSSLineSelector + ' circle {\n                stroke: ' + sColor + ';\n            }\n\n            ' + sCSSLineSelector + ' text {\n                fill: ' + sColor + ';\n            }';
+          sCSS += "".concat(sCSSLineSelector, " line {\n                stroke: ").concat(sColor, ";\n            }\n\n            ").concat(sCSSLineSelector, " circle {\n                stroke: ").concat(sColor, ";\n            }\n\n            ").concat(sCSSLineSelector, " text {\n                fill: ").concat(sColor, ";\n            }");
         }
 
         switch (sLineStyle) {
           case library.LineStyle.Dashed:
           case library.LineStyle.Dotted:
             // calculate dash array
-            sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5';
+            sDashArray = sLineStyle === library.LineStyle.Dotted ? '1 5' : '5'; // add css to svg definitions
 
-            // add css to svg definitions
-            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sUID);
+            oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sUID));
+
             if (oStrokeStyle.empty()) {
-              oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
-                id: '' + sUID,
+              oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs")).append('style').attr({
+                id: "".concat(sUID),
                 type: 'text/css'
               });
-            }
-            // update svg pattern style
-            oStrokeStyle.text(sCSSLineSelector + ' line {\n                    stroke-dasharray: ' + sDashArray + ';\n                    stroke-linecap: round;\n                }');
+            } // update svg pattern style
+
+
+            oStrokeStyle.text("".concat(sCSSLineSelector, " line {\n                    stroke-dasharray: ").concat(sDashArray, ";\n                    stroke-linecap: round;\n                }"));
             break;
+
           case library.LineStyle.Solid:
           default:
             // remove pattern style from shape area
-            oStrokeStyle = d3.select('#' + sChartHtmlID + ' defs #' + sUID);
+            oStrokeStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sUID));
+
             if (!oStrokeStyle.empty()) {
               oStrokeStyle.text('');
             }
-            break;
-        }
 
-        // update line selector icon and selector press event
+            break;
+        } // update line selector icon and selector press event
+
+
         var oLineHook = d3.select(sCSSLineSelector),
             oIconInfo = sap.ui.core.IconPool.getIconInfo(oLine.getLineSelectorIcon());
 
         if (oLine.getShowLineSelector()) {
           // set icon of text element
-          oLineHook.select('.c3-grid-lines-circle-text').attr('font-family', oIconInfo.fontFamily).text(oIconInfo.content);
+          oLineHook.select('.c3-grid-lines-circle-text').attr('font-family', oIconInfo.fontFamily).text(oIconInfo.content); // set click event
 
-          // set click event
           oLineHook.select('.c3-grid-lines-circle-hover').on('click', function () {
             oLine.fireSelectorPress({
               line: oLine,
               selectorDomRef: this.previousSibling // return circle instead of hover-circle
+
             });
           });
         } else {
@@ -2399,10 +2407,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           oLineHook.select('.c3-grid-lines-circle-hover').on('click', function () {});
         }
       });
-
       oLineStyle.text(sCSS);
     },
-
 
     /**
      * Update chart line areas
@@ -2414,55 +2420,52 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       var sChartHtmlID = this.getId();
       var sCSS = '',
-          oAreaStyle = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-area-style');
+          oAreaStyle = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-area-style")); // create style element if not exist
 
-      // create style element if not exist
       if (oAreaStyle.empty()) {
-        oAreaStyle = d3.select('#' + sChartHtmlID + ' defs').append('style').attr({
-          id: sChartHtmlID + '-area-style',
+        oAreaStyle = d3.select("#".concat(sChartHtmlID, " defs")).append('style').attr({
+          id: "".concat(sChartHtmlID, "-area-style"),
           type: 'text/css'
         });
-      }
+      } // get all chart areas and concatenate style rules
 
-      // get all chart areas and concatenate style rules
+
       this.getAreas().forEach(function (oArea) {
         var sAreaHtmlID = oArea.getId();
         var sColor = oArea.getColor() || '#000000';
         var sShapeStyle = oArea.getStyle();
-        var oPattern = void 0;
+        var oPattern;
 
         switch (sShapeStyle) {
           case library.ShapeStyle.Striped:
             // add pattern to svg definitions
-            oPattern = d3.select('#' + sChartHtmlID + ' defs #' + sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID);
+            oPattern = d3.select("#".concat(sChartHtmlID, " defs #").concat(sChartHtmlID, "-area-stripe-pattern-").concat(sAreaHtmlID));
 
             if (oPattern.empty()) {
-              oPattern = d3.select('#' + sChartHtmlID + ' defs').append('pattern').attr({
-                id: sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID,
+              oPattern = d3.select("#".concat(sChartHtmlID, " defs")).append('pattern').attr({
+                id: "".concat(sChartHtmlID, "-area-stripe-pattern-").concat(sAreaHtmlID),
                 width: '8',
                 height: '8',
                 patternUnits: 'userSpaceOnUse',
-                class: 'area-stripe-pattern-' + sAreaHtmlID
+                class: "area-stripe-pattern-".concat(sAreaHtmlID)
               }).append('path').attr({
                 d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
               });
-            }
+            } // update svg area style
 
-            // update svg area style
-            sCSS += '#' + sChartHtmlID + ' .area-stripe-pattern-' + sAreaHtmlID + ' path {\n                                    fill: ' + sColor + ';\n                                    stroke: none;\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-stripe,\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-area {\n                                    fill: url(#' + sChartHtmlID + '-area-stripe-pattern-' + sAreaHtmlID + ') !important;\n                                }';
+
+            sCSS += "#".concat(sChartHtmlID, " .area-stripe-pattern-").concat(sAreaHtmlID, " path {\n                                    fill: ").concat(sColor, ";\n                                    stroke: none;\n                                }\n                                #").concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " rect.c3-region-stripe,\n                                #").concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " text.c3-region-text {\n                                    fill: ").concat(sColor, ";\n                                }\n                                #").concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " rect.c3-region-area {\n                                    fill: url(#").concat(sChartHtmlID, "-area-stripe-pattern-").concat(sAreaHtmlID, ") !important;\n                                }");
             break;
 
           case library.ShapeStyle.Solid:
           default:
             // update svg area style
-            sCSS += '#' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-stripe,\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' text.c3-region-text {\n                                    fill: ' + sColor + ';\n                                }\n                                #' + sChartHtmlID + ' .' + _this10.CSS_CLASS_AREA + '-' + sAreaHtmlID + ' rect.c3-region-area {\n                                    fill: ' + sColor + ';\n                                }';
+            sCSS += "#".concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " rect.c3-region-stripe,\n                                #").concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " text.c3-region-text {\n                                    fill: ").concat(sColor, ";\n                                }\n                                #").concat(sChartHtmlID, " .").concat(_this10.CSS_CLASS_AREA, "-").concat(sAreaHtmlID, " rect.c3-region-area {\n                                    fill: ").concat(sColor, ";\n                                }");
             break;
         }
       });
-
       oAreaStyle.text(sCSS);
     },
-
 
     /**
      * Check if a style is valid for shapes
@@ -2473,17 +2476,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _isShapeType: function _isShapeType(sSeriesType) {
       var bTypeValid = false;
+
       switch (sSeriesType) {
         case library.ChartSeriesType.Bar:
           bTypeValid = true;
           break;
+
         default:
           bTypeValid = false;
           break;
       }
+
       return bTypeValid;
     },
-
 
     /**
      * Check if a style is valid for lines
@@ -2494,6 +2499,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _isLineType: function _isLineType(sSeriesType) {
       var bTypeValid = false;
+
       switch (sSeriesType) {
         case library.ChartSeriesType.Line:
         case library.ChartSeriesType.Spline:
@@ -2506,13 +2512,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         case library.ChartSeriesType.RibbonStep:
           bTypeValid = true;
           break;
+
         default:
           bTypeValid = false;
           break;
       }
+
       return bTypeValid;
     },
-
 
     /**
      * Check if a series type is from type ribbon
@@ -2525,7 +2532,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       return sSeriesType === (library.ChartSeriesType.RibbonLine || library.ChartSeriesType.RibbonSpline || library.ChartSeriesType.RibbonStep);
     },
 
-
     /**
      * Get available size in pixel of parent element.
      *
@@ -2534,12 +2540,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @private
      */
     _getAvailableSize: function _getAvailableSize(sSizeType) {
-      var iMargin = 0;
+      var iMargin = 0; // fallback to 'width'
 
-      // fallback to 'width'
-      sSizeType = sSizeType === 'width' || sSizeType === 'height' ? sSizeType : 'width';
+      sSizeType = sSizeType === 'width' || sSizeType === 'height' ? sSizeType : 'width'; // get margin
 
-      // get margin
       if (this.getDomRef()) {
         if (sSizeType === 'width') {
           iMargin += parseInt(getComputedStyle(this.getDomRef(), '').marginLeft.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
@@ -2548,12 +2552,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           iMargin += parseInt(getComputedStyle(this.getDomRef(), '').marginTop.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
           iMargin += parseInt(getComputedStyle(this.getDomRef(), '').marginBottom.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
         }
-      }
+      } // get available width of parent element
 
-      // get available width of parent element
+
       return $(this._getParentDomRef())[sSizeType]() - iMargin;
     },
-
 
     /**
      * Get computed CSS size in pixel.
@@ -2565,9 +2568,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _getComputedSize: function _getComputedSize(sCSSSize, sSizeType) {
       sCSSSize = sCSSSize || 'auto';
-      sSizeType = sSizeType === 'width' || sSizeType === 'height' ? sSizeType : 'width';
+      sSizeType = sSizeType === 'width' || sSizeType === 'height' ? sSizeType : 'width'; // parse css value
 
-      // parse css value
       var mCSS = library.parseCSSSize(sCSSSize),
           iFraction = 1,
           iCalculatedWidth;
@@ -2577,39 +2579,47 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           // calculate pixel dependant on font size of root element
           iCalculatedWidth = mCSS.value * parseInt(getComputedStyle(document.body, '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
           break;
+
         case 'em':
           // calculate pixel dependant on font size of parent
           iCalculatedWidth = mCSS.value * parseInt(getComputedStyle(this._getParentDomRef(), '').fontSize.match(/(\d*(\.\d*)?)/, 10)[1]) || 0;
           break;
+
         case 'px':
           // if width value is negative or not supposed, then we take the full browser width
           iCalculatedWidth = mCSS.value && mCSS.value > 0 ? mCSS.value : this._getAvailableSize(sSizeType);
           break;
+
         case 'vw':
           // percentage value of viewport width
           iFraction = (mCSS.value && mCSS.value > 0 ? mCSS.value : 100) / 100;
           iCalculatedWidth = this._getAvailableSize('width') * iFraction;
           break;
+
         case 'vh':
           // percentage value of viewport height
           iFraction = (mCSS.value && mCSS.value > 0 ? mCSS.value : 100) / 100;
           iCalculatedWidth = this._getAvailableSize('height') * iFraction;
           break;
+
         case '%':
           // transform css value to fraction (50% >> 0.5)
           iFraction = (mCSS.value && mCSS.value > 0 ? mCSS.value : 100) / 100;
           iCalculatedWidth = this._getAvailableSize(sSizeType) * iFraction;
           break;
         // continue with 'auto:'
-        case 'initial':
-        // continue with 'auto:'
+
+        case 'initial': // continue with 'auto:'
+
         case 'inherit': // eslint-disable-line no-fallthrough
         // continue with 'auto:'
+
         case 'auto':
           // eslint-disable-line no-fallthrough
           // continue with 'auto:'
           iCalculatedWidth = this._getAvailableSize(sSizeType);
           break;
+
         default:
           // not supported, yet: ch, ex, vmin, vmax, cm, mm, in, pc, pt, mozmm
           // check: https://developer.mozilla.org/de/docs/Web/CSS/length#Interpolation
@@ -2619,7 +2629,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
 
       return iCalculatedWidth;
     },
-
 
     /**
      * Resize chart and update width and height.
@@ -2634,9 +2643,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           height: this.getHeigth()
         });
       }
+
       return this;
     },
-
 
     /**
      * Get parent DOM element of chart control.

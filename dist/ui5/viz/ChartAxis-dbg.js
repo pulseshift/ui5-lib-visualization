@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -35,9 +33,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
    */
   return Element.extend('ui5.viz.ChartAxis', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -46,7 +45,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Sets axis title
          */
-        title: { type: 'string', group: 'Appereance', defaultValue: null },
+        title: {
+          type: 'string',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Sets the posotion of the title
@@ -80,17 +83,29 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         /**
          * Sets the minimal value of the axis. (use index/position for category X-axis, too)
          */
-        minValue: { type: 'string', group: 'Appereance', defaultValue: null },
+        minValue: {
+          type: 'string',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Sets the maximal value of the axis. (use index/position for category X-axis, too)
          */
-        maxValue: { type: 'string', group: 'Appereance', defaultValue: null },
+        maxValue: {
+          type: 'string',
+          group: 'Appereance',
+          defaultValue: null
+        },
 
         /**
          * Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values.
          */
-        autoTickValues: { type: 'boolean', group: 'Appereance', defaultValue: false },
+        autoTickValues: {
+          type: 'boolean',
+          group: 'Appereance',
+          defaultValue: false
+        },
 
         /**
          * Sets visibility of the element.
@@ -117,7 +132,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
          * Sets the labels displayed on the axis
          * Hint: live update by c3 API is only supported for X axis, yet, therefore we must rerender the chart
          */
-        labels: { type: 'ui5.viz.ChartAxisLabel', multiple: true }
+        labels: {
+          type: 'ui5.viz.ChartAxisLabel',
+          multiple: true
+        }
       },
       defaultAggregation: 'labels',
       associations: {},
@@ -131,15 +149,21 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -152,7 +176,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -160,7 +183,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @override
      */
     init: function init() {},
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -173,9 +195,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       this.fireAxisUpdate();
     },
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -193,12 +216,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       // only fire axis update if axis type is X axis
       if (sAggregationName === 'labels' && this.getProperty('_axisType') === library.Axis.X) {
         // important: update value, before fire event
-        Element.prototype.insertAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.insertAggregation.call(this, sAggregationName, oObject, true); // forward labelsUpdate event
 
-        // forward labelsUpdate event
-        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this));
+        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this)); // inform observers about labels update
 
-        // inform observers about labels update
         this.fireAxisUpdate();
       } else {
         Element.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
@@ -206,7 +227,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Adds some entity oObject to the aggregation identified by sAggregationName.
@@ -222,12 +242,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       // only fire axis update if axis type is X axis
       if (sAggregationName === 'labels' && this.getProperty('_axisType') === library.Axis.X) {
         // important: update value, before fire event
-        Element.prototype.addAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.addAggregation.call(this, sAggregationName, oObject, true); // forward labelsUpdate event
 
-        // forward labelsUpdate event
-        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this));
+        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this)); // inform observers about labels update
 
-        // inform observers about labels update
         this.fireAxisUpdate();
       } else {
         Element.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
@@ -235,7 +253,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
@@ -251,12 +268,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       // only fire axis update if axis type is X axis
       if (sAggregationName === 'labels' && this.getProperty('_axisType') === library.Axis.X) {
         // important: update value, before fire event
-        Element.prototype.removeAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.removeAggregation.call(this, sAggregationName, oObject, true); // forward labelsUpdate event
 
-        // forward labelsUpdate event
-        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this));
+        oObject.attachAxisLabelUpdate(this.fireAxisUpdate.bind(this)); // inform observers about labels update
 
-        // inform observers about labels update
         this.fireAxisUpdate();
       } else {
         Element.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
@@ -264,7 +279,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Removes all objects from the 0..n-aggregation named sAggregationName.
@@ -279,9 +293,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       // only fire axis update if axis type is X axis
       if (sAggregationName === 'labels' && this.getProperty('_axisType') === library.Axis.X) {
         // important: update value, before fire event
-        Element.prototype.removeAllAggregation.call(this, sAggregationName, true);
+        Element.prototype.removeAllAggregation.call(this, sAggregationName, true); // inform observers about labels update
 
-        // inform observers about labels update
         this.fireAxisUpdate();
       } else {
         Element.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
@@ -289,7 +302,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
@@ -304,9 +316,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       // only fire axis update if axis type is X axis
       if (sAggregationName === 'labels' && this.getProperty('_axisType') === library.Axis.X) {
         // important: update value, before fire event
-        Element.prototype.destroyAggregation.call(this, sAggregationName, true);
+        Element.prototype.destroyAggregation.call(this, sAggregationName, true); // inform observers about labels update
 
-        // inform observers about labels update
         this.fireAxisUpdate();
       } else {
         Element.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
@@ -314,7 +325,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Overwrites the method in order to check on supported properties.
@@ -331,8 +341,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       if (['title', 'showTitle', 'visible'].includes(sName)) {
         // important: update value, before fire event
         Element.prototype.setProperty.call(this, sName, vValue, true); // do not rerender
-
         // inform observers about data update
+
         this.fireAxisUpdate();
       } else {
         Element.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
@@ -340,15 +350,19 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     }
-
     /* =========================================================== */
+
     /* public methods                                              */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* private methods                                             */
+
     /* =========================================================== */
 
   });
 },
-/* bExport= */true);
+/* bExport= */
+true);

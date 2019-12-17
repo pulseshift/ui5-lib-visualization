@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -35,9 +33,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
    */
   return Element.extend('ui5.viz.ChartSeries', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -200,15 +199,21 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -221,7 +226,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -229,7 +233,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      * @override
      */
     init: function init() {},
-
 
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
@@ -244,9 +247,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       });
     },
 
-
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /**
@@ -256,10 +260,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
      */
     getKey: function getKey() {
       var sKey = this.getProperty('key');
-
       return library.toValidHtmlID(sKey);
     },
-
 
     /**
      * Inserts managed object oObject to the aggregation named sAggregationName at position iIndex.
@@ -277,16 +279,14 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       if (sAggregationName === 'data') {
         // important: update value, before fire event
-        Element.prototype.insertAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.insertAggregation.call(this, sAggregationName, oObject, true); // forward dataUpdate event
 
-        // forward dataUpdate event
         oObject.attachDataPointUpdate(function () {
           _this.fireSeriesDataUpdate({
             code: library.ChartUpdateCode.DataPoint
           });
-        });
+        }); // inform observers about data update
 
-        // inform observers about data update
         this.fireSeriesDataUpdate({
           code: library.ChartUpdateCode.DataPoint
         });
@@ -296,7 +296,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Adds some entity oObject to the aggregation identified by sAggregationName.
@@ -313,16 +312,14 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       if (sAggregationName === 'data') {
         // important: update value, before fire event
-        Element.prototype.addAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.addAggregation.call(this, sAggregationName, oObject, true); // forward dataUpdate event
 
-        // forward dataUpdate event
         oObject.attachDataPointUpdate(function () {
           _this2.fireSeriesDataUpdate({
             code: library.ChartUpdateCode.DataPoint
           });
-        });
+        }); // inform observers about data update
 
-        // inform observers about data update
         this.fireSeriesDataUpdate({
           code: library.ChartUpdateCode.DataPoint
         });
@@ -332,7 +329,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
@@ -349,16 +345,14 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       if (sAggregationName === 'data') {
         // important: update value, before fire event
-        Element.prototype.removeAggregation.call(this, sAggregationName, oObject, true);
+        Element.prototype.removeAggregation.call(this, sAggregationName, oObject, true); // forward dataUpdate event
 
-        // forward dataUpdate event
         oObject.attachDataPointUpdate(function () {
           _this3.fireSeriesDataUpdate({
             code: library.ChartUpdateCode.DataPoint
           });
-        });
+        }); // inform observers about data update
 
-        // inform observers about data update
         this.fireSeriesDataUpdate({
           code: library.ChartUpdateCode.DataPoint
         });
@@ -368,7 +362,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Removes all objects from the 0..n-aggregation named sAggregationName.
@@ -382,9 +375,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     removeAllAggregation: function removeAllAggregation(sAggregationName, bSuppressInvalidate) {
       if (sAggregationName === 'data') {
         // important: update value, before fire event
-        Element.prototype.removeAllAggregation.call(this, sAggregationName, true);
+        Element.prototype.removeAllAggregation.call(this, sAggregationName, true); // inform observers about data update
 
-        // inform observers about data update
         this.fireSeriesDataUpdate({
           code: library.ChartUpdateCode.DataPoint
         });
@@ -394,7 +386,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Destroys (all) the managed object(s) in the aggregation named sAggregationName and empties the aggregation. If the aggregation did contain any object, this ManagedObject is marked as changed.
@@ -408,9 +399,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
     destroyAggregation: function destroyAggregation(sAggregationName, bSuppressInvalidate) {
       if (sAggregationName === 'data') {
         // important: update value, before fire event
-        Element.prototype.destroyAggregation.call(this, sAggregationName, true);
+        Element.prototype.destroyAggregation.call(this, sAggregationName, true); // inform observers about data update
 
-        // inform observers about data update
         this.fireSeriesDataUpdate({
           code: library.ChartUpdateCode.DataPoint
         });
@@ -420,7 +410,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
-
 
     /**
      * Overwrites the method in order to check on supported properties.
@@ -436,14 +425,14 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
       if (['type', 'name', 'color', 'showLabels', 'groupKey', 'visible', 'yAxis', 'lineStyle', 'shapeStyle', 'lineAnimationSpeed', 'lineAnimationForwards'].includes(sName)) {
         // important: update value, before fire event
         Element.prototype.setProperty.call(this, sName, vValue, true); // do not rerender
-
         // inform observers about data update
+
         this.fireSeriesDataUpdate();
       } else if (sName === 'visible') {
         // important: update value, before fire event
         Element.prototype.setProperty.call(this, sName, vValue, true); // do not rerender
-
         // inform observers about show/hide series
+
         this.fireSeriesVisibilityChange({
           chartSeries: this
         });
@@ -453,16 +442,19 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     }
-  }
+    /* =========================================================== */
 
-  /* =========================================================== */
-  /* public methods                                              */
-  /* =========================================================== */
+    /* public methods                                              */
 
-  /* =========================================================== */
-  /* private methods                                             */
-  /* =========================================================== */
-  );
+    /* =========================================================== */
+
+    /* =========================================================== */
+
+    /* private methods                                             */
+
+    /* =========================================================== */
+
+  });
 },
 /* bExport= */
 true);

@@ -1,6 +1,4 @@
-'use strict';
-
-/* @flow */
+"use strict";
 
 /**
  * @example
@@ -35,9 +33,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element) {
    */
   return Element.extend('ui5.viz.Color', {
     /* =========================================================== */
-    /* meta data definition                                        */
-    /* =========================================================== */
 
+    /* meta data definition                                        */
+
+    /* =========================================================== */
     metadata: {
       library: 'ui5.viz',
       properties: {
@@ -58,15 +57,21 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element) {
     },
 
     /* =========================================================== */
+
     /* private attributes                                          */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* constants                                                   */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* lifecycle methods                                           */
+
     /* =========================================================== */
 
     /**
@@ -79,7 +84,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element) {
       Element.prototype.constructor.apply(this, arguments);
     },
 
-
     /**
      * The init() method can be used to set up, for example, internal variables or subcontrols of a composite control.
      * If the init() method is implemented, SAPUI5 invokes the method for each control instance directly after the constructor method.
@@ -87,7 +91,6 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element) {
      * @override
      */
     init: function init() {}
-
     /**
      * The exit() method is used to clean up resources and to deregister event handlers.
      * If the exit() method is implemented, SAPUI5 core invokes the method for each control instance when it is destroyed.
@@ -97,17 +100,24 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element) {
     // exit() {},
 
     /* =========================================================== */
+
     /* override methods                                            */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* public methods                                              */
+
     /* =========================================================== */
 
     /* =========================================================== */
+
     /* private methods                                             */
+
     /* =========================================================== */
 
   });
 },
-/* bExport= */true);
+/* bExport= */
+true);

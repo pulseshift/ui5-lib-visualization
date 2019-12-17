@@ -1,0 +1,12 @@
+# Browsers that we support
+# Config see: https://github.com/browserslist/browserslist
+
+last 2 chrome versions
+last 2 edge versions
+last 2 safari versions
+last 2 firefox versions
+firefox ESR
+ie 11
+last 2 ios_saf versions
+last 2 and_chr versions
+not dead

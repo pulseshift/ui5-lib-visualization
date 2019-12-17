@@ -34,7 +34,7 @@ import sourcemaps from 'gulp-sourcemaps'
 import ui5preload from 'gulp-ui5-preload'
 import mainNpmFiles from 'gulp-main-npm-files'
 import ui5Bust from 'ui5-cache-buster'
-import { ui5Download, ui5Build, ui5CompileLessLib } from 'ui5-lib-util'
+import {ui5Build, ui5CompileLessLib} from 'ui5-lib-util'
 import browserify from 'browserify'
 import source from 'vinyl-source-stream'
 import buffer from 'vinyl-buffer'
@@ -45,13 +45,11 @@ import del from 'del'
 import path from 'path'
 import fs from 'fs'
 import commander from 'commander'
-import server from 'browser-sync'
 import handlebars from 'handlebars'
 import gulpHandlebars from 'gulp-handlebars-html'
 import favicons from 'gulp-favicons'
 import gzip from 'gulp-gzip'
 import brotli from 'gulp-brotli'
-import gzipStaticMiddleware from 'connect-gzip-static'
 
 // TODO: because build script becomes so feature rich it should be split into sub modules
 
@@ -63,6 +61,7 @@ import gzipStaticMiddleware from 'connect-gzip-static'
 commander
   .version(pkg.version)
   .option('--silent')
+  .option('--local')
   .parse(process.argv)
 
 const hdlbars = gulpHandlebars(handlebars)
@@ -89,7 +88,7 @@ const IS_DEV_MODE = process.env.NODE_ENV === 'development'
 // path to source directory
 const SRC = 'src'
 // path to development directory
-const DEV = '.tmp'
+const DEV = 'dev'
 // path to ditribution direcory
 const DIST = 'dist'
 // path to ui5 repository
@@ -98,7 +97,7 @@ const UI5 = IS_DEV_MODE ? 'ui5' : `${DIST}/ui5`
 // create unique hash for current favicon image
 const isFaviconDefined =
   pkg.favicon && pkg.favicon.src.length > 0 && fs.existsSync(pkg.favicon.src)
-const FAVICON_HASH = isFaviconDefined
+const FAVICON_HASH = isFaviconDefined //TODO:get rid? Favicons NOT in root seesm to be an anit pattern? https://stackoverflow.com/questions/5273103/any-problems-with-favicons-in-a-subfolder
   ? require('loader-utils')
       .getHashDigest(
         Buffer.concat([fs.readFileSync(pkg.favicon.src)]),
@@ -142,7 +141,10 @@ const UI5_ROOTS = []
   .concat(NON_UI5_ASSETS)
 
 // target directory of plain npm dependencies
-const NPM_MODULES_TARGET = pkg.ui5.vendor || { name: '', path: '' }
+const NPM_MODULES_TARGET = pkg.ui5.vendor || {
+  name: '',
+  path: ''
+}
 
 // identify ui5 modules loaded as devDependency
 const NPM_UI5_LIBS = (pkg.ui5.libraries || []).filter(oModule =>
@@ -155,6 +157,17 @@ const NPM_UI5_MODULES = []
   .concat(pkg.ui5.assets || [])
   .filter(oModule => oModule.path.startsWith('node_modules'))
 
+const THEMES = [
+  'base',
+  'psmaterial',
+  'sap_belize',
+  'sap_belize_hcb',
+  'sap_belize_hcw',
+  'sap_belize_plus',
+  'sap_bluecrystal',
+  'sap_goldreflection',
+  'sap_hcb'
+]
 const TARGET_THEME = pkg.ui5.theme || 'sap_belize'
 
 // paths used in our app
@@ -171,12 +184,12 @@ const paths = {
             `${oModule.path}/**/*.json`,
             `${oModule.path}/**/*.{xml,html}`,
             `${oModule.path}/**/*.css`,
-            `${oModule.path}/**/*.{jpg,jpeg,png,svg,ico}`
+            `${oModule.path}/**/*.{jpg,jpeg,png,svg,ico}`,
+            `${oModule.path}/**/*.{woff,woff2,eot,ttf}`
           ]),
         []
       )
       // take into account .js files only for asset roots
-      // TODO: create path automatically based on pkg.main
       .concat(NON_UI5_ASSETS.map(oAsset => `${oAsset.path}/**/*.js`))
   },
   scripts: {
@@ -210,9 +223,9 @@ const paths = {
  */
 const start = gulp.series(
   logStart,
-  clean,
+  cleanDev,
   favicon,
-  gulp.parallel(gulp.series(downloadOpenUI5, buildOpenUI5), loadDependencies),
+  gulp.parallel(prepareOpenUI5, loadDependencies),
   gulp.parallel(copyUi5Theme, copyUi5LibraryThemes),
   gulp.parallel(
     entry,
@@ -222,7 +235,7 @@ const start = gulp.series(
     ui5LibStyles,
     ui5ThemeStyles
   ),
-  gulp.parallel(logStats),
+  gulp.parallel(logStats, updateVersion),
   watch
 )
 
@@ -235,19 +248,19 @@ function logStart(done) {
 
 // log common statistics
 function logStatsCommons() {
-  const sSourceID = pkg.ui5.src
-  const oSource = pkg.ui5.srcLinks[sSourceID]
-  const sUI5Version = oSource.version
-  const sOnlineUI5State =
-    !oSource.isArchive && oSource.isPrebuild ? '(remote)' : ''
-  const sUI5Details = !oSource.isPrebuild ? '(custom build)' : sOnlineUI5State
+  // const sSourceID = pkg.ui5.src
+  // const oSource = pkg.ui5.srcLinks[sSourceID]
+  const sUI5Version = getUI5Version()
+  // const sOnlineUI5State =
+  //   !oSource.isArchive && oSource.isPrebuild ? '(remote)' : ''
+  // const sUI5Details = !oSource.isPrebuild ? '(custom build)' : sOnlineUI5State
 
   const iApps = UI5_APPS.length
   const iThemes = UI5_THEMES.length
   const iLibs = UI5_LIBS.length
 
   const sVendorLibsPath = NPM_MODULES_TARGET.path
-  const aVendorLibs = mainNpmFiles()
+  const aVendorLibs = allExplicitDependencies()
 
   if (aVendorLibs.length > 0) {
     spinner.print(' ')
@@ -263,7 +276,7 @@ function logStatsCommons() {
 
   // print success message
   spinner.print(' ')
-  spinner.succeed(`UI5 Version: ${sUI5Version} ${sUI5Details}`).print(' ')
+  spinner.succeed(`UI5 Version: ${sUI5Version}`).print(' ')
   spinner
     .succeed('UI5 assets created:')
     .print(`• ${iApps} app${iApps !== 1 ? 's' : ''}`)
@@ -293,7 +306,8 @@ const build = gulp.series(
   cleanDist,
   favicon,
   gulp.parallel(
-    gulp.series(downloadOpenUI5, buildOpenUI5),
+    //gulp.series(prepareOpenUI5, buildOpenUI5),
+    gulp.series(prepareOpenUI5),
     loadDependenciesDist
   ),
   gulp.parallel(copyUi5Theme, copyUi5LibraryThemes),
@@ -337,7 +351,7 @@ function logStatsDist(done) {
   logStatsCommons()
   done()
 }
-export { build }
+export {build}
 
 /* ----------------------------------------------------------- *
  * watch files for changes
@@ -345,78 +359,76 @@ export { build }
 
 // [development build]
 function watch() {
-  const sSuccessMessage =
-    '\u{1F64C}  (Server started, use Ctrl+C to stop and go back to the console...)'
-
   // start watchers
-  gulp.watch(paths.entry.src, gulp.series(entry, reload))
-  gulp.watch(paths.assets.src, gulp.series(assets, reload))
-  gulp.watch(paths.scripts.src, gulp.series(scripts, reload))
-  gulp.watch(paths.appStyles.src, gulp.series(ui5AppStyles, reload))
-  gulp.watch(paths.libStyles.src, gulp.series(ui5LibStyles, reload))
-  gulp.watch(paths.themeStyles.src, gulp.series(ui5ThemeStyles, reload))
+  gulp.watch(paths.entry.src, gulp.series(startWatchTask, entry, reload))
+  gulp.watch(paths.assets.src, gulp.series(startWatchTask, assets, reload))
+  gulp.watch(paths.scripts.src, gulp.series(startWatchTask, scripts, reload))
+  gulp.watch(
+    paths.appStyles.src,
+    gulp.series(startWatchTask, ui5AppStyles, reload)
+  )
+  gulp.watch(
+    paths.libStyles.src,
+    gulp.series(startWatchTask, ui5LibStyles, reload)
+  )
+  gulp.watch(
+    paths.themeStyles.src,
+    gulp.series(startWatchTask, ui5ThemeStyles, reload)
+  )
 
   // start HTTP server
-  // learn more about the powerful options (proxy, middleware, etc.) here:
-  // https://www.browsersync.io/docs/options
-  server.init({
-    // open the browser automatically
-    open: true,
-    // use port defined in package.json
-    port: parseInt(process.env.DEV_PORT || 3000, 10),
-    // TODO: create path automatically based on pkg.main
-    startPath: 'demo/index.html',
-    server: {
-      baseDir: `./${DEV}`,
-      index: 'demo/index.html',
-      routes: {
-        '/ui5': `./${UI5}`
-      }
-    }
-  })
-
-  // log success message
-  gutil.log(gutil.colors.green(sSuccessMessage))
+  if (commander.local) {
+    startHttpServer()
+  }
 }
 
 // [production build]
-export function testDist() {
+export function startHttpServer() {
   const sSuccessMessage =
     '\u{1F64C}  (Server started, use Ctrl+C to stop and go back to the console...)'
 
-  // start HTTP server
-  // learn more about the powerful options (proxy, middleware, etc.) here:
-  // https://www.browsersync.io/docs/options
-  server.init({
-    // open the browser automatically
-    open: true,
-    // use port defined in package.json
-    port: parseInt(process.env.DEV_PORT || 3000, 10),
-    // TODO: create path automatically based on pkg.main
-    startPath: 'demo/index.html',
-    server: {
-      baseDir: `./${DIST}`,
-      index: 'demo/index.html',
-      routes: {
-        '/ui5': `./${UI5}`
-      }
-    },
-    callbacks: {
-      ready: function(err, bs) {
-        // gzip/brotli static middleware - serves compressed files if they exist
-        bs.addMiddleware('*', gzipStaticMiddleware(`./${DIST}`), {
-          override: true
-        })
+  // start web server
+  const port = parseInt(process.env.DEV_PORT || 3000, 10)
+  const express = require('express')
+  const proxy = require('http-proxy-middleware')
 
-        // only serve ui5 assets if not fetched from remote
-        if (fs.existsSync(`./${UI5}`)) {
-          bs.addMiddleware('/ui5', gzipStaticMiddleware(`./${UI5}`), {
-            override: true
-          })
-        }
-      }
+  // proxy middleware options
+  const proxyOptions = {
+    target: process.env.DEV_API_PROXY,
+    secure: false,
+    xfwd: true,
+    // autoRewrite: true,
+    // changeOrigin: true,
+    headers: {
+      host: `localhost:${port}`,
+      origin: `http://localhost:${port}`
+    },
+    cookieDomainRewrite: {
+      '*': `localhost:${port}`
     }
-  })
+  }
+
+  // create the proxy (without context)
+  const apiProxy = proxy(proxyOptions)
+
+  // mount web server
+  const webServer = express()
+
+  // config and start web server
+  webServer.use('/api', apiProxy)
+  webServer.use(express.static(IS_DEV_MODE ? `./${DEV}` : `./${DIST}`))
+  webServer.use('/app', express.static(IS_DEV_MODE ? `./${DEV}` : `./${DIST}`))
+  webServer.use('/ui5', express.static(`./${UI5}`))
+  webServer.use('/.maps', express.static(`./.maps`))
+  // if (!IS_DEV_MODE) {
+  //   // TODO: get gzip middleware working again with express
+  //   // gzip/brotli static middleware - serves compressed files if they exist
+  //   const gzipStaticMiddleware = require('connect-gzip-static')
+  //   const oneDay = 86400000
+  //   webServer.use('/app', gzipStaticMiddleware(`./${DIST}`), {maxAge: oneDay})
+  // }
+
+  webServer.listen(port)
 
   // log success message
   gutil.log(gutil.colors.green(sSuccessMessage))
@@ -426,11 +438,40 @@ export function testDist() {
  * reload browser
  * ----------------------------------------------------------- */
 
+/**
+ * Helper to print the current time formatted
+ * @return {string}
+ */
+function currentTime() {
+  const now = new Date()
+  const h = str_pad(now.getHours())
+  const m = str_pad(now.getMinutes())
+  const s = str_pad(now.getSeconds())
+  return h + ':' + m + ':' + s
+}
+
+function str_pad(n) {
+  return String('0' + n).slice(-2)
+}
+
 // [development build]
 function reload(done) {
-  server.reload()
-  gutil.log('Change completed, ready for reload...')
-  spinner.print(`\u{1F435}  update completed.`)
+  if (commander.silent) {
+    spinner.print(
+      `\u{1F435}  Update completed, ready for reload... - ${currentTime()}`
+    )
+  } else {
+    gutil.log(`Update completed, ready for reload... - ${currentTime()}`)
+  }
+  done()
+}
+
+function startWatchTask(done) {
+  if (commander.silent) {
+    spinner.print(`\u{1F440}  Watch task started ... - ${currentTime()}`)
+  } else {
+    gutil.log(`Watch task started ... - ${currentTime()}`)
+  }
   done()
 }
 
@@ -439,101 +480,158 @@ function reload(done) {
  * ----------------------------------------------------------- */
 
 // [development & production build]
-export function downloadOpenUI5() {
-  try {
-    const sSourceID = pkg.ui5.src
-    const oSource = pkg.ui5.srcLinks[sSourceID]
-    const sUI5Version = oSource.version
-    const sCompiledURL = handlebars.compile(oSource.url)(oSource)
-    const isRemoteLink = sCompiledURL.startsWith('http')
+// export function downloadOpenUI5() {
+//   try {
+//     const sSourceID = pkg.ui5.src
+//     const oSource = pkg.ui5.srcLinks[sSourceID]
+//     const sUI5Version = oSource.version
+//     const sCompiledURL = handlebars.compile(oSource.url)(oSource)
+//     const isRemoteLink = sCompiledURL.startsWith('http')
 
-    // if UI5 download link is marked as prebuild,
-    // we can extract it directly into '/ui5' target directory
-    const sDownloadPath = !oSource.isPrebuild
-      ? path.resolve(__dirname, './.download')
-      : path.resolve(__dirname, `./${UI5}`)
-    const isDownloadRequired =
-      oSource.isArchive &&
-      isRemoteLink &&
-      !fs.existsSync(`${sDownloadPath}/${sUI5Version}`)
-    const oDownloadOptions = {
-      onProgress(iStep, iTotalSteps, oStepDetails) {
-        // update spinner state
-        spinner.text = `Downloading UI5... [${iStep}/${iTotalSteps}] ${Math.round(
-          oStepDetails.progress || 0
-        )}% (${oStepDetails.name})`
-      }
+//     // if UI5 download link is marked as prebuild,
+//     // we can extract it directly into '/ui5' target directory
+//     const sDownloadPath = !oSource.isPrebuild
+//       ? path.resolve(__dirname, './.download')
+//       : path.resolve(__dirname, `./${UI5}`)
+//     const isDownloadRequired =
+//       oSource.isArchive &&
+//       isRemoteLink &&
+//       !fs.existsSync(path.join(sDownloadPath, sUI5Version))
+//     const oDownloadOptions = {
+//       onProgress(iStep, iTotalSteps, oStepDetails) {
+//         // update spinner state
+//         spinner.text = `Downloading UI5... [${iStep}/${iTotalSteps}] ${Math.round(
+//           oStepDetails.progress || 0
+//         )}% (${oStepDetails.name})`
+//       }
+//     }
+
+//     // ensure ui5 download oath exists
+//     if (!fs.existsSync(sDownloadPath)) {
+//       fs.mkdirSync(sDownloadPath)
+//     }
+
+//     if (isDownloadRequired) {
+//       gutil.log('Download UI5 form: ' + sCompiledURL)
+//       // update spinner state
+//       spinner.text =
+//         'Downloading UI5... (this task can take several minutes, please be patient)'
+//     }
+
+//     // return promise
+//     return isDownloadRequired
+//       ? ui5Download(sCompiledURL, sDownloadPath, sUI5Version, oDownloadOptions)
+//           .then(sSuccessMessage => {
+//             spinner.succeed(sSuccessMessage)
+//             spinner.start('')
+//           })
+//           .catch(sErrorMessage => {
+//             spinner.fail(sErrorMessage)
+//             spinner.start('')
+//             throw sErrorMessage
+//           })
+//       : Promise.resolve()
+//   } catch (error) {
+//     spinner.fail(error)
+//   }
+// }
+
+/**
+ * Reads UI5 version from depencies
+ */
+function getUI5Version() {
+  //Make sure to return actual semantic version number only, as this will be used in URLs
+  return pkg.dependencies['@openui5/sap.ui.core'].replace(/[^0123456789.]/g, '')
+}
+
+export function prepareOpenUI5() {
+  let sUI5Version = getUI5Version()
+  let sUI5Path = path.resolve(__dirname, `./${UI5}`)
+  const isAlreadyPresent = fs.existsSync(path.join(sUI5Path, sUI5Version))
+
+  if (!isAlreadyPresent) {
+    gutil.log(
+      'Missing UI5 runtime, start building for version: ' +
+        gutil.colors.bold(sUI5Version)
+    )
+    require('child_process').execSync(
+      `yarn ui5 build --all --dest=./${UI5}/${sUI5Version} --clean-dest=true`,
+      {stdio: 'inherit'}
+    )
+
+    //Build sap-ui-version.json file (e.g. to make UI5 inspector happy)
+    // initialize build time
+    const NOW = new Date()
+    // build time stamp in format yyyyMMddhhmm
+    const sBuildTime = NOW.toISOString()
+      .slice(0, 16)
+      .replace(/[-T:]/g, '')
+
+    const oVersionJSON = {
+      buildTimestamp: sBuildTime,
+      name: 'openui5-sdk-dist-pulseshift-custom',
+      version: sUI5Version,
+      libraries: [] //TODO:Check if needed: Could be read from yarn/npm dependencies
     }
+    const sVersionJSONString = JSON.stringify(oVersionJSON, null, 2)
 
-    if (isDownloadRequired) {
-      // update spinner state
-      spinner.text =
-        'Downloading UI5... (this task can take several minutes, please be patient)'
-    }
-
-    // return promise
-    return isDownloadRequired
-      ? ui5Download(sCompiledURL, sDownloadPath, sUI5Version, oDownloadOptions)
-          .then(sSuccessMessage => {
-            spinner.succeed(sSuccessMessage)
-            spinner.start('')
-          })
-          .catch(sErrorMessage => {
-            spinner.fail(sErrorMessage)
-            spinner.start('')
-          })
-      : Promise.resolve()
-  } catch (error) {
-    spinner.fail(error)
+    // write JSON file
+    fs.writeFileSync(
+      `./${UI5}/${sUI5Version}/resources/sap-ui-version.json`,
+      sVersionJSONString
+    )
+  } else {
+    gutil.log(
+      'Found UI5 runtime, nothing to do - version: ' +
+        gutil.colors.bold(sUI5Version)
+    )
   }
+
+  return Promise.resolve()
 }
 
 // [development & production build]
+//TODO: Is this still needed?
 export function buildOpenUI5() {
-  try {
-    const sSourceID = pkg.ui5.src
-    const oSource = pkg.ui5.srcLinks[sSourceID]
-    const sUI5Version = oSource.version
+  //const sSourceID = pkg.ui5.src
+  //const oSource = pkg.ui5.srcLinks[sSourceID]
+  //const sUI5Version = oSource.version
+  let sUI5Version = getUI5Version()
 
-    const sDownloadPath = path.resolve(__dirname, './.download')
-    const sUI5TargetPath = path.resolve(__dirname, `./${UI5}/${sUI5Version}`)
-    const isBuildRequired =
-      oSource.isPrebuild === false && !fs.existsSync(sUI5TargetPath)
-    const oBuildOptions = {
-      onProgress(iStep, iTotalSteps, oStepDetails) {
-        // update spinner state
-        spinner.text = `Build UI5... [${iStep}/${iTotalSteps}] (${
-          oStepDetails.name
-        })`
-      }
-    }
-
-    if (isBuildRequired) {
+  //const sDownloadPath = path.resolve(__dirname, './ui5_tmp')
+  const sDownloadPath = path.resolve(__dirname, `./${UI5}/${sUI5Version}`)
+  const sUI5TargetPath = path.resolve(__dirname, `./${UI5}/${sUI5Version}`)
+  const isBuildRequired = !fs.existsSync(sUI5TargetPath)
+  const oBuildOptions = {
+    onProgress(iStep, iTotalSteps, oStepDetails) {
       // update spinner state
-      spinner.text =
-        'Build UI5... (this task can take several minutes, please be patient)'
+      spinner.text = `Build UI5... [${iStep}/${iTotalSteps}] (${oStepDetails.name})`
     }
-
-    // define build Promise
-    return isBuildRequired
-      ? ui5Build(
-          `${sDownloadPath}/${sUI5Version}`,
-          sUI5TargetPath,
-          sUI5Version,
-          oBuildOptions
-        )
-          .then(sSuccessMessage => {
-            spinner.succeed(sSuccessMessage)
-            spinner.start('')
-          })
-          .catch(sErrorMessage => {
-            spinner.fail(sErrorMessage)
-            spinner.start('')
-          })
-      : Promise.resolve()
-  } catch (error) {
-    spinner.fail(error)
   }
+
+  if (isBuildRequired) {
+    // update spinner state
+    spinner.text =
+      'Build UI5... (this task can take several minutes, please be patient)'
+  }
+
+  // define build Promise
+  return isBuildRequired
+    ? ui5Build(
+        `${sDownloadPath}/${sUI5Version}`,
+        sUI5TargetPath,
+        sUI5Version,
+        oBuildOptions
+      )
+        .then(sSuccessMessage => {
+          spinner.succeed(sSuccessMessage)
+          spinner.start('')
+        })
+        .catch(sErrorMessage => {
+          spinner.fail(sErrorMessage)
+          spinner.start('')
+        })
+    : Promise.resolve()
 }
 
 /* ----------------------------------------------------------- *
@@ -541,15 +639,47 @@ export function buildOpenUI5() {
  * ----------------------------------------------------------- */
 
 // [development build]
-function clean() {
+function cleanDev() {
   const VENDOR_SRC = pkg.ui5.vendor ? `${pkg.ui5.vendor.path}/**/*` : ''
-  return del([`${DEV}/**/*`, `!${UI5}/**/*`, `!${DEV}/${FAVICON_HASH}`].concat(VENDOR_SRC))
+  return del(
+    [`${DEV}/**/*`, `!${UI5}/**/*`, `!${DEV}/${FAVICON_HASH}`].concat(
+      VENDOR_SRC
+    )
+  )
 }
 
 // [production build]
 function cleanDist() {
   const VENDOR_SRC = pkg.ui5.vendor ? `${pkg.ui5.vendor.path}/**/*` : ''
-  return del([`${DIST}/**/*`, `!${UI5}/**/*`, `!${DIST}/${FAVICON_HASH}`].concat(VENDOR_SRC))
+  return del(
+    [`${DIST}/**/*`, `!${UI5}/**/*`, `!${DIST}/${FAVICON_HASH}`].concat(
+      VENDOR_SRC
+    )
+  )
+}
+
+// [helper function]
+export function clean() {
+  const VENDOR_SRC = pkg.ui5.vendor ? `${pkg.ui5.vendor.path}/**/*` : ''
+  return del(
+    [
+      DEV,
+      DIST,
+      UI5,
+      '.maps',
+      '.download',
+      'test/screenshots/**/*',
+      `${SRC}/**/*.help.properties`,
+      `${SRC}/**/i18n_*.properties`,
+      `${SRC}/**/messagebundle_*.properties`
+    ]
+      .concat(
+        THEMES.filter(theme => theme !== TARGET_THEME).map(
+          theme => `${SRC}/resources/ui5-themes/UI5/sap/**/themes/${theme}`
+        )
+      )
+      .concat(VENDOR_SRC)
+  )
 }
 
 /* ----------------------------------------------------------- *
@@ -560,7 +690,7 @@ function cleanDist() {
 function favicon() {
   const targetPath = IS_DEV_MODE ? DEV : DIST
   const isFaviconsDirCached = fs.existsSync(
-    `${targetPath}/${FAVICON_HASH}/results.html`
+    `${targetPath}/favicons_results.html`
   )
   // use content hash of master image as directory name and cashe assets in dev mode
   return isFaviconsDirCached || !isFaviconDefined
@@ -576,14 +706,14 @@ function favicon() {
             version: pkg.version,
             background: '#fefefe',
             theme_color: '#fefefe',
-            path: `./${FAVICON_HASH}`,
-            html: 'results.html',
+            path: ``,
+            html: 'favicons_results.html',
             online: false,
             preferOnline: false,
             pipeHTML: true
           })
         )
-        .pipe(gulp.dest(`${targetPath}/${FAVICON_HASH}`))
+        .pipe(gulp.dest(`${targetPath}`))
 }
 
 /* ----------------------------------------------------------- *
@@ -601,6 +731,7 @@ function getHandlebarsProps(sEntryHTMLPath) {
   return {
     indexTitle: pkg.ui5.indexTitle,
     src: getRelativeUI5SrcURL(sEntryHTMLPath),
+    scriptAttributes: IS_DEV_MODE ? '' : 'defer', //Add defer only in prod build as currently sap-ui-debug does not work in deferred mode
     theme: TARGET_THEME,
     // create resource roots string
     resourceroots: JSON.stringify(
@@ -609,12 +740,22 @@ function getHandlebarsProps(sEntryHTMLPath) {
           new RegExp(`^${SRC}`),
           IS_DEV_MODE ? DEV : DIST
         )
+
         // create path to theme relative to entry HTML
+        let sRelativePath = path.relative(
+          path.parse(sEntryHTMLPath).dir,
+          sModulePath
+        )
+
+        // on windows, the sRelativePath will contain backslashes. as the browser cannot handle
+        // the relative path included in the script tag containing backslashes, we have to replace
+        // them with normal slashes
+        sRelativePath = sRelativePath.includes('\\')
+          ? sRelativePath.replace(/\\/g, '/')
+          : sRelativePath
+
         return Object.assign(oResult, {
-          [oModule.name]: path.relative(
-            path.parse(sEntryHTMLPath).dir,
-            sModulePath
-          )
+          [oModule.name]: sRelativePath
         })
       }, {})
     ),
@@ -625,62 +766,86 @@ function getHandlebarsProps(sEntryHTMLPath) {
           new RegExp(`^${SRC}`),
           IS_DEV_MODE ? DEV : DIST
         )
+
+        // create path to theme relative to entry HTML
+        let sRelativePath = path.relative(
+          path.parse(sEntryHTMLPath).dir,
+          `${sThemePath}/UI5`
+        )
+
+        // on windows, the sRelativePath will contain backslashes. as the browser cannot handle
+        // the relative path included in the script tag containing backslashes, we have to replace
+        // them with normal slashes
+        sRelativePath = sRelativePath.includes('\\')
+          ? sRelativePath.replace(/\\/g, '/')
+          : sRelativePath
+
         // create path to theme relative to entry HTML
         return Object.assign(oResult, {
-          [oTheme.name]: path.relative(
-            path.parse(sEntryHTMLPath).dir,
-            `${sThemePath}/UI5`
-          )
+          [oTheme.name]: sRelativePath
         })
       }, {})
     ),
     // create favicons
     favicons: isFaviconDefined
       ? fs.readFileSync(
-          `${IS_DEV_MODE ? DEV : DIST}/${FAVICON_HASH}/results.html`,
+          `${IS_DEV_MODE ? DEV : DIST}/favicons_results.html`,
           'utf8'
         )
-      : ''
+      : '',
+    // define HOST used for API calls in case a proxy is used
+    devheader: ''
+    // process.env.DEV_API_PROXY && IS_DEV_MODE
+    //   ? '<link id="dev-api-proxy-origin" href="https://localhost" />'
+    //   : ''
   }
 }
 
 // [helper function]
 function getRelativeUI5SrcURL(sEntryHTMLPath) {
   const sEntryPath = path.dirname(sEntryHTMLPath)
-  const sSourceID = pkg.ui5.src
-  const oSource = pkg.ui5.srcLinks[sSourceID]
-  const sCompiledURL = handlebars.compile(oSource.url)(oSource)
-  const isRemoteLink = sCompiledURL.startsWith('http')
+  //const sSourceID = pkg.ui5.src
+  //const oSource = pkg.ui5.srcLinks[sSourceID]
+  //const sCompiledURL = handlebars.compile(oSource.url)(oSource)
+  //const isRemoteLink = sCompiledURL.startsWith('http')
+  //const sLocalPath = oSource.path || ''
 
-  const sOpenUI5PathNaked = path.resolve(
-    __dirname,
-    `${UI5}/${oSource.version}/sap-ui-core.js`
-  )
+  // const sOpenUI5PathNaked = path.resolve(
+  //   __dirname,
+  //   path.join(`${UI5}/${getUI5Version()}`, 'sap-ui-core.js')
+  // )
   const sOpenUI5PathWrapped = path.resolve(
     __dirname,
-    `${UI5}/${oSource.version}/resources/sap-ui-core.js`
+    path.join(`${UI5}/${getUI5Version()}/resources`, 'sap-ui-core.js')
   )
 
-  let sRelativeUI5Path = ''
+  let sRelativeUI5Path = path.relative(sEntryPath, sOpenUI5PathWrapped)
 
-  if (oSource.isArchive && isRemoteLink && !oSource.isPrebuild) {
-    // ui5/version/sap-ui-core.js
-    sRelativeUI5Path = path.relative(sEntryPath, sOpenUI5PathNaked)
-  } else if (oSource.isArchive && isRemoteLink && oSource.isPrebuild) {
-    // ui5/version/resources/sap-ui-core.js (wrapped) OR ui5/version/sap-ui-core.js (naked)
-    sRelativeUI5Path = path.relative(
-      sEntryPath,
-      fs.existsSync(sOpenUI5PathWrapped)
-        ? sOpenUI5PathWrapped
-        : sOpenUI5PathNaked
-    )
-  } else if (!oSource.isArchive && isRemoteLink) {
-    // direct remote link
-    sRelativeUI5Path = sCompiledURL
-  } else if (!isRemoteLink) {
-    // direct local link
-    sRelativeUI5Path = path.relative(sEntryPath, sCompiledURL)
-  }
+  // if (oSource.isArchive && isRemoteLink && !oSource.isPrebuild) {
+  //   // ui5/version/sap-ui-core.js
+  //   sRelativeUI5Path = path.relative(sEntryPath, sOpenUI5PathNaked)
+  // } else if (oSource.isArchive && isRemoteLink && oSource.isPrebuild) {
+  //   // ui5/version/resources/sap-ui-core.js (wrapped) OR ui5/version/sap-ui-core.js (naked)
+  //   sRelativeUI5Path = path.relative(
+  //     sEntryPath,
+  //     fs.existsSync(sOpenUI5PathWrapped)
+  //       ? sOpenUI5PathWrapped
+  //       : sOpenUI5PathNaked
+  //   )
+  // } else if (!oSource.isArchive && isRemoteLink) {
+  //   // direct remote link
+  //   sRelativeUI5Path = sCompiledURL
+  // } else if (!isRemoteLink) {
+  //   // direct local link
+  //   sRelativeUI5Path = path.relative(sEntryPath, sCompiledURL)
+  // }
+
+  // on windows, the sRelativeUI5Path will contain backslashes. as the browser cannot handle
+  // the relative path included in the script tag containing backslashes, we have to replace
+  // them with normal slashes
+  sRelativeUI5Path = sRelativeUI5Path.includes('\\')
+    ? sRelativeUI5Path.replace(/\\/g, '/')
+    : sRelativeUI5Path
 
   return sRelativeUI5Path
 }
@@ -847,15 +1012,6 @@ function assetsDist() {
               })
             )
           )
-          // rename i18n_*.dist.properties into i18n_*.properties
-          .pipe(
-            gulpif(
-              /.*\.dist.properties$/,
-              rename(path => {
-                path.basename = path.basename.replace(/\.dist$/g, '')
-              })
-            )
-          )
           // minify HTML
           .pipe(gulpif(/.*\.html$/, htmlmin()))
           // minify CSS
@@ -954,7 +1110,8 @@ function scriptsDist() {
 function ui5AppStyles() {
   try {
     const autoprefix = new LessAutoprefix({
-      browsers: ['last 2 versions']
+      // Read from .browserlistrc
+      // browsers: ['last 2 versions']
     })
     return paths.appStyles.src.length === 0
       ? Promise.resolve()
@@ -987,7 +1144,8 @@ function ui5AppStyles() {
 function ui5AppStylesDist() {
   try {
     const autoprefix = new LessAutoprefix({
-      browsers: ['last 2 versions']
+      //Read from .browserlistrc
+      // browsers: ['last 2 versions']
     })
     return paths.appStyles.src.length === 0
       ? Promise.resolve()
@@ -1234,17 +1392,16 @@ function ui5LibStylesDist() {
                     base: DIST
                   })
                   .pipe(plumber(buildErrorHandler))
-                  // TODO: disable clean CSS until v4.2 is released, because svg styles are beeing removed
                   // minify CSS
-                  // .pipe(
-                  //   cleanCSS({
-                  //     level: 2
-                  //   })
-                  // )
+                  .pipe(
+                    cleanCSS({
+                      level: 2
+                    })
+                  )
                   .pipe(gulp.dest(DIST))
                   .on('error', reject)
                   .on('end', resolve)
-                )
+              )
           )
   } catch (error) {
     spinner.fail(error)
@@ -1258,29 +1415,37 @@ function ui5LibStylesDist() {
 // [development & production build]
 function copyUi5Theme() {
   try {
-    const sSourceID = pkg.ui5.src
-    const oSource = pkg.ui5.srcLinks[sSourceID]
-    const sUI5Version = oSource.version
-    const sCompiledURL = handlebars.compile(oSource.url)(oSource)
-    const isPrebuild = oSource.isPrebuild
-    const isArchive = oSource.isArchive
-    const isRemoteLibrary =
-      sCompiledURL.startsWith('http') && !isArchive && isPrebuild
+    //const sSourceID = pkg.ui5.src
+    //const oSource = pkg.ui5.srcLinks[sSourceID]
+    //const sUI5Version = oSource.version
+    const sUI5Version = getUI5Version()
+    //const sCompiledURL = handlebars.compile(oSource.url)(oSource)
+    // const isPrebuild = oSource.isPrebuild
+    // const isArchive = oSource.isArchive
+    // const isRemoteLibrary =
+    //   sCompiledURL.startsWith('http') && !isArchive && isPrebuild
+    // const sLocalPath = oSource.path || ''
 
-    const sOpenUI5PathNaked = `${UI5}/${sUI5Version}/sap-ui-core.js`
-    const sOpenUI5PathWrapped = `${UI5}/${sUI5Version}/resources/sap-ui-core.js`
+    // const sOpenUI5PathNaked = path.join(`${UI5}/${sUI5Version}`, sLocalPath)
+    // const sOpenUI5PathWrapped = path.join(
+    //   `${UI5}/${sUI5Version}/resources`,
+    //   sLocalPath
+    // )
 
-    const sUI5Path = fs.existsSync(path.resolve(__dirname, sOpenUI5PathWrapped))
-      ? sOpenUI5PathWrapped.replace(/\/sap-ui-core\.js$/, '')
-      : sOpenUI5PathNaked.replace(/\/sap-ui-core\.js$/, '')
+    // const sUI5Path = fs.existsSync(path.resolve(__dirname, sOpenUI5PathWrapped))
+    //   ? sOpenUI5PathWrapped
+    //   : sOpenUI5PathNaked
+
+    //TODO:Wh no path joining here??
+    let sUI5Path = `${UI5}/${sUI5Version}/resources`
 
     if (UI5_THEMES.length === 0) {
       return Promise.resolve()
     }
 
-    if (isRemoteLibrary) {
-      throw 'Custom UI5 theme build can only be used with a local UI5 library (remote UI5 libs are not supported).'
-    }
+    // if (isRemoteLibrary) {
+    //   throw 'Custom UI5 theme build can only be used with a local UI5 library (remote UI5 libs are not supported).'
+    // }
 
     // copy UI5 theme resources to path/to/my/theme/UI5 [one-time after building ui5]
     const aThemeUpdates = UI5_THEMES.filter(noPrebuild).map(
@@ -1300,7 +1465,7 @@ function copyUi5Theme() {
               }
             )
             .pipe(plumber(buildErrorHandler))
-            .pipe(gulp.dest(`${oTheme.path}/UI5`))
+            .pipe(gulp.dest(path.resolve(oTheme.path, 'UI5')))
             .on('error', reject)
             .on('end', resolve)
         )
@@ -1313,17 +1478,17 @@ function copyUi5Theme() {
 }
 
 // [development & production build]
-export function copyUi5LibraryThemes() {
+function copyUi5LibraryThemes() {
   try {
     // copy UI5 theme resources to path/to/my/theme/UI5 [one-time after building ui5]
     const aThemeUpdates = UI5_THEMES.filter(noPrebuild).reduce(
       (aUpdateList, oTheme) => {
-        var sThemeTargetPath = oTheme.path.replace(
+        const sThemeTargetPath = oTheme.path.replace(
           new RegExp(`^${SRC}`),
           IS_DEV_MODE ? DEV : DIST
         )
 
-        var aNpmUi5Lib = NPM_UI5_LIBS.map(oLib => {
+        const aNpmUi5Lib = NPM_UI5_LIBS.map(oLib => {
           const sNpmUi5BasePath = oLib.path.replace(
             new RegExp(`${oLib.name.replace('.', '/')}$`),
             ''
@@ -1332,11 +1497,8 @@ export function copyUi5LibraryThemes() {
             gulp
               .src(
                 [
-                  `${oLib.path}/**/*.css`,
                   `${oLib.path}/**/themes/**/*`,
-                  `!${oLib.path}/**/themes/**/library.css`,
-                  `!${oLib.path}/**/themes/**/library-*.css`,
-                  `!${oLib.path}/**/themes/**/*.json`
+                  `!${oLib.path}/**/themes/**/*.less`
                 ],
                 {
                   base: sNpmUi5BasePath
@@ -1369,6 +1531,16 @@ function ui5ThemeStyles() {
           oTheme.path
         )}/**/themes/${TARGET_THEME}/library.source.less`
     )
+    const aSelectLibraryBundles = UI5_THEMES.filter(noPrebuild).reduce(
+      (aBundles, oTheme) =>
+        aBundles.concat([
+          `${mapPathToDev(oTheme.path)}/**/themes/${TARGET_THEME}/library.css`,
+          `${mapPathToDev(
+            oTheme.path
+          )}/**/themes/${TARGET_THEME}/library-RTL.css`
+        ]),
+      []
+    )
 
     return paths.themeStyles.src.length === 0
       ? Promise.resolve()
@@ -1385,27 +1557,56 @@ function ui5ThemeStyles() {
             .pipe(gulp.dest(DEV))
             .on('error', reject)
             .on('end', resolve)
-        }).then(
-          () =>
-            new Promise((resolve, reject) => {
-              // 2. compile library.css
-              gulp
-                .src(aSelectLibrarySources, {
-                  base: DEV,
-                  read: true
-                })
-                // don't exit the running watcher task on errors
-                .pipe(plumber())
-                .pipe(
-                  tap(oFile => {
-                    ui5CompileLessLib(oFile)
+        })
+          .then(
+            () =>
+              new Promise((resolve, reject) => {
+                // 2. compile library.css
+                gulp
+                  .src(aSelectLibrarySources, {
+                    base: DEV,
+                    read: true
                   })
-                )
-                .pipe(gulp.dest(DEV))
-                .on('error', reject)
-                .on('end', resolve)
-            })
-        )
+                  // don't exit the running watcher task on errors
+                  .pipe(plumber())
+                  .pipe(
+                    tap(oFile => {
+                      ui5CompileLessLib(oFile)
+                    })
+                  )
+                  .pipe(gulp.dest(DEV))
+                  .on('error', reject)
+                  .on('end', resolve)
+              })
+          )
+          .then(
+            () =>
+              new Promise((resolve, reject) =>
+                /**
+                 * FIXME:
+                 * For yet unknown reasons, the less compiler replaces some "rem" font-size units with "em".
+                 * Therefore this is a hacky fix to transform all font-sizes back from "em" to "rem" without changing the values.
+                 */
+                gulp
+                  .src(aSelectLibraryBundles, {
+                    base: DEV,
+                    read: true
+                  })
+                  .pipe(plumber())
+                  .pipe(
+                    tap(oFile => {
+                      const sCSS = oFile.contents.toString('utf8')
+                      oFile.contents = new Buffer(
+                        sCSS.replace(/(\s*\d*\.?\d+)em/gm, '$1rem')
+                      )
+                      return oFile
+                    })
+                  )
+                  .pipe(gulp.dest(DEV))
+                  .on('error', reject)
+                  .on('end', resolve)
+              )
+          )
   } catch (error) {
     spinner.fail(error)
   }
@@ -1471,15 +1672,31 @@ function ui5ThemeStylesDist() {
                 // 3. minify css after creation
                 gulp
                   .src(aSelectLibraryBundles, {
-                    base: DIST
+                    base: DIST,
+                    read: true
                   })
                   .pipe(plumber(buildErrorHandler))
-                  // minify CSS
                   .pipe(
-                    cleanCSS({
-                      level: 2
+                    /**
+                     * FIXME:
+                     * For yet unknown reasons, the less compiler replaces some "rem" font-size units with "em".
+                     * Therefore this is a hacky fix to transform all font-sizes back from "em" to "rem" without changing the values.
+                     */
+                    tap(oFile => {
+                      const sCSS = oFile.contents.toString('utf8')
+                      oFile.contents = new Buffer(
+                        sCSS.replace(/(\s*\d*\.?\d+)em/gm, '$1rem')
+                      )
+                      return oFile
                     })
                   )
+                  // TODO: disable clean CSS until v4.2 is released, because svg styles are beeing removed
+                  // minify CSS
+                  // .pipe(
+                  //   cleanCSS({
+                  //     level: 2
+                  //   })
+                  // )
                   .pipe(gulp.dest(DIST))
                   .on('error', reject)
                   .on('end', resolve)
@@ -1501,100 +1718,114 @@ function getExposedModuleName(sModule) {
     // case 'lodash':
     //   return '_'
     default:
-      // turn to camel case (e.g. "ok js", "ok-js", "ok_js" become all "okJs")
+      // turn to camel case (e.g. "ok js", "ok-js", "ok_js", "ok/js become all "okJs")
       return sModule
-        .replace(/[\s-_.](.)/g, $1 => $1.toUpperCase())
-        .replace(/[\s-_.]/g, '')
+        .replace(/[\s-/_.](.)/g, $1 => $1.toUpperCase())
+        .replace(/[\s-/_.]/g, '')
         .replace(/^(.)/, $1 => $1.toLowerCase())
   }
 }
 
+/**
+ * Helper function fo filter out all ui5 deps, as they will be considered separetly
+ */
+function allExplicitDependencies() {
+  return mainNpmFiles().filter(sEntry => {
+    const sModuleName = sEntry.split('/node_modules/')[1].split('/')[0]
+    return !sModuleName.startsWith('@openui5')
+  })
+}
+
 // [development build]
-export function loadDependencies() {
-  try {
-    if (!NPM_MODULES_TARGET.path || NPM_MODULES_TARGET.path.length === 0) {
-      return Promise.resolve()
-    }
+function loadDependencies() {
+  if (!NPM_MODULES_TARGET.path || NPM_MODULES_TARGET.path.length === 0) {
+    return Promise.resolve()
+  }
 
-    const aDependencies = mainNpmFiles()
-    const sVendorLibsPathSrc = pkg.ui5.vendor ? pkg.ui5.vendor.path : ''
-    const sVendorLibsPathDev = sVendorLibsPathSrc.replace(
-      new RegExp(`^${SRC}`),
-      DEV
-    )
+  const aDependencies = allExplicitDependencies()
+  const sVendorLibsPathSrc = pkg.ui5.vendor ? pkg.ui5.vendor.path : ''
+  const sVendorLibsPathDev = sVendorLibsPathSrc.replace(
+    new RegExp(`^${SRC}`),
+    DEV
+  )
 
-    const aEntryBuilds = aDependencies.map(
-      sEntry =>
-        new Promise((resolve, reject) => {
-          const sModuleName = sEntry.split('/node_modules/')[1].split('/')[0]
-          const sGlobalName = getExposedModuleName(sModuleName)
-          return (
-            browserify({
-              entries: sEntry,
-              // global name will never be exposed, cause we wrap the module in an ui5 define statement
-              standalone: sGlobalName
-            })
-              // babel will run with the settings defined in `.babelrc` file
-              .transform(babelify)
-              .bundle()
-              .pipe(source(`${sModuleName}.js`))
-              .pipe(buffer())
-              // wrap complete module to be compatible with ui5 loading system
-              .pipe(
-                tap(file => {
-                  file.contents = Buffer.concat([
-                    new Buffer(`sap.ui.define([/* no dependencies */], function(){
+  const aEntryBuilds = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sModuleName = sEntry.split('/node_modules/')[1].split('/')[0]
+        const sGlobalName = getExposedModuleName(sModuleName)
+        // console.log(sEntry)
+        // console.log(sModuleName)
+        // console.log(sGlobalName)
+        return (
+          browserify({
+            entries: sEntry,
+            // global name will never be exposed, cause we wrap the module in an ui5 define statement
+            standalone: sGlobalName
+          })
+            // babel will run with the settings defined in `.babelrc` file
+            .transform(babelify)
+            .bundle()
+            .pipe(source(`${sModuleName}.js`))
+            .pipe(buffer())
+            // wrap complete module to be compatible with ui5 loading system
+            .pipe(
+              tap(file => {
+                file.contents = Buffer.concat([
+                  new Buffer(
+                    `sap.ui.define([/* no dependencies */], function(){
                       var exports = {};
-                      var module = { exports: null };`),
-                    file.contents,
-                    new Buffer(`return module.exports; });`)
-                  ])
-                })
-              )
+                      var module = { exports: null };`
+                  ),
+                  file.contents,
+                  new Buffer(`return module.exports; });`)
+                ])
+              })
+            )
+            .pipe(gulp.dest(sVendorLibsPathSrc))
+            .pipe(gulp.dest(sVendorLibsPathDev))
+            .on('error', reject)
+            .on('end', resolve)
+        )
+      })
+  )
+  const aStyleCopy = aDependencies.map(
+    sEntry =>
+      new Promise((resolve, reject) => {
+        const sStylesheetName = sEntry.replace(/\.js$/, '.css')
+        return fs.existsSync(path.resolve(__dirname, sStylesheetName))
+          ? gulp
+              .src([sStylesheetName])
               .pipe(gulp.dest(sVendorLibsPathSrc))
               .pipe(gulp.dest(sVendorLibsPathDev))
               .on('error', reject)
               .on('end', resolve)
-          )
-        })
-    )
-    const aStyleCopy = aDependencies.map(
-      sEntry =>
-        new Promise((resolve, reject) => {
-          const sStylesheetName = sEntry.replace(/\.js$/, '.css')
-          return fs.existsSync(path.resolve(__dirname, sStylesheetName))
-            ? gulp
-                .src([sStylesheetName])
-                .pipe(gulp.dest(sVendorLibsPathSrc))
-                .pipe(gulp.dest(sVendorLibsPathDev))
-                .on('error', reject)
-                .on('end', resolve)
-            : resolve()
-        })
-    )
+          : resolve()
+      })
+  )
 
-    const oExternalModuleCopy = new Promise((resolve, reject) => {
-      return NPM_UI5_MODULES.length > 0
-        ? gulp
-            .src(NPM_UI5_MODULES.map(oModule => `${oModule.path}/**/*`), {
+  const oExternalModuleCopy = new Promise((resolve, reject) => {
+    return NPM_UI5_MODULES.length > 0
+      ? gulp
+          .src(
+            NPM_UI5_MODULES.map(oModule => `${oModule.path}/**/*`),
+            {
               base: './'
-            })
-            .pipe(gulp.dest(DEV))
-            .on('error', reject)
-            .on('end', resolve)
-        : resolve()
-    })
+            }
+          )
+          .pipe(gulp.dest(DEV))
+          .on('error', reject)
+          .on('end', resolve)
+      : resolve()
+  })
 
-    // execute all at once
-    return Promise.all(
-      []
-        .concat(aEntryBuilds)
-        .concat(aStyleCopy)
-        .concat(oExternalModuleCopy)
-    )
-  } catch (error) {
-    spinner.fail(error)
-  }
+  // execute all at once
+  return Promise.all(
+    []
+      .concat(aEntryBuilds)
+      .concat(aStyleCopy)
+      .concat(oExternalModuleCopy)
+  )
 }
 
 // [production build]
@@ -1604,7 +1835,7 @@ function loadDependenciesDist() {
       return Promise.resolve()
     }
 
-    const aDependencies = mainNpmFiles()
+    const aDependencies = allExplicitDependencies()
     const sVendorLibsPathSrc = pkg.ui5.vendor ? pkg.ui5.vendor.path : ''
     const sVendorLibsPathDist = NPM_MODULES_TARGET.path.replace(
       new RegExp(`^${SRC}`),
@@ -1632,9 +1863,11 @@ function loadDependenciesDist() {
               .pipe(
                 tap(file => {
                   file.contents = Buffer.concat([
-                    new Buffer(`sap.ui.define([/* no dependencies */], function(){
+                    new Buffer(
+                      `sap.ui.define([/* no dependencies */], function(){
                       var exports = {};
-                      var module = { exports: null };`),
+                      var module = { exports: null };`
+                    ),
                     file.contents,
                     new Buffer(`return module.exports; });`)
                   ])
@@ -1687,9 +1920,12 @@ function loadDependenciesDist() {
     const oExternalModuleCopy = new Promise((resolve, reject) => {
       return NPM_UI5_MODULES.length > 0
         ? gulp
-            .src(NPM_UI5_MODULES.map(oModule => `${oModule.path}/**/*`), {
-              base: './'
-            })
+            .src(
+              NPM_UI5_MODULES.map(oModule => `${oModule.path}/**/*`),
+              {
+                base: './'
+              }
+            )
             .pipe(gulp.dest(DIST))
             .on('error', reject)
             .on('end', resolve)
@@ -1722,6 +1958,7 @@ function ui5cacheBust() {
       return Promise.resolve('Cache buster is deactivated.')
     }
 
+    // console.log('paths.htmlEntries.src', paths.htmlEntries.src)
     return paths.htmlEntries.src.length === 0
       ? Promise.resolve()
       : gulp
@@ -1788,4 +2025,181 @@ function preCompressionBrotli() {
       )
       .pipe(gulp.dest(DIST))
   )
+}
+
+/* ----------------------------------------------------------- *
+ * update sensum version info
+ * ----------------------------------------------------------- */
+
+// [development build]
+function updateVersion() {
+  try {
+    // const sSourceID = pkg.ui5.src
+    //const oSource = pkg.ui5.srcLinks[sSourceID]
+    const sUI5Version = getUI5Version()
+    const sCommitVersion = require('child_process')
+      .execSync('git rev-parse HEAD')
+      .toString()
+      .trim()
+    const sData = JSON.stringify(
+      {
+        name: pkg.name,
+        description: pkg.description,
+        vendor: pkg.vendor,
+        version: `${pkg.version} (dev)`,
+        builtAt: new Date(),
+        commitVersion: sCommitVersion,
+        ui5Version: sUI5Version
+      },
+      null,
+      2
+    )
+
+    // write file
+    return new Promise((resolve, reject) => {
+      fs.writeFile(`${DEV}/sensum-version.json`, sData, oError => {
+        return oError ? reject() : resolve()
+      })
+    })
+  } catch (error) {
+    spinner.fail(error)
+  }
+}
+
+// [production build]
+export function updateVersionDist() {
+  try {
+    const sUI5Version = getUI5Version()
+
+    // NOTE:This code is exist nearly identical in auris repo as well
+    // -> Adapt both when applying fixes
+
+    // Our internal versioning tag pattern
+    const rSemanticVersionTag = /v(\d+).(\d+).(\d+)-?(\d*)-?.*/g
+    const sCommitVersion = require('child_process')
+      .execSync('git rev-parse HEAD')
+      .toString()
+      .trim()
+
+    //Time stamp from git in unix format
+    const sCommitTimeStamp = require('child_process')
+      // .execSync('git log -1 --pretty=format:%ct')
+      .execSync(
+        `git rev-list --format=format:'%ct' --max-count=1 ${sCommitVersion}`
+      )
+      .toString()
+      .split('\n')[1]
+      .trim()
+    //Parse as js date for consistency with other timestamps
+    const dCommitTimeStamp = new Date(parseInt(sCommitTimeStamp, 10) * 1000)
+
+    const sCurrentBranch = process.env.CI_BUILD_REF_NAME || require('child_process')
+      .execSync('git rev-parse --abbrev-ref HEAD')
+      .toString()
+      .trim()
+
+    const sGitDescribeOutput = require('child_process')
+      .execSync('git describe --abbrev=0 --tags')
+      .toString()
+      .trim()
+    // console.log('tag: ' + sGitDescribeOutput)
+
+    const sNoOfCommitsSinceTag = require('child_process')
+      .execSync(
+        `git log --ancestry-path ${sGitDescribeOutput}..HEAD --oneline | wc -l`
+      )
+      .toString()
+      .trim()
+    // console.log('NoOfCommitsSinceTag: ' + sNoOfCommitsSinceTag)
+
+    const iNoOfCommitsSinceTag = parseInt(sNoOfCommitsSinceTag, 10)
+
+    const [, majorVersion, minorVersion, patchVersion /* , commitDiffToTag */] =
+      rSemanticVersionTag.exec(sGitDescribeOutput) || []
+    // const iCommitDiff =
+    //   (parseInt(commitDiffToTag, 10) || 0) - iNoOfCommitsSinceTag
+    // const commitGrievanceSuffix =
+    //   iCommitDiff !== 0
+    //     ? `(${iCommitDiff > 0 ? '+' : '-'}${iCommitDiff} unexpected commits)`
+    //     : ''
+
+    let sSuffix = ''
+    switch (sCurrentBranch) {
+      case 'master':
+        sSuffix = iNoOfCommitsSinceTag > 0 ? `-dev.${sNoOfCommitsSinceTag}` : ''
+        break
+      case 'deploy/demo':
+        sSuffix = iNoOfCommitsSinceTag > 0 ? `-hf.${sNoOfCommitsSinceTag}` : ''
+        break
+      case 'deploy/production':
+        sSuffix = iNoOfCommitsSinceTag > 0 ? `-hf.${sNoOfCommitsSinceTag}` : ''
+        break
+      default:
+        // other branch or no branch
+        sSuffix =
+          iNoOfCommitsSinceTag > 0
+            ? `-${sCurrentBranch}.${sNoOfCommitsSinceTag}`
+            : ''
+    }
+
+    if (!majorVersion && majorVersion !== 0)
+      throw 'Could not parse majorVersion: ' + majorVersion
+    if (!minorVersion && minorVersion !== 0)
+      throw 'Could not parse minorVersion: ' + minorVersion
+    if (!patchVersion && patchVersion !== 0)
+      throw 'Could not parse patchVersion: ' + patchVersion
+
+    // concat version
+    let derivedVersion = _buildVersion(
+      majorVersion,
+      minorVersion,
+      patchVersion,
+      // `${sSuffix} ${commitGrievanceSuffix}`
+      `${sSuffix}`
+    )
+
+    gutil.log(
+      'Software Version derived from git tag: ' +
+        gutil.colors.bold(derivedVersion)
+    )
+
+    const sData = JSON.stringify(
+      {
+        name: pkg.name,
+        description: pkg.description,
+        vendor: pkg.vendor,
+        version: derivedVersion,
+        builtAt: new Date(),
+        commitVersion: sCommitVersion,
+        commitTimeStamp: dCommitTimeStamp,
+        ui5Version: sUI5Version
+      },
+      null,
+      2
+    )
+
+    // write file
+    // $FlowFixMe: add proper type annotation
+    return new Promise((resolve, reject) =>
+      fs.writeFile(`${DIST}/sensum-version.json`, sData, oError =>
+        oError ? reject() : resolve()
+      )
+    )
+  } catch (error) {
+    gutil.log(gutil.colors.red(error.message || error))
+    spinner.fail(error)
+  }
+}
+
+/**
+ * Helper function to construct the final software version as string
+ * @param majorVersion
+ * @param minorVersion
+ * @param patchVersion
+ * @param sSuffix
+ * @return {string}
+ * @private
+ */
+function _buildVersion(majorVersion, minorVersion, patchVersion, sSuffix) {
+  return `${majorVersion}.${minorVersion}.${patchVersion}${sSuffix}`
 }
