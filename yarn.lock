@@ -12346,12 +12346,16 @@ ui5-lib-util@0.2.0:
     request "^2.81.0"
     request-progress "^3.0.0"
 
-ui5-lib-visualization@0.3.7:
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/ui5-lib-visualization/-/ui5-lib-visualization-0.3.7.tgz#63047d6c9d6ed23d9961415a8067a7c741eeee3e"
-  integrity sha512-ZE31Mv8Hjd9YMBwZ1r23TOZvWK5MvO32OPUBZwNDjIiHHD9wkL1PmLusOWmgCLOJP5XbZ5CGULAYD7BGUCKk1Q==
+ui5-lib-visualization@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/ui5-lib-visualization/-/ui5-lib-visualization-0.4.0.tgz#c63e2aee3646301a6a3f804366dff1d2c7b383ab"
+  integrity sha512-6yzvfOJQxXTEIjGCypRWxGs/GaoK7sCBGJ/vr8NkL/EBIKsED/iclJ1KrfyyPkIGS7NlnOZEqiCJCQXLOWLlgw==
   dependencies:
+    "@openui5/sap.m" "1.72.1"
+    "@openui5/sap.ui.core" "1.72.1"
+    "@openui5/themelib_sap_belize" "^1.73.2"
     c3 "https://github.com/pulseshift/c3#master"
+    d3 "^5.14.2"
     lodash.debounce "^4.0.8"
     lodash.isequal "^4.5.0"
 
