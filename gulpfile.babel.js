@@ -409,13 +409,15 @@ export function startHttpServer() {
   }
 
   // create the proxy (without context)
-  const apiProxy = proxy(proxyOptions)
+  const apiProxy = process.env.DEV_API_PROXY ? proxy(proxyOptions) : null
 
   // mount web server
   const webServer = express()
 
   // config and start web server
-  webServer.use('/api', apiProxy)
+  if (process.env.DEV_API_PROXY) {
+    webServer.use('/api', apiProxy)
+  }
   webServer.use(express.static(IS_DEV_MODE ? `./${DEV}` : `./${DIST}`))
   webServer.use('/app', express.static(IS_DEV_MODE ? `./${DEV}` : `./${DIST}`))
   webServer.use('/ui5', express.static(`./${UI5}`))

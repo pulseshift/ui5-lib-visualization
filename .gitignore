@@ -8,6 +8,7 @@
 /.vscode/
 
 ### Build Process ###
+/dev/
 /ui5/
 /.tmp/
 /.maps/
@@ -16,8 +17,49 @@
 
 ### Dist Files ###
 /dist/demo/
+/dist/ui5/**/resources/
 /dist/ui5/viz/themes/**/*.less
 
 ### Node ###
 node_modules/
 *.log
+
+dist/ui5/viz/library-preload.js
+
+dist/ui5/viz/libs/c3-dbg.js
+
+dist/ui5/viz/libs/c3.css
+
+dist/ui5/viz/libs/c3.js
+
+dist/ui5/viz/themes/base/library-RTL.css
+
+dist/ui5/viz/themes/base/library.css
+
+dist/ui5/viz/themes/psmaterial/library-RTL.css
+
+dist/ui5/viz/themes/psmaterial/library.css
+
+dist/ui5/viz/themes/sap_belize_hcb/library-RTL.css
+
+dist/ui5/viz/themes/sap_belize_hcb/library.css
+
+dist/ui5/viz/themes/sap_belize_hcw/library-RTL.css
+
+dist/ui5/viz/themes/sap_belize_hcw/library.css
+
+dist/ui5/viz/themes/sap_belize_plus/library-RTL.css
+
+dist/ui5/viz/themes/sap_belize_plus/library.css
+
+dist/ui5/viz/themes/sap_belize/library-RTL.css
+
+dist/ui5/viz/themes/sap_belize/library.css
+
+dist/ui5/viz/themes/sap_bluecrystal/library-RTL.css
+
+dist/ui5/viz/themes/sap_bluecrystal/library.css
+
+dist/ui5/viz/themes/sap_hcb/library-RTL.css
+
+dist/ui5/viz/themes/sap_hcb/library.css

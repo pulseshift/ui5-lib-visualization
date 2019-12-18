@@ -39,11 +39,9 @@ sap.ui.define(
     './ChartAxisLabel',
     './libs/lodash.debounce',
     './libs/lodash.isequal',
+    './libs/d3',
     './libs/c3',
-    './library',
-
-    // libs
-    'sap/ui/thirdparty/d3'
+    './library'
   ],
   function (
     Control,
@@ -52,7 +50,8 @@ sap.ui.define(
     ChartAxisLabel,
     lodashDebounce,
     lodashIsequal,
-    c3,
+    d3 = window.d3,
+    c3 = window.c3,
     library
   ) {
     /**
@@ -2426,17 +2425,15 @@ sap.ui.define(
                 oPattern = d3
                   .select(`#${sChartHtmlID} defs`)
                   .append('pattern')
-                  .attr({
-                    id: `${sChartHtmlID}-stripe-pattern-${sSeriesHtmlID}`,
-                    width: '8',
-                    height: '8',
-                    patternUnits: 'userSpaceOnUse',
-                    class: `stripe-pattern-${sSeriesHtmlID}`
-                  })
+                  .attr('id', `${sChartHtmlID}-stripe-pattern-${sSeriesHtmlID}`)
+                  .attr('width', '8')
+                  .attr('height', '8')
+                  .attr('patternUnits', 'userSpaceOnUse')
+                  .attr('class', `stripe-pattern-${sSeriesHtmlID}`)
                   .append('path')
-                  .attr({
-                    d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
-                  })
+                  .attr(
+                    'd', 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
+                  )
               }
 
               // add css to svg definitions
@@ -2447,10 +2444,8 @@ sap.ui.define(
                 oPatternStyle = d3
                   .select(`#${sChartHtmlID} defs`)
                   .append('style')
-                  .attr({
-                    id: `${sChartHtmlID}-stripe-style-${sSeriesHtmlID}`,
-                    type: 'text/css'
-                  })
+                  .attr('id', `${sChartHtmlID}-stripe-style-${sSeriesHtmlID}`)
+                  .attr('type', 'text/css')
               }
               // update svg pattern style
               oPatternStyle.text(
@@ -2521,10 +2516,8 @@ sap.ui.define(
                 oStrokeStyle = d3
                   .select(`#${sChartHtmlID} defs`)
                   .append('style')
-                  .attr({
-                    id: `${sChartHtmlID}-dashdot-style-${sSeriesHtmlID}`,
-                    type: 'text/css'
-                  })
+                  .attr('id', `${sChartHtmlID}-dashdot-style-${sSeriesHtmlID}`)
+                  .attr('type', 'text/css')
               }
               // update svg pattern style
               oStrokeStyle.text(
@@ -2576,10 +2569,8 @@ sap.ui.define(
           oLineStyle = d3
             .select(`#${sChartHtmlID} defs`)
             .append('style')
-            .attr({
-              id: `${sChartHtmlID}-line-style`,
-              type: 'text/css'
-            })
+            .attr('id', `${sChartHtmlID}-line-style`)
+            .attr('type', 'text/css')
         }
 
         // get all chart lines  and concatenate color rules
@@ -2625,10 +2616,8 @@ sap.ui.define(
                 oStrokeStyle = d3
                   .select(`#${sChartHtmlID} defs`)
                   .append('style')
-                  .attr({
-                    id: `${sUID}`,
-                    type: 'text/css'
-                  })
+                  .attr('id', `${sUID}`)
+                  .attr('type', 'text/css')
               }
               // update svg pattern style
               oStrokeStyle.text(
@@ -2699,10 +2688,8 @@ sap.ui.define(
           oAreaStyle = d3
             .select(`#${sChartHtmlID} defs`)
             .append('style')
-            .attr({
-              id: `${sChartHtmlID}-area-style`,
-              type: 'text/css'
-            })
+            .attr('id', `${sChartHtmlID}-area-style`)
+            .attr('type', 'text/css')
         }
 
         // get all chart areas and concatenate style rules
@@ -2723,17 +2710,15 @@ sap.ui.define(
                 oPattern = d3
                   .select(`#${sChartHtmlID} defs`)
                   .append('pattern')
-                  .attr({
-                    id: `${sChartHtmlID}-area-stripe-pattern-${sAreaHtmlID}`,
-                    width: '8',
-                    height: '8',
-                    patternUnits: 'userSpaceOnUse',
-                    class: `area-stripe-pattern-${sAreaHtmlID}`
-                  })
+                  .attr('id', `${sChartHtmlID}-area-stripe-pattern-${sAreaHtmlID}`)
+                  .attr('width', '8')
+                  .attr('height', '8')
+                  .attr('patternUnits', 'userSpaceOnUse')
+                  .attr('class', `area-stripe-pattern-${sAreaHtmlID}`)
                   .append('path')
-                  .attr({
-                    d: 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
-                  })
+                  .attr(
+                    'd', 'M1,0L5,0L0,5L0,1L1,0 M8,1L8,5L5,8L1,8L8,1'
+                  )
               }
 
               // update svg area style

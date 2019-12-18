@@ -5,10 +5,25 @@
  */
 sap.ui.define(
   [
-    // library dependency
-    'sap/ui/thirdparty/d3'
+    './libs/d3'
   ],
-  function () {
+  function (d3) {
+    const d3VersionRequired = 5
+    const getMainVersion = (d3) => {
+      if (d3) {
+        const [mainVersion] = d3.version.split('.')
+        
+        return parseInt(mainVersion, 10)
+      } else {
+        return 0
+      }
+    } 
+  
+    // register d3 on global scope
+    if (!window.d3 || getMainVersion(window.d3) < d3VersionRequired) {
+      window.d3 = d3
+    }
+
     /**
      * PulseShift OpenUI5 library with visualization functionalities.
      *

@@ -1,11 +1,11 @@
 {
   "name": "ui5-lib-visualization",
-  "version": "0.3.7",
+  "version": "0.4.0",
   "scripts": {
     "test": "yarn eslint ./src/ui5/viz  --ext .js --cache ",
-    "start": "cross-env NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --silent",
-    "start:verbose": "cross-env NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js",
-    "start:dist": "cross-env NODE_ENV=production DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js testDist",
+    "start": "cross-env NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --silent --local",
+    "start:verbose": "cross-env NODE_ENV=development DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js --local",
+    "start:dist": "cross-env NODE_ENV=production DEV_PORT=3000 babel-node node_modules/gulp/bin/gulp.js startHttpServer",
     "build": "cross-env NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build",
     "build:disclaimer": "yarn licenses generate-disclaimer --production >> DISCLAIMER.md",
     "docs": "babel-node docs/tools/create-ui5-docs.js",
@@ -142,7 +142,9 @@
   "dependencies": {
     "@openui5/sap.m": "1.72.1",
     "@openui5/sap.ui.core": "1.72.1",
+    "@openui5/themelib_sap_belize": "^1.73.2",
     "c3": "https://github.com/pulseshift/c3#master",
+    "d3": "^5.14.2",
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0"
   }
