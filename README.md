@@ -5,8 +5,6 @@
 
 This library provides an OpenUI5 API that acts as a wrapper for D3-based charting library [C3.js](http://c3js.org/). It offers a more detailed and attractive API design than `sap.viz` chart controls, which interacts harmoniously especially in XML Views in combination with data binding.
 
-> Furthermore, this project is also a Boilerplate for all UI5 control libraries that rely completely on Open Source and uses 100% internally the same Gulp based build script as our [OpenUI5 Starter Kit](https://github.com/pulseshift/openui5-gulp-starter-kit). One build script to **rule them all**, I mean, how cool is that? Probably pretty cool, at least as long as we haven't found an alternative with Webpack yet. So take a look at our Starter Kit to learn more about the features and functionality of the build process.
-
 ## Usage
 
 There are two options how to use the chart library in your UI5 project, depending of the project boilerplate you are using.
@@ -80,14 +78,14 @@ A brief overview of features, additional to C3.js line and area charts:
 
 * Complete API coverage of properties and aggregations for a fully integrated feature set in XML views.
 * If supported by C3.js, rerender will be avoided by the chart control to ensure smooth transitions in case of changes in the data.
-* Support of pins and areas.
+* Support of chart annotations, like lines and areas in various designs.
 * Support for special designs such as animated dashed lines or hatched areas.
 * Convergence interval as a new display type of series.
 * Simple color management by implementing color palettes or individual colors for specific series.
 
 ### Example
 
-To execute the demo, please follow the instructions described in section `Development`. At the time the demo is being refactored with the goal to provide you an SAP explored like experience.
+To execute the demo, please follow the instructions described in section `Development`. At the time the demo is being refactored with the goal to provide you an _SAP Explore_ like experience.
 
 Here a basic sample of how to use the charts in an XML view:
 
@@ -194,23 +192,22 @@ Info: To get a more detailed logging, use `yarn start:verbose` instead.
 
 ## Distribution
 
-Start build:
+Start distribution build:
 _Will create a `dist` directory in your project root._
 
 ```
-yarn build
+yarn dist
 ```
 
-Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000/demo/index.html`
+This will build the app, test the code with linters and updates all docs automatically. Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000/demo/index.html`
 
-Info: To get a more detailed logging, use `yarn build:verbose` instead.
-
-Publish new version (please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)):
-_Will execute tests, update docs and create a `dist` directory in your project root as prepublish step._
+If the app build matches your requirements, upload your build to **npm**:
 
 ```
 yarn publish
 ```
+
+_When asket for bumping the version, please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)._
 
 ### Contributing & Troubleshooting
 

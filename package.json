@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production babel-node node_modules/gulp/bin/gulp.js build",
     "build:disclaimer": "yarn licenses generate-disclaimer --production >> DISCLAIMER.md",
     "docs": "babel-node docs/tools/create-ui5-docs.js",
-    "distPreparation": "yarn test && yarn docs && yarn build && yarn build:disclaimer"
+    "dist": "yarn test && yarn docs && yarn build && yarn build:disclaimer"
   },
   "description": "UI5 Visualization Library",
   "repository": "https://github.com/pulseshift/ui5-lib-visualization.git",
