@@ -143,7 +143,7 @@
     "@openui5/sap.ui.core": "1.73.2",
     "@openui5/themelib_sap_belize": "1.73.2",
     "c3": "https://github.com/pulseshift/c3#master",
-    "d3": "5.14.2",
+    "d3": "5.15.0",
     "lodash.debounce": "4.0.8",
     "lodash.isequal": "4.5.0"
   }
