@@ -39,10 +39,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
  *   </yAxis>
  * </Chart>
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './libs/lodash.debounce', './libs/lodash.isequal', './libs/d3', './libs/c3', './library'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, lodashDebounce, lodashIsequal) {
-  var d3 = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : window.d3;
-  var c3 = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : window.c3;
-  var library = arguments.length > 8 ? arguments[8] : undefined;
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartAxis', './ChartAxisLabel', './libs/lodash.debounce', './libs/lodash.isequal', './libs/lodash.defer', './libs/d3', './libs/c3', './library'], function (Control, DateFormat, ChartAxis, ChartAxisLabel, lodashDebounce, lodashIsequal, lodashDefer) {
+  var d3 = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : window.d3;
+  var c3 = arguments.length > 8 && arguments[8] !== undefined ? arguments[8] : window.c3;
+  var library = arguments.length > 9 ? arguments[9] : undefined;
 
   /**
    * Constructor for a new <code>ui5.viz.Chart</code>.
@@ -1869,7 +1869,79 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           default:
             return iIndex;
         }
-      }) : undefined; // update series data
+      }) : undefined;
+
+      var fnAfterLoad = function fnAfterLoad() {
+        // highlight data points
+        d3.selectAll("#".concat(sChartHtmlID, " g.c3-circles circle.c3-circle")).classed(_this5.CSS_HIGHLIGHT_PULSATE, false);
+
+        if (aHighlightedDataPoints.length > 0) {
+          aHighlightedDataPoints.forEach(function (oHighlightInfo) {
+            d3.select("#".concat(sChartHtmlID, " g.c3-circles-").concat(oHighlightInfo.series, " circle.c3-circle-").concat(oHighlightInfo.point)).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
+          });
+        } // update groups
+
+
+        _this5._chart.groups(aSeries.length === 0 ? [] : aSeries.reduce(function (aGroups, oSeries) {
+          // collect all group keys
+          if (oSeries && oSeries.getGroupKey() && !aGroups.includes(oSeries.getGroupKey())) {
+            aGroups.push(oSeries.getGroupKey());
+          }
+
+          return aGroups;
+        }, []).map(function (sGroupKey) {
+          // return for each group key the list of respective series keys (['data1', 'data2'])
+          return aSeries.filter(function (oSeries) {
+            return oSeries.getGroupKey() === sGroupKey;
+          }).map(function (oSeries) {
+            return oSeries.getKey();
+          });
+        })); // update series styles
+
+
+        _this5._updateSeriesStyles(); // update axis titles
+
+
+        _this5._chart.axis.labels({
+          x: oXAxis.getShowTitle() ? oXAxis.getTitle() : null,
+          y: oYAxis.getShowTitle() ? oYAxis.getTitle() : null,
+          y2: oY2Axis.getShowTitle() ? oY2Axis.getTitle() : null
+        });
+
+        _this5._chart.axis.showX(oXAxis.getVisible());
+
+        _this5._chart.axis.showY(oYAxis.getVisible());
+
+        _this5._chart.axis.showY2(oY2Axis.getVisible()); // update min/max for y axis
+        // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
+
+
+        _this5._chart.axis.range({
+          min: {
+            X: _this5.getMinValueByAxis(oXAxis),
+            y: _this5.getMinValueByAxis(oYAxis),
+            y2: _this5.getMinValueByAxis(oY2Axis)
+          },
+          max: {
+            x: _this5.getMaxValueByAxis(oXAxis),
+            y: _this5.getMaxValueByAxis(oYAxis),
+            y2: _this5.getMaxValueByAxis(oY2Axis)
+          }
+        }); // not supported by c3js API, yet
+        // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+        // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+        // not supported by c3js API, yet
+        // this._chart.grid.x.show = oXAxis.getShowGridLines();
+        // this._chart.grid.y.show = oYAxis.getShowGridLines();
+        // inform observers about data update
+
+
+        _this5.fireChartDataUpdate(); // ensure repaint is performed
+
+
+        lodashDefer(_this5._chart.flush);
+      }; // update series data
+
 
       var aUpdateSeries = {
         // if data that has the same target id is given, the chart will be updated, otherwise, new target will be added
@@ -1922,76 +1994,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           return oTypes;
         }, {}),
         // unload series, not used anymore (data will be unloaded before loading new data)
-        unload: aObsoleteSeries
+        unload: aObsoleteSeries,
+        // continue update after load
+        done: fnAfterLoad
       };
 
-      this._chart.load(aUpdateSeries); // highlight data points
-
-
-      d3.selectAll("#".concat(sChartHtmlID, " g.c3-circles circle.c3-circle")).classed(this.CSS_HIGHLIGHT_PULSATE, false);
-
-      if (aHighlightedDataPoints.length > 0) {
-        aHighlightedDataPoints.forEach(function (oHighlightInfo) {
-          d3.select("#".concat(sChartHtmlID, " g.c3-circles-").concat(oHighlightInfo.series, " circle.c3-circle-").concat(oHighlightInfo.point)).classed(_this5.CSS_HIGHLIGHT_PULSATE, true);
-        });
-      } // update groups
-
-
-      this._chart.groups(aSeries.length === 0 ? [] : aSeries.reduce(function (aGroups, oSeries) {
-        // collect all group keys
-        if (oSeries && oSeries.getGroupKey() && !aGroups.includes(oSeries.getGroupKey())) {
-          aGroups.push(oSeries.getGroupKey());
-        }
-
-        return aGroups;
-      }, []).map(function (sGroupKey) {
-        // return for each group key the list of respective series keys (['data1', 'data2'])
-        return aSeries.filter(function (oSeries) {
-          return oSeries.getGroupKey() === sGroupKey;
-        }).map(function (oSeries) {
-          return oSeries.getKey();
-        });
-      })); // update series styles
-
-
-      this._updateSeriesStyles(); // update axis titles
-
-
-      this._chart.axis.labels({
-        x: oXAxis.getShowTitle() ? oXAxis.getTitle() : null,
-        y: oYAxis.getShowTitle() ? oYAxis.getTitle() : null,
-        y2: oY2Axis.getShowTitle() ? oY2Axis.getTitle() : null
-      });
-
-      this._chart.axis.showX(oXAxis.getVisible());
-
-      this._chart.axis.showY(oYAxis.getVisible());
-
-      this._chart.axis.showY2(oY2Axis.getVisible()); // update min/max for y axis
-      // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
-
-
-      this._chart.axis.range({
-        min: {
-          X: this.getMinValueByAxis(oXAxis),
-          y: this.getMinValueByAxis(oYAxis),
-          y2: this.getMinValueByAxis(oY2Axis)
-        },
-        max: {
-          x: this.getMaxValueByAxis(oXAxis),
-          y: this.getMaxValueByAxis(oYAxis),
-          y2: this.getMaxValueByAxis(oY2Axis)
-        }
-      }); // not supported by c3js API, yet
-      // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
-      // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
-      // not supported by c3js API, yet
-      // this._chart.grid.x.show = oXAxis.getShowGridLines();
-      // this._chart.grid.y.show = oYAxis.getShowGridLines();
-      // inform observers about data update
-
-
-      this.fireChartDataUpdate();
+      this._chart.load(aUpdateSeries);
     },
 
     /**
