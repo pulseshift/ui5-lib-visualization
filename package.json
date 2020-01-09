@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/pulseshift/ui5-lib-visualization/issues"
   },
-  "homepage": "https://github.com/pulseshift/openui5-gulp-starter-kit#readme",
+  "homepage": "https://github.com/pulseshift/ui5-lib-visualization#readme",
   "main": "src/demo/index.hbs",
   "ui5": {
     "indexTitle": "UI5 Visualization Library",
