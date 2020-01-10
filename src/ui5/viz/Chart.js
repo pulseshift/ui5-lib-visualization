@@ -2033,93 +2033,6 @@ sap.ui.define(
           }) :
           undefined
 
-        const fnAfterLoad = () => {
-          // highlight data points
-          d3
-            .selectAll(
-              `#${sChartHtmlID} g.c3-circles circle.c3-circle`
-            )
-            .classed(this.CSS_HIGHLIGHT_PULSATE, false)
-          if (aHighlightedDataPoints.length > 0) {
-            aHighlightedDataPoints.forEach(oHighlightInfo => {
-              d3
-                .select(
-                  `#${sChartHtmlID} g.c3-circles-${
-                    oHighlightInfo.series
-                  } circle.c3-circle-${oHighlightInfo.point}`
-                )
-                .classed(this.CSS_HIGHLIGHT_PULSATE, true)
-            })
-          }
-  
-          // update groups
-          this._chart.groups(
-            aSeries.length === 0 ? [] :
-            aSeries
-            .reduce((aGroups, oSeries) => {
-              // collect all group keys
-              if (
-                oSeries &&
-                oSeries.getGroupKey() &&
-                !aGroups.includes(oSeries.getGroupKey())
-              ) {
-                aGroups.push(oSeries.getGroupKey())
-              }
-              return aGroups
-            }, [])
-            .map(sGroupKey => {
-              // return for each group key the list of respective series keys (['data1', 'data2'])
-              return aSeries
-                .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
-                .map(oSeries => oSeries.getKey())
-            })
-          )
-  
-          // update series styles
-          this._updateSeriesStyles()
-  
-          // update axis titles
-          this._chart.axis.labels({
-            x: oXAxis.getShowTitle() ? oXAxis.getTitle() : null,
-            y: oYAxis.getShowTitle() ? oYAxis.getTitle() : null,
-            y2: oY2Axis.getShowTitle() ? oY2Axis.getTitle() : null
-          })
-  
-          this._chart.axis.showX(oXAxis.getVisible())
-          this._chart.axis.showY(oYAxis.getVisible())
-          this._chart.axis.showY2(oY2Axis.getVisible())
-  
-          // update min/max for y axis
-          // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
-          this._chart.axis.range({
-            min: {
-              X: this.getMinValueByAxis(oXAxis),
-              y: this.getMinValueByAxis(oYAxis),
-              y2: this.getMinValueByAxis(oY2Axis)
-            },
-            max: {
-              x: this.getMaxValueByAxis(oXAxis),
-              y: this.getMaxValueByAxis(oYAxis),
-              y2: this.getMaxValueByAxis(oY2Axis)
-            }
-          })
-  
-          // not supported by c3js API, yet
-          // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
-          // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
-  
-          // not supported by c3js API, yet
-          // this._chart.grid.x.show = oXAxis.getShowGridLines();
-          // this._chart.grid.y.show = oYAxis.getShowGridLines();
-  
-          // inform observers about data update
-          this.fireChartDataUpdate()
-
-          // ensure repaint is performed, after load animation is done
-          setTimeout(this._chart.flush, this._chart.internal.config.transition_duration)
-          lodashDefer(this._chart.flush);
-        }
-
         // update series data
         const aUpdateSeries = {
           // if data that has the same target id is given, the chart will be updated, otherwise, new target will be added
@@ -2190,9 +2103,94 @@ sap.ui.define(
           unload: aObsoleteSeries,
 
           // continue update after load
-          done: fnAfterLoad
+          done: () => {
+            // inform observers about data update
+            this.fireChartDataUpdate()
+
+            // ensure repaint is performed, after load animation is done
+            setTimeout(this._chart.flush, this._chart.internal.config.transition_duration)
+            lodashDefer(this._chart.flush);
+          }
         }
         this._chart.load(aUpdateSeries)
+
+        // highlight data points
+        d3
+          .selectAll(
+            `#${sChartHtmlID} g.c3-circles circle.c3-circle`
+          )
+          .classed(this.CSS_HIGHLIGHT_PULSATE, false)
+        if (aHighlightedDataPoints.length > 0) {
+          aHighlightedDataPoints.forEach(oHighlightInfo => {
+            d3
+              .select(
+                `#${sChartHtmlID} g.c3-circles-${
+                  oHighlightInfo.series
+                } circle.c3-circle-${oHighlightInfo.point}`
+              )
+              .classed(this.CSS_HIGHLIGHT_PULSATE, true)
+          })
+        }
+
+        // update groups
+        this._chart.groups(
+          aSeries.length === 0 ? [] :
+          aSeries
+          .reduce((aGroups, oSeries) => {
+            // collect all group keys
+            if (
+              oSeries &&
+              oSeries.getGroupKey() &&
+              !aGroups.includes(oSeries.getGroupKey())
+            ) {
+              aGroups.push(oSeries.getGroupKey())
+            }
+            return aGroups
+          }, [])
+          .map(sGroupKey => {
+            // return for each group key the list of respective series keys (['data1', 'data2'])
+            return aSeries
+              .filter(oSeries => oSeries.getGroupKey() === sGroupKey)
+              .map(oSeries => oSeries.getKey())
+          })
+        )
+
+        // update series styles
+        this._updateSeriesStyles()
+
+        // update axis titles
+        this._chart.axis.labels({
+          x: oXAxis.getShowTitle() ? oXAxis.getTitle() : null,
+          y: oYAxis.getShowTitle() ? oYAxis.getTitle() : null,
+          y2: oY2Axis.getShowTitle() ? oY2Axis.getTitle() : null
+        })
+
+        this._chart.axis.showX(oXAxis.getVisible())
+        this._chart.axis.showY(oYAxis.getVisible())
+        this._chart.axis.showY2(oY2Axis.getVisible())
+
+        // update min/max for y axis
+        // TODO: Check why change of x axis range is not working without rerender (simple examples are working)
+        this._chart.axis.range({
+          min: {
+            X: this.getMinValueByAxis(oXAxis),
+            y: this.getMinValueByAxis(oYAxis),
+            y2: this.getMinValueByAxis(oY2Axis)
+          },
+          max: {
+            x: this.getMaxValueByAxis(oXAxis),
+            y: this.getMaxValueByAxis(oYAxis),
+            y2: this.getMaxValueByAxis(oY2Axis)
+          }
+        })
+
+        // not supported by c3js API, yet
+        // this._chart.axis.y.tick.values = oYAxis.getLabels().length > 0 ? oYAxis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+        // this._chart.axis.y2.tick.values = oY2Axis.getLabels().length > 0 ? oY2Axis.getLabels().map(oLabel => parseFloat(oLabel.getValue())) : null;
+
+        // not supported by c3js API, yet
+        // this._chart.grid.x.show = oXAxis.getShowGridLines();
+        // this._chart.grid.y.show = oYAxis.getShowGridLines();
       },
 
       /**
