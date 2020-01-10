@@ -375,13 +375,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      */
     _debounceUpdateChartAreas: null,
 
-    /**
-     * Is dirty flag to indicate if c3 must be flushed after repaint (fixes an display issue with data points still visible after update).
-     * @private
-     * @type {boolean}
-     */
-    _isDirty: false,
-
     /* =========================================================== */
 
     /* constants                                                   */
@@ -963,13 +956,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         }),
         transition: {
           duration: 175
-        },
-        // this workaround fixes a display issues with data points still visible after data update
-        onrendered: function onrendered() {
-          if (_this._isDirty) {
-            lodashDefer(_this._chart.flush);
-            _this._isDirty = false;
-          }
         }
       }; // for debugging purposes
       // console.log(options)
@@ -1953,7 +1939,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         _this5.fireChartDataUpdate(); // ensure repaint is performed, after load animation is done
 
 
-        _this5._isDirty = true;
+        setTimeout(_this5._chart.flush, _this5._chart.internal.config.transition_duration);
+        lodashDefer(_this5._chart.flush);
       }; // update series data
 
 
