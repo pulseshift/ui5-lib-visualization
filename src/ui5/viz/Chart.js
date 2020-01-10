@@ -382,6 +382,13 @@ sap.ui.define(
        */
       _debounceUpdateChartAreas: null,
 
+      /**
+       * Is dirty flag to indicate if c3 must be flushed after repaint (fixes an display issue with data points still visible after update).
+       * @private
+       * @type {boolean}
+       */
+      _isDirty: false,
+
       /* =========================================================== */
       /* constants                                                   */
       /* =========================================================== */
@@ -1062,6 +1069,14 @@ sap.ui.define(
             }),
           transition: {
             duration: 175
+          },
+
+          // this workaround fixes a display issues with data points still visible after data update
+          onrendered: () => {
+            if (this._isDirty) {
+              lodashDefer(this._chart.flush);
+              this._isDirty = false
+            }
           }
         }
 
@@ -2115,8 +2130,8 @@ sap.ui.define(
           // inform observers about data update
           this.fireChartDataUpdate()
 
-          // ensure repaint is performed
-          lodashDefer(this._chart.flush)
+          // ensure repaint is performed, after load animation is done
+          this._isDirty = true
         }
 
         // update series data
