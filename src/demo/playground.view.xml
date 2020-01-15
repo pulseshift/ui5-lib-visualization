@@ -213,6 +213,8 @@
           value="September"
           style="{store>/lines/style}"
           title="last sightings"
+          showLineSelector="true"
+          selectorPress="oneSelectorPress"
           color="{store>/lines/todayColor}"
           visible="{store>/lines/show}" />
         <!-- <ChartLine

@@ -1,4 +1,7 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
+  Controller,
+  Toast
+) {
   return Controller.extend('ui5.demo.playground', {
     onInit() {
       const aColorPalette = ui5.viz.ColorPalette.Material500
@@ -62,14 +65,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
           {
             name: 'Foxes Confidence Interval',
             dataPoints: [
-              { low: 1, high: 3, type: ui5.viz.DataPointType.ValuePair },
-              { low: 2, high: 5, type: ui5.viz.DataPointType.ValuePair },
-              { low: 4, high: 7, type: ui5.viz.DataPointType.ValuePair },
-              { low: 3, high: 7, type: ui5.viz.DataPointType.ValuePair },
-              { low: 5, high: 11, type: ui5.viz.DataPointType.ValuePair },
-              { low: 8, high: 11.5, type: ui5.viz.DataPointType.ValuePair },
-              { low: null, high: null, type: ui5.viz.DataPointType.ValuePair },
-              { low: null, high: null, type: ui5.viz.DataPointType.ValuePair }
+              {low: 1, high: 3, type: ui5.viz.DataPointType.ValuePair},
+              {low: 2, high: 5, type: ui5.viz.DataPointType.ValuePair},
+              {low: 4, high: 7, type: ui5.viz.DataPointType.ValuePair},
+              {low: 3, high: 7, type: ui5.viz.DataPointType.ValuePair},
+              {low: 5, high: 11, type: ui5.viz.DataPointType.ValuePair},
+              {low: 8, high: 11.5, type: ui5.viz.DataPointType.ValuePair},
+              {low: null, high: null, type: ui5.viz.DataPointType.ValuePair},
+              {low: null, high: null, type: ui5.viz.DataPointType.ValuePair}
             ],
             color: aColorPalette[0],
             type: ui5.viz.ChartSeriesType.RibbonSpline
@@ -104,6 +107,10 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
       })
 
       this.getView().setModel(oModel, 'store')
+    },
+
+    oneSelectorPress(oEvent) {
+      Toast.show('Line Selector pressed: ' + oEvent.getSource().getTitle())
     }
   })
 })
