@@ -6,6 +6,8 @@
 /.idea/
 /.settings/
 /.vscode/
+/ui5-lib-visualization.iml
+
 
 ### Build Process ###
 /dev/
