@@ -139,7 +139,7 @@
   },
   "dependencies": {
     "@openui5/sap.m": "1.73.2",
-    "@openui5/sap.ui.core": "1.73.2",
+    "@openui5/sap.ui.core": "1.74.0",
     "@openui5/themelib_sap_belize": "1.73.2",
     "c3": "https://github.com/pulseshift/c3#master",
     "d3": "5.15.0",
