@@ -81,7 +81,7 @@
     "babel-eslint": "10.0.3",
     "babelify": "10.0.0",
     "browserify": "16.5.0",
-    "commander": "4.1.0",
+    "commander": "4.1.1",
     "connect-gzip-static": "2.1.1",
     "cross-env": "6.0.3",
     "del": "5.1.0",
