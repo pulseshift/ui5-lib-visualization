@@ -787,6 +787,9 @@ sap.ui.define(
               max: this.getMaxValueByAxis(oXAxis),
               min: this.getMinValueByAxis(oXAxis),
               tick: {
+                // Avoid ugly overflow into legend of longer labels
+                multiline: true,
+                multilineMax: 2,
                 centered: false,
                 // count: 10, >> this value should be set automatically
                 // rotate: 45, >> c3js is a little bit buggy here, CSS solution may be required
