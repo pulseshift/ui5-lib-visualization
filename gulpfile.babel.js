@@ -1257,7 +1257,7 @@ function ui5LibPreloads() {
               '**/library-preload.json',
               tap(oFile => {
                 const oJSONRaw = oFile.contents.toString('utf8')
-                oFile.contents = new Buffer(
+                oFile.contents = Buffer.from(
                   `jQuery.sap.registerPreloadedModules(${oJSONRaw});`
                 )
                 return oFile
@@ -1598,7 +1598,7 @@ function ui5ThemeStyles() {
                   .pipe(
                     tap(oFile => {
                       const sCSS = oFile.contents.toString('utf8')
-                      oFile.contents = new Buffer(
+                      oFile.contents = Buffer.from(
                         sCSS.replace(/(\s*\d*\.?\d+)em/gm, '$1rem')
                       )
                       return oFile
@@ -1686,7 +1686,7 @@ function ui5ThemeStylesDist() {
                      */
                     tap(oFile => {
                       const sCSS = oFile.contents.toString('utf8')
-                      oFile.contents = new Buffer(
+                      oFile.contents = Buffer.from(
                         sCSS.replace(/(\s*\d*\.?\d+)em/gm, '$1rem')
                       )
                       return oFile
@@ -1774,13 +1774,13 @@ function loadDependencies() {
             .pipe(
               tap(file => {
                 file.contents = Buffer.concat([
-                  new Buffer(
+                  Buffer.from(
                     `sap.ui.define([/* no dependencies */], function(){
                       var exports = {};
                       var module = { exports: null };`
                   ),
                   file.contents,
-                  new Buffer(`return module.exports; });`)
+                  Buffer.from(`return module.exports; });`)
                 ])
               })
             )
@@ -1865,13 +1865,13 @@ function loadDependenciesDist() {
               .pipe(
                 tap(file => {
                   file.contents = Buffer.concat([
-                    new Buffer(
+                    Buffer.from(
                       `sap.ui.define([/* no dependencies */], function(){
                       var exports = {};
                       var module = { exports: null };`
                     ),
                     file.contents,
-                    new Buffer(`return module.exports; });`)
+                    Buffer.from(`return module.exports; });`)
                   ])
                 })
               )
