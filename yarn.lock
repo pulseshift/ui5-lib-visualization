@@ -1537,15 +1537,15 @@
     xml2js "^0.4.23"
     yazl "^2.5.1"
 
-"@ui5/cli@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@ui5/cli/-/cli-2.1.0.tgz#7ad99eb87ea3f6db2d3b9b06b5551ac9ef2ff892"
-  integrity sha512-6FuzvFGFaFx15w9o4KaXv1tz21CYftex+NEQrj6k3kYPCP5o698vC23Ah2ldAK6eqckaifVaCYltL5M+CAQzaw==
+"@ui5/cli@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@ui5/cli/-/cli-2.2.0.tgz#5119aac8cc85c673d295eb5fcd89dcf46eeebfea"
+  integrity sha512-p7Mu2T2FsRG9ACgrcrcqZmzkkWg3t636PWV86VeB+mh3LVBviR97ggd1Nm6GA1cidRY2UlYmTuBhNvTPnAESGg==
   dependencies:
     "@ui5/builder" "^2.0.1"
     "@ui5/fs" "^2.0.1"
     "@ui5/logger" "^2.0.0"
-    "@ui5/project" "^2.0.4"
+    "@ui5/project" "^2.1.0"
     "@ui5/server" "^2.0.2"
     chalk "^4.0.0"
     data-with-position "^0.4.0"
@@ -1583,10 +1583,10 @@
   dependencies:
     npmlog "^4.1.2"
 
-"@ui5/project@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@ui5/project/-/project-2.0.4.tgz#4a732cac7dd4eb4fd523ff492714ce130485e912"
-  integrity sha512-BPVTLzlReMiS7v86e2U8ErtTSq/LvNsg7WpO+BAafvLyr0L6no/JWWp/b5mstlRzL1ac+Sz+Y4fXwaoDdZWEWA==
+"@ui5/project@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@ui5/project/-/project-2.1.0.tgz#271e0e5f4d014aa3e208fe53d8b3f26075084cea"
+  integrity sha512-bdZJvtL9+Sup1m0Xleo2iAgu5s5JIXj1dwUujc1Qq03H1JuvIZVl1Qr7kqu7xbvSBFi/MRs2G9vHLqvIMYM9kw==
   dependencies:
     "@ui5/builder" "^2.0.1"
     "@ui5/logger" "^2.0.0"
@@ -1595,7 +1595,7 @@
     ajv-errors "^1.0.1"
     chalk "^4.0.0"
     escape-string-regexp "^4.0.0"
-    graceful-fs "^4.2.3"
+    graceful-fs "^4.2.4"
     js-yaml "^3.13.1"
     libnpmconfig "^1.2.1"
     lockfile "^1.0.4"
@@ -6745,7 +6745,7 @@ graceful-fs@4.X, graceful-fs@^4.0.0, graceful-fs@^4.1.10, graceful-fs@^4.1.11, g
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
   integrity sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
 
-graceful-fs@^4.1.15:
+graceful-fs@^4.1.15, graceful-fs@^4.2.4:
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
