@@ -94,7 +94,7 @@
     "eslint-plugin-testcafe": "0.2.1",
     "express": "4.17.1",
     "flow": "0.2.3",
-    "flow-bin": "0.123.0",
+    "flow-bin": "0.124.0",
     "fs-es6-promise": "0.0.3",
     "glob": "7.1.6",
     "gulp": "4.0.2",
