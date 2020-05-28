@@ -1824,6 +1824,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // exit if chart is not availalein DOM
       if (!this.getDomRef()) {
         return;
+      } // don't call update routine if it is halted
+
+
+      if (this._getChartUpdateHandler().isHalted()) {
+        return;
       } // console.error('UPDATE THE CHART');
 
 
@@ -2190,7 +2195,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         axis: oChartLine.getAxis().toLowerCase(),
         text: oChartLine.getTitle(),
         position: oChartLine.getTitlePosition().toLowerCase(),
-        showSelector: oChartLine.getShowLineSelector() ? true : false,
+        showSelector: !!oChartLine.getShowLineSelector(),
         // add three classes: general line class, line style class and line identifier
         class: "".concat(this.CSS_CLASS_LINE, " ").concat(this.CSS_CLASS_LINE, "-").concat(oChartLine.getStyle(), " ").concat(this.CSS_CLASS_LINE, "-").concat(oChartLine.getId(), " ").concat(sShowSelectorClass, " ").concat(sIconOnlyClass)
       };
@@ -2308,7 +2313,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             } // update svg pattern style
 
 
-            oStrokeStyle.text("#".concat(sChartHtmlID, " .c3-target-").concat(sSeriesHtmlID, " path.c3-shape {\n                                    stroke-dashoffset: ").concat(oSeries.getLineAnimationForwards() ? '' : '-', "50rem;\n                                    stroke-dasharray: ").concat(sDashArray, ";\n                                    stroke-linecap: round;\n\n                                    -webkit-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -moz-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -ms-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    -o-animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                    animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                }"));
+            oStrokeStyle.text("#".concat(sChartHtmlID, " .c3-target-").concat(sSeriesHtmlID, " path.c3-shape {\n                                    stroke-dashoffset: ").concat(oSeries.getLineAnimationForwards() ? '' : '-', "50rem;\n                                    stroke-dasharray: ").concat(sDashArray, ";\n                                    stroke-linecap: round;\n                                    animation: ui5-viz-chart-dash-animation ").concat(iAnimationSpeed, "s 0s linear infinite forwards;\n                                }"));
             break;
 
           case library.LineStyle.Solid:

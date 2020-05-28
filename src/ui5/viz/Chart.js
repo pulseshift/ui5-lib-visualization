@@ -1972,6 +1972,10 @@ sap.ui.define(
         if (!this.getDomRef()) {
           return
         }
+        // don't call update routine if it is halted
+        if (this._getChartUpdateHandler().isHalted()) {
+          return
+        }
 
         // console.error('UPDATE THE CHART');
         const sChartHtmlID = this.getId()
@@ -2378,7 +2382,7 @@ sap.ui.define(
           axis: oChartLine.getAxis().toLowerCase(),
           text: oChartLine.getTitle(),
           position: oChartLine.getTitlePosition().toLowerCase(),
-          showSelector: oChartLine.getShowLineSelector() ? true : false,
+          showSelector: !!oChartLine.getShowLineSelector(),
           // add three classes: general line class, line style class and line identifier
           class: `${this.CSS_CLASS_LINE} ${
             this.CSS_CLASS_LINE
@@ -2542,11 +2546,6 @@ sap.ui.define(
                                     }50rem;
                                     stroke-dasharray: ${sDashArray};
                                     stroke-linecap: round;
-
-                                    -webkit-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -moz-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -ms-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
-                                    -o-animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
                                     animation: ui5-viz-chart-dash-animation ${iAnimationSpeed}s 0s linear infinite forwards;
                                 }`
               )
