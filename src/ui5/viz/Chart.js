@@ -533,7 +533,7 @@ sap.ui.define(
        * @override
        */
       onAfterRendering() {
-        console.log('onAfterRendering')
+        // console.log('onAfterRendering')
         // exit if chart is not availale in DOM
         if (!this.getDomRef()) {
           return
