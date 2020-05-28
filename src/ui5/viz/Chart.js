@@ -469,7 +469,7 @@ sap.ui.define(
         this._getChartUpdateHandler().halt()
 
         // init debounce update function instance
-        this._debounceUpdate = lodashDebounce(this._onDataUpdate, 10)
+        this._debounceUpdate = lodashDebounce(this._onDataUpdate, 50)
         this._debounceUpdateChartLines = lodashDebounce(
           this._updateChartLines,
           50
@@ -533,6 +533,7 @@ sap.ui.define(
        * @override
        */
       onAfterRendering() {
+        console.log('onAfterRendering')
         // exit if chart is not availale in DOM
         if (!this.getDomRef()) {
           return
