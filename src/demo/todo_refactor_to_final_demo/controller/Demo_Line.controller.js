@@ -13,21 +13,21 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
         xAxis: [
           {
             title: 'Summerdays 🌞',
-            labels: [1, 2, 3, 4, 5, 6]
-          }
+            labels: [1, 2, 3, 4, 5, 6],
+          },
         ],
         yAxis: [
           {
-            title: 'Sold ice cream scoops 🍧'
-          }
+            title: 'Sold ice cream scoops 🍧',
+          },
         ],
         series: [
           {
             name: 'Chocolate 🍫',
             dataPoints: [10, 15, 18, 17, 29, 40],
-            type: 'line'
-          }
-        ]
+            type: 'line',
+          },
+        ],
       })
 
       setTimeout(() => {
@@ -36,12 +36,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
         const aNewSeries = aSeries.concat({
           name: 'Strawberry 🍓',
           dataPoints: [8, 11, 12, 21, 24, 31],
-          type: 'line'
+          type: 'line',
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

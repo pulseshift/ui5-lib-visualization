@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element'],
-  function(Element) {
+  function (Element) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxisLabel</code>.
      *
@@ -46,12 +46,12 @@ sap.ui.define(
           /**
            * Sets axis value
            */
-          value: { type: 'any', group: 'Appereance', defaultValue: null },
+          value: {type: 'any', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets axis label title
            */
-          title: { type: 'string', group: 'Appereance', defaultValue: null },
+          title: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets axis label icon
@@ -64,8 +64,8 @@ sap.ui.define(
           visible: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
-          }
+            defaultValue: true,
+          },
         },
         aggregations: {},
         associations: {},
@@ -74,8 +74,8 @@ sap.ui.define(
            * Data was updated
            * @event axisLabelUpdate
            */
-          axisLabelUpdate: {}
-        }
+          axisLabelUpdate: {},
+        },
       },
 
       /* =========================================================== */
@@ -155,7 +155,7 @@ sap.ui.define(
         }
 
         return this
-      }
+      },
 
       /* =========================================================== */
       /* public methods                                              */

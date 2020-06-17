@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_SubchartZoom', {
@@ -39,9 +39,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               22,
               23,
               24,
-              25
-            ]
-          }
+              25,
+            ],
+          },
         ],
         series: [
           {
@@ -71,14 +71,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               45,
               98,
               67,
-              12
+              12,
             ],
-            type: 'line'
-          }
-        ]
+            type: 'line',
+          },
+        ],
       })
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

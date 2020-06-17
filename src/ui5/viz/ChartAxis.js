@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  function (Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartAxis</code>.
      *
@@ -46,7 +46,7 @@ sap.ui.define(
           /**
            * Sets axis title
            */
-          title: { type: 'string', group: 'Appereance', defaultValue: null },
+          title: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets the posotion of the title
@@ -59,7 +59,7 @@ sap.ui.define(
           showTitle: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /**
@@ -74,23 +74,27 @@ sap.ui.define(
           showGridLines: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: false
+            defaultValue: false,
           },
 
           /**
            * Sets the minimal value of the axis. (use index/position for category X-axis, too)
            */
-          minValue: { type: 'string', group: 'Appereance', defaultValue: null },
+          minValue: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets the maximal value of the axis. (use index/position for category X-axis, too)
            */
-          maxValue: { type: 'string', group: 'Appereance', defaultValue: null },
+          maxValue: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values.
            */
-          autoTickValues: { type: 'boolean', group: 'Appereance', defaultValue: false },
+          autoTickValues: {
+            type: 'boolean',
+            group: 'Appereance',
+            defaultValue: false,
+          },
 
           /**
            * Sets visibility of the element.
@@ -98,7 +102,7 @@ sap.ui.define(
           visible: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /**
@@ -109,15 +113,15 @@ sap.ui.define(
             type: 'ui5.viz.Axis',
             group: 'Data',
             hidden: true,
-            defaultValue: library.Axis.X
-          }
+            defaultValue: library.Axis.X,
+          },
         },
         aggregations: {
           /**
            * Sets the labels displayed on the axis
            * Hint: live update by c3 API is only supported for X axis, yet, therefore we must rerender the chart
            */
-          labels: { type: 'ui5.viz.ChartAxisLabel', multiple: true }
+          labels: {type: 'ui5.viz.ChartAxisLabel', multiple: true},
         },
         defaultAggregation: 'labels',
         associations: {},
@@ -126,8 +130,8 @@ sap.ui.define(
            * Axis was updated
            * @event axisUpdate
            */
-          axisUpdate: {}
-        }
+          axisUpdate: {},
+        },
       },
 
       /* =========================================================== */
@@ -403,7 +407,7 @@ sap.ui.define(
         }
 
         return this
-      }
+      },
 
       /* =========================================================== */
       /* public methods                                              */

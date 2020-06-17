@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Step', {
@@ -18,24 +18,24 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               'Friday',
               'Friday night',
               'Saturday',
-              'Saturday night'
-            ]
-          }
+              'Saturday night',
+            ],
+          },
         ],
         yAxis: [
           {
-            title: 'Bonfires in the village 🔥'
-          }
+            title: 'Bonfires in the village 🔥',
+          },
         ],
         series: [
           {
             dataPoints: [0, 1, 0, 5, 1, 6],
-            type: 'step'
-          }
-        ]
+            type: 'step',
+          },
+        ],
       })
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

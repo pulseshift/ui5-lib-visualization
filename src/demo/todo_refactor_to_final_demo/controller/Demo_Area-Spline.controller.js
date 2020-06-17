@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Area-spline', {
@@ -18,22 +18,22 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               'September',
               'October',
               'November',
-              'December'
-            ]
-          }
+              'December',
+            ],
+          },
         ],
         yAxis: [
           {
-            title: 'Rain [l/m²] 💧'
-          }
+            title: 'Rain [l/m²] 💧',
+          },
         ],
         series: [
           {
             name: 'Oak City 🌳',
             dataPoints: [6, 8, 14, 23, 28, 26],
-            type: 'area-spline'
-          }
-        ]
+            type: 'area-spline',
+          },
+        ],
       })
 
       setTimeout(() => {
@@ -42,12 +42,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var aNewSeries = aSeries.concat({
           name: 'Pine Village 🌲',
           dataPoints: [4, 10, 18, 28, 30, 29],
-          type: 'area-spline'
+          type: 'area-spline',
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

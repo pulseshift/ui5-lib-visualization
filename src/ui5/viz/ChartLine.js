@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  function (Element, library) {
     'use strict'
 
     /**
@@ -48,7 +48,7 @@ sap.ui.define(
           /**
            * Sets the ttitleext of the ChartLine
            */
-          title: { type: 'string', group: 'Appereance', defaultValue: null },
+          title: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets the position of the title
@@ -56,7 +56,7 @@ sap.ui.define(
           titlePosition: {
             type: 'ui5.viz.ChartTitlePosition',
             group: 'Appereance',
-            defaultValue: library.ChartTitlePosition.Start
+            defaultValue: library.ChartTitlePosition.Start,
           },
 
           /**
@@ -65,7 +65,7 @@ sap.ui.define(
           style: {
             type: 'ui5.viz.LineStyle',
             group: 'Appearance',
-            defaultValue: library.LineStyle.Solid
+            defaultValue: library.LineStyle.Solid,
           },
 
           /**
@@ -74,7 +74,7 @@ sap.ui.define(
           color: {
             type: 'sap.ui.core.CSSColor',
             group: 'Appearance',
-            defaultValue: null
+            defaultValue: null,
           },
 
           /**
@@ -83,7 +83,7 @@ sap.ui.define(
           axis: {
             type: 'ui5.viz.Axis',
             group: 'Appearance',
-            defaultValue: library.Axis.Y
+            defaultValue: library.Axis.Y,
           },
 
           /**
@@ -92,7 +92,7 @@ sap.ui.define(
           showLineSelector: {
             type: 'boolean',
             group: 'Appearance',
-            defaultValue: false
+            defaultValue: false,
           },
 
           /**
@@ -101,7 +101,7 @@ sap.ui.define(
           selectorIconOnly: {
             type: 'boolean',
             group: 'Appearance',
-            defaultValue: false
+            defaultValue: false,
           },
 
           /**
@@ -110,7 +110,7 @@ sap.ui.define(
           lineSelectorIcon: {
             type: 'sap.ui.core.URI',
             group: 'Appearance',
-            defaultValue: 'sap-icon://flag'
+            defaultValue: 'sap-icon://flag',
           },
 
           /**
@@ -119,7 +119,7 @@ sap.ui.define(
           visible: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /* === Data === */
@@ -127,7 +127,7 @@ sap.ui.define(
           /**
            * Sets value that is matching a position on the assigned axis
            */
-          value: { type: 'string', group: 'Data', defaultValue: null }
+          value: {type: 'string', group: 'Data', defaultValue: null},
         },
         aggregations: {},
         associations: {},
@@ -142,8 +142,8 @@ sap.ui.define(
                * Chart update event code.
                * @event lineUpdate
                */
-              code: { type: 'ui5.viz.ChartUpdateCode' }
-            }
+              code: {type: 'ui5.viz.ChartUpdateCode'},
+            },
           },
 
           /**
@@ -156,16 +156,16 @@ sap.ui.define(
                * Chart line that was clicked.
                * @event selectorPress
                */
-              line: { type: 'ui5.viz.ChartLine' },
+              line: {type: 'ui5.viz.ChartLine'},
 
               /**
                * Dom reference of line selector.
                * @event selectorPress
                */
-              selectorDomRef: { type: 'object' }
-            }
-          }
-        }
+              selectorDomRef: {type: 'object'},
+            },
+          },
+        },
       },
 
       /* =========================================================== */
@@ -207,7 +207,7 @@ sap.ui.define(
       exit() {
         // inform observers about control destroy
         this.fireLineUpdate({
-          code: library.ChartUpdateCode.Line
+          code: library.ChartUpdateCode.Line,
         })
       },
 
@@ -234,7 +234,7 @@ sap.ui.define(
             'color',
             'axis',
             'value',
-            'visible'
+            'visible',
           ].includes(sName)
         ) {
           // important: update value, before fire event
@@ -242,7 +242,7 @@ sap.ui.define(
 
           // inform observers about data update
           this.fireLineUpdate({
-            code: library.ChartUpdateCode.Line
+            code: library.ChartUpdateCode.Line,
           })
         } else {
           Element.prototype.setProperty.call(
@@ -254,7 +254,7 @@ sap.ui.define(
         }
 
         return this
-      }
+      },
 
       /* =========================================================== */
       /* public methods                                              */

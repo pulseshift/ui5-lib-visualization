@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element) {
+  function (Element) {
     /**
      * Constructor for a new <code>ui5.viz.Color</code>.
      *
@@ -49,12 +49,12 @@ sap.ui.define(
           color: {
             type: 'sap.ui.core.CSSColor',
             group: 'Appereance',
-            defaultValue: null
-          }
+            defaultValue: null,
+          },
         },
         aggregations: {},
         associations: {},
-        events: {}
+        events: {},
       },
 
       /* =========================================================== */
@@ -85,7 +85,7 @@ sap.ui.define(
        * @private
        * @override
        */
-      init() {}
+      init() {},
 
       /**
        * The exit() method is used to clean up resources and to deregister event handlers.

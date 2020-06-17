@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Spline', {
@@ -14,16 +14,16 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         xAxis: [
           {
             title: 'Finds in the village 🏡',
-            labels: ['January', 'Febuary', 'March', 'April', 'May', 'June']
-          }
+            labels: ['January', 'Febuary', 'March', 'April', 'May', 'June'],
+          },
         ],
         series: [
           {
             name: 'Snow angels ❄️',
             dataPoints: [33, 31, 11, 0, 0, 0],
-            type: 'spline'
-          }
-        ]
+            type: 'spline',
+          },
+        ],
       })
 
       setTimeout(() => {
@@ -32,12 +32,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var aNewSeries = aSeries.concat({
           name: 'Ripe cherry trees 🍒',
           dataPoints: [0, 0, 0, 1, 24, 28],
-          type: 'spline'
+          type: 'spline',
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

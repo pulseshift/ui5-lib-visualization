@@ -49,7 +49,7 @@ sap.ui.define(
           type: {
             type: 'ui5.viz.ChartSeriesType',
             group: 'Appearance',
-            defaultValue: library.ChartSeriesType.Spline
+            defaultValue: library.ChartSeriesType.Spline,
           },
 
           /**
@@ -58,7 +58,7 @@ sap.ui.define(
           name: {
             type: 'string',
             group: 'Appearance',
-            defaultValue: null
+            defaultValue: null,
           },
 
           /**
@@ -67,7 +67,7 @@ sap.ui.define(
           color: {
             type: 'sap.ui.core.CSSColor',
             group: 'Appearance',
-            defaultValue: null
+            defaultValue: null,
           },
 
           /**
@@ -76,7 +76,7 @@ sap.ui.define(
           showLabels: {
             type: 'boolean',
             group: 'Appearance',
-            defaultValue: false
+            defaultValue: false,
           },
 
           /**
@@ -85,7 +85,7 @@ sap.ui.define(
           lineStyle: {
             type: 'ui5.viz.LineStyle',
             group: 'Appearance',
-            defaultValue: library.LineStyle.Solid
+            defaultValue: library.LineStyle.Solid,
           },
 
           /**
@@ -94,7 +94,7 @@ sap.ui.define(
           shapeStyle: {
             type: 'ui5.viz.ShapeStyle',
             group: 'Appearance',
-            defaultValue: library.ShapeStyle.Solid
+            defaultValue: library.ShapeStyle.Solid,
           },
 
           /**
@@ -103,7 +103,7 @@ sap.ui.define(
           lineAnimationSpeed: {
             type: 'ui5.viz.AnimationSpeed',
             group: 'Appearance',
-            defaultValue: library.AnimationSpeed.None
+            defaultValue: library.AnimationSpeed.None,
           },
 
           /**
@@ -112,7 +112,7 @@ sap.ui.define(
           lineAnimationForwards: {
             type: 'boolean',
             group: 'Appearance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /**
@@ -121,7 +121,7 @@ sap.ui.define(
           groupKey: {
             type: 'string',
             group: 'Appearance',
-            defaultValue: null
+            defaultValue: null,
           },
 
           /**
@@ -130,7 +130,7 @@ sap.ui.define(
           yAxis: {
             type: 'ui5.viz.Axis',
             group: 'Appearance',
-            defaultValue: library.Axis.Y
+            defaultValue: library.Axis.Y,
           },
 
           /**
@@ -139,7 +139,7 @@ sap.ui.define(
           visible: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /* === Data === */
@@ -150,8 +150,8 @@ sap.ui.define(
           key: {
             type: 'string',
             group: 'Data',
-            defaultValue: null
-          }
+            defaultValue: null,
+          },
         },
         aggregations: {
           /**
@@ -159,8 +159,8 @@ sap.ui.define(
            */
           data: {
             type: 'ui5.viz.ChartDataPoint',
-            multiple: true
-          }
+            multiple: true,
+          },
         },
         defaultAggregation: 'data',
         associations: {},
@@ -176,9 +176,9 @@ sap.ui.define(
                * @event seriesDataUpdate
                */
               code: {
-                type: 'ui5.viz.ChartUpdateCode'
-              }
-            }
+                type: 'ui5.viz.ChartUpdateCode',
+              },
+            },
           },
 
           /**
@@ -192,11 +192,11 @@ sap.ui.define(
                * @event seriesVisibilityChange
                */
               chartSeries: {
-                type: 'ui5.viz.ChartSeries'
-              }
-            }
-          }
-        }
+                type: 'ui5.viz.ChartSeries',
+              },
+            },
+          },
+        },
       },
 
       /* =========================================================== */
@@ -238,7 +238,7 @@ sap.ui.define(
       exit() {
         // inform observers about control destroy
         this.fireSeriesDataUpdate({
-          code: library.ChartUpdateCode.DataPoint
+          code: library.ChartUpdateCode.DataPoint,
         })
       },
 
@@ -286,13 +286,13 @@ sap.ui.define(
           // forward dataUpdate event
           oObject.attachDataPointUpdate(() => {
             this.fireSeriesDataUpdate({
-              code: library.ChartUpdateCode.DataPoint
+              code: library.ChartUpdateCode.DataPoint,
             })
           })
 
           // inform observers about data update
           this.fireSeriesDataUpdate({
-            code: library.ChartUpdateCode.DataPoint
+            code: library.ChartUpdateCode.DataPoint,
           })
         } else {
           Element.prototype.insertAggregation.call(
@@ -330,13 +330,13 @@ sap.ui.define(
           // forward dataUpdate event
           oObject.attachDataPointUpdate(() => {
             this.fireSeriesDataUpdate({
-              code: library.ChartUpdateCode.DataPoint
+              code: library.ChartUpdateCode.DataPoint,
             })
           })
 
           // inform observers about data update
           this.fireSeriesDataUpdate({
-            code: library.ChartUpdateCode.DataPoint
+            code: library.ChartUpdateCode.DataPoint,
           })
         } else {
           Element.prototype.addAggregation.call(
@@ -373,13 +373,13 @@ sap.ui.define(
           // forward dataUpdate event
           oObject.attachDataPointUpdate(() => {
             this.fireSeriesDataUpdate({
-              code: library.ChartUpdateCode.DataPoint
+              code: library.ChartUpdateCode.DataPoint,
             })
           })
 
           // inform observers about data update
           this.fireSeriesDataUpdate({
-            code: library.ChartUpdateCode.DataPoint
+            code: library.ChartUpdateCode.DataPoint,
           })
         } else {
           Element.prototype.removeAggregation.call(
@@ -413,7 +413,7 @@ sap.ui.define(
 
           // inform observers about data update
           this.fireSeriesDataUpdate({
-            code: library.ChartUpdateCode.DataPoint
+            code: library.ChartUpdateCode.DataPoint,
           })
         } else {
           Element.prototype.removeAllAggregation.call(
@@ -446,7 +446,7 @@ sap.ui.define(
 
           // inform observers about data update
           this.fireSeriesDataUpdate({
-            code: library.ChartUpdateCode.DataPoint
+            code: library.ChartUpdateCode.DataPoint,
           })
         } else {
           Element.prototype.destroyAggregation.call(
@@ -482,7 +482,7 @@ sap.ui.define(
             'lineStyle',
             'shapeStyle',
             'lineAnimationSpeed',
-            'lineAnimationForwards'
+            'lineAnimationForwards',
           ].includes(sName)
         ) {
           // important: update value, before fire event
@@ -496,7 +496,7 @@ sap.ui.define(
 
           // inform observers about show/hide series
           this.fireSeriesVisibilityChange({
-            chartSeries: this
+            chartSeries: this,
           })
         } else {
           Element.prototype.setProperty.call(

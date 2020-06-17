@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Area-step', {
@@ -18,22 +18,22 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
               'December',
               'January',
               'February',
-              'March'
-            ]
-          }
+              'March',
+            ],
+          },
         ],
         yAxis: [
           {
-            title: 'Snow [kg/m²] ❄️'
-          }
+            title: 'Snow [kg/m²] ❄️',
+          },
         ],
         series: [
           {
             name: 'Oak City 🌳',
             dataPoints: [0, 1, 3, 10, 9, 1],
-            type: 'area-step'
-          }
-        ]
+            type: 'area-step',
+          },
+        ],
       })
 
       setTimeout(() => {
@@ -42,12 +42,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         var aNewSeries = aSeries.concat({
           name: 'Pine Village 🌲',
           dataPoints: [0, 2, 8, 14, 14, 2],
-          type: 'area-step'
+          type: 'area-step',
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

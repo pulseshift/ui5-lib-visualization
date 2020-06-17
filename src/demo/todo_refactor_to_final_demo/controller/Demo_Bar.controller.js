@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
   'use strict'
 
   return Controller.extend('sap.ui.demo.db.controller.Demo_Bar', {
@@ -13,21 +13,21 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         xAxis: [
           {
             title: 'Summerdays 🌞',
-            labels: [1, 2, 3, 4, 5, 6]
-          }
+            labels: [1, 2, 3, 4, 5, 6],
+          },
         ],
         yAxis: [
           {
-            title: 'Hatched birds in the wood 🦉'
-          }
+            title: 'Hatched birds in the wood 🦉',
+          },
         ],
         series: [
           {
             name: 'Male',
             dataPoints: [13, 15, 18, 17, 19, 14],
-            type: 'bar'
-          }
-        ]
+            type: 'bar',
+          },
+        ],
       })
 
       setTimeout(() => {
@@ -36,12 +36,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function(Controller) {
         const aNewSeries = aSeries.concat({
           name: 'Female',
           dataPoints: [14, 11, 18, 21, 16, 14],
-          type: 'bar'
+          type: 'bar',
         })
         oModel.setProperty('/series/', aNewSeries)
       }, 3000)
 
       this.getView().setModel(oModel, 'store')
-    }
+    },
   })
 })

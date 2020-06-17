@@ -15,7 +15,7 @@
  */
 sap.ui.define(
   ['sap/ui/core/Element', './library'],
-  function(Element, library) {
+  function (Element, library) {
     /**
      * Constructor for a new <code>ui5.viz.ChartArea</code>.
      *
@@ -46,7 +46,7 @@ sap.ui.define(
           /**
            * Sets the ttitleext of the ChartArea
            */
-          title: { type: 'string', group: 'Appereance', defaultValue: null },
+          title: {type: 'string', group: 'Appereance', defaultValue: null},
 
           /**
            * Sets the position of the title
@@ -59,7 +59,7 @@ sap.ui.define(
           style: {
             type: 'ui5.viz.ShapeStyle',
             group: 'Appearance',
-            defaultValue: library.ShapeStyle.Solid
+            defaultValue: library.ShapeStyle.Solid,
           },
 
           /**
@@ -68,7 +68,7 @@ sap.ui.define(
           color: {
             type: 'sap.ui.core.CSSColor',
             group: 'Appearance',
-            defaultValue: null
+            defaultValue: null,
           },
 
           /**
@@ -77,7 +77,7 @@ sap.ui.define(
           axis: {
             type: 'ui5.viz.Axis',
             group: 'Appearance',
-            defaultValue: library.Axis.X
+            defaultValue: library.Axis.X,
           },
 
           /**
@@ -86,7 +86,7 @@ sap.ui.define(
           visible: {
             type: 'boolean',
             group: 'Appereance',
-            defaultValue: true
+            defaultValue: true,
           },
 
           /* === Data === */
@@ -94,12 +94,12 @@ sap.ui.define(
           /**
            * Sets value that is matching a start position on the assigned axis
            */
-          startValue: { type: 'string', group: 'Data', defaultValue: null },
+          startValue: {type: 'string', group: 'Data', defaultValue: null},
 
           /**
            * Sets value that is matching a end position on the assigned axis
            */
-          endValue: { type: 'string', group: 'Data', defaultValue: null }
+          endValue: {type: 'string', group: 'Data', defaultValue: null},
         },
         aggregations: {},
         associations: {},
@@ -114,10 +114,10 @@ sap.ui.define(
                * Chart update event code.
                * @event areaUpdate
                */
-              code: { type: 'ui5.viz.ChartUpdateCode' }
-            }
-          }
-        }
+              code: {type: 'ui5.viz.ChartUpdateCode'},
+            },
+          },
+        },
       },
 
       /* =========================================================== */
@@ -159,7 +159,7 @@ sap.ui.define(
       exit() {
         // inform observers about control destroy
         this.fireAreaUpdate({
-          code: library.ChartUpdateCode.Area
+          code: library.ChartUpdateCode.Area,
         })
       },
 
@@ -191,19 +191,19 @@ sap.ui.define(
        * @returns {string|int}
        * @public
        */
-     getEndValue() {
-       const v = this.getProperty('endValue')
-       const sRefAxis = this.getProperty('axis')
+      getEndValue() {
+        const v = this.getProperty('endValue')
+        const sRefAxis = this.getProperty('axis')
 
-       if (sRefAxis === library.Axis.X) {
-        const oChart = this.getParent()
-        const isTimeAxis = oChart.getXAxisType() === library.AxisType.Time
+        if (sRefAxis === library.Axis.X) {
+          const oChart = this.getParent()
+          const isTimeAxis = oChart.getXAxisType() === library.AxisType.Time
 
-        return isTimeAxis ? v : oChart.getXAxisIndexByValue(v)
-      }
+          return isTimeAxis ? v : oChart.getXAxisIndexByValue(v)
+        }
 
-       return v
-     },
+        return v
+      },
 
       /**
        * Overwrites the method in order to check on supported properties.
@@ -224,7 +224,7 @@ sap.ui.define(
             'title',
             'startValue',
             'endValue',
-            'visible'
+            'visible',
           ].includes(sName)
         ) {
           // important: update value, before fire event
@@ -232,7 +232,7 @@ sap.ui.define(
 
           // inform observers about control destroy
           this.fireAreaUpdate({
-            code: library.ChartUpdateCode.Area
+            code: library.ChartUpdateCode.Area,
           })
         } else {
           Element.prototype.setProperty.call(
@@ -244,7 +244,7 @@ sap.ui.define(
         }
 
         return this
-      }
+      },
 
       /* =========================================================== */
       /* public methods                                              */

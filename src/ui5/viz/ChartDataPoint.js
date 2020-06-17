@@ -13,7 +13,10 @@
  *   <!-- tbd -->
  * </Chart>
  */
-sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'], function (
+  Element,
+  library
+) {
   /**
    * Constructor for a new <code>ui5.viz.ChartDataPoint</code>.
    *
@@ -48,7 +51,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         highlightAnimation: {
           type: 'ui5.viz.DataPointAnimation',
           group: 'Appearance',
-          defaultValue: library.DataPointAnimation.None
+          defaultValue: library.DataPointAnimation.None,
         },
 
         /**
@@ -57,7 +60,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         type: {
           type: 'ui5.viz.DataPointType',
           group: 'Appearance',
-          defaultValue: library.DataPointType.SingleValue
+          defaultValue: library.DataPointType.SingleValue,
         },
 
         /* === Data === */
@@ -65,7 +68,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         /**
          * Sets the representation of value as formatted text.
          */
-        label: { type: 'string', group: 'Data', defaultValue: null },
+        label: {type: 'string', group: 'Data', defaultValue: null},
 
         /**
          * Sets the representation of value as formatted text in the tooltip.
@@ -76,19 +79,19 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
          * Sets the value the data point should represent.
          * Hint: To support null as value, the type must be "any"
          */
-        value: { type: 'any', group: 'Data', defaultValue: null },
+        value: {type: 'any', group: 'Data', defaultValue: null},
 
         /**
          * Sets the high value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
-        high: { type: 'any', group: 'Data', defaultValue: null },
+        high: {type: 'any', group: 'Data', defaultValue: null},
 
         /**
          * Sets the low value the data point should represent in case of ribbon type.
          * Hint: To support null as value, the type must be "any"
          */
-        low: { type: 'any', group: 'Data', defaultValue: null },
+        low: {type: 'any', group: 'Data', defaultValue: null},
 
         /**
          * Sets visibility of the element.
@@ -96,8 +99,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         visible: {
           type: 'boolean',
           group: 'Appereance',
-          defaultValue: true
-        }
+          defaultValue: true,
+        },
       },
       aggregations: {},
       associations: {},
@@ -106,8 +109,8 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
          * Data was updated
          * @event dataPointUpdate
          */
-        dataPointUpdate: {}
-      }
+        dataPointUpdate: {},
+      },
     },
 
     /* =========================================================== */
@@ -174,7 +177,7 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
           'label',
           'tooltipLabel',
           'visible',
-          'highlightAnimation'
+          'highlightAnimation',
         ].includes(sName)
       ) {
         // important: update value, before fire event
@@ -266,10 +269,10 @@ sap.ui.define(['sap/ui/core/Element', './library'], function(Element, library) {
         var lowValue = this.getLow()
         var result = {
           high: highValue,
-          low: lowValue
+          low: lowValue,
         }
-        return isVisible ? result : { high: null, low: null }
+        return isVisible ? result : {high: null, low: null}
       }
-    }
+    },
   })
 })

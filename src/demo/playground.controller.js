@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function (
   Controller,
   Toast
 ) {
@@ -22,12 +22,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
         lines: {
           show: true,
           todayColor: aColorPalette[12],
-          style: ui5.viz.LineStyle.Solid
+          style: ui5.viz.LineStyle.Solid,
         },
         areas: {
           show: false,
           areaColor: aColorPalette[7],
-          style: ui5.viz.ShapeStyle.Solid
+          style: ui5.viz.ShapeStyle.Solid,
         },
         xAxis: {
           labels: [
@@ -38,29 +38,29 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
             'August',
             'September',
             'October',
-            'November'
-          ]
+            'November',
+          ],
         },
         yAxis: {
           title: 'Sightings in the woods 🌲',
           minEnabled: false,
           maxEnabled: false,
           gridLines: false,
-          customTicks: false
+          customTicks: false,
         },
         series: [
           {
             name: 'Foxes 🦊',
             dataPoints: [2, null, 6, 5, 8, 9, null, null],
             color: aColorPalette[0],
-            type: ui5.viz.ChartSeriesType.Spline
+            type: ui5.viz.ChartSeriesType.Spline,
           },
           {
             name: 'Foxes Forecast',
             dataPoints: [null, null, null, null, null, 9, 8, 6],
             type: ui5.viz.ChartSeriesType.Spline,
             color: aColorPalette[0],
-            forecast: true
+            forecast: true,
           },
           {
             name: 'Foxes Confidence Interval',
@@ -72,38 +72,38 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
               {low: 5, high: 11, type: ui5.viz.DataPointType.ValuePair},
               {low: 8, high: 11.5, type: ui5.viz.DataPointType.ValuePair},
               {low: null, high: null, type: ui5.viz.DataPointType.ValuePair},
-              {low: null, high: null, type: ui5.viz.DataPointType.ValuePair}
+              {low: null, high: null, type: ui5.viz.DataPointType.ValuePair},
             ],
             color: aColorPalette[0],
-            type: ui5.viz.ChartSeriesType.RibbonSpline
+            type: ui5.viz.ChartSeriesType.RibbonSpline,
           },
           {
             name: 'Bears 🐻',
             dataPoints: [1, 2, 0, 2, 1, 3, null, null],
             type: ui5.viz.ChartSeriesType.Spline,
-            color: aColorPalette[1]
+            color: aColorPalette[1],
           },
           {
             name: 'Bears Forecast',
             dataPoints: [null, null, null, null, null, 3, 5, 9],
             type: ui5.viz.ChartSeriesType.Spline,
             color: aColorPalette[1],
-            forecast: true
+            forecast: true,
           },
           {
             name: 'Deers 🦌',
             dataPoints: [14, 20, 18, 23, 17, 18, null, null],
             type: ui5.viz.ChartSeriesType.Spline,
-            color: aColorPalette[2]
+            color: aColorPalette[2],
           },
           {
             name: 'Deers Forecast',
             dataPoints: [null, null, null, null, null, 18, 19, 12],
             type: ui5.viz.ChartSeriesType.Spline,
             color: aColorPalette[2],
-            forecast: true
-          }
-        ]
+            forecast: true,
+          },
+        ],
       })
 
       this.getView().setModel(oModel, 'store')
@@ -111,6 +111,6 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'], function(
 
     oneSelectorPress(oEvent) {
       Toast.show('Line Selector pressed: ' + oEvent.getSource().getTitle())
-    }
+    },
   })
 })
