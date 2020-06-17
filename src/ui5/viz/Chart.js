@@ -2140,11 +2140,21 @@ sap.ui.define(
             this.fireChartDataUpdate()
 
             // ensure repaint is performed, after load animation is done
+            const fnSecureFlush = function () {
+              // Catch all errors here, as chart could already be destroyed due to timeout (PSA-3015)
+              try {
+                this._chart.flush()
+              } catch (error) {
+                console.warn(
+                  'Could not flush, probably chart is destroyed already'
+                )
+              }
+            }.bind(this)
             setTimeout(
-              this._chart.flush,
+              fnSecureFlush,
               this._chart.internal.config.transition_duration
             )
-            lodashDefer(this._chart.flush)
+            lodashDefer(fnSecureFlush)
           },
         }
         this._chart.load(aUpdateSeries)
