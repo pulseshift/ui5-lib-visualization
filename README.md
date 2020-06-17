@@ -207,7 +207,7 @@ If the app build matches your requirements, upload your build to **npm**:
 yarn publish
 ```
 
-_When asket for bumping the version, please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)._
+_When asked for bumping the version, please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)._
 
 ### Contributing & Troubleshooting
 
