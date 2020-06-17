@@ -123,68 +123,26 @@
   // highlight rules for data points
   // 1. PULSATE
   circle.ui5-viz-chart-point-highlight-pulsate {
-    -webkit-animation: pulsating-circle 2s ease-out infinite;
-    -moz-animation: pulsating-circle 2s ease-out infinite;
-    -o-animation: pulsating-circle 2s ease-out infinite;
     animation: pulsating-circle 2s ease-out infinite;
+    stroke: inherit;
   }
 
   // PULSATE ANIMATION
-  /* clean-css ignore:start */
-  @-webkit-keyframes pulsating-circle {
-    0% {
-      r: 3.5;
-      opacity: 1;
-    }
-    20% {
-      r: 6;
-      opacity: 1;
-    }
-    100% {
-      r: 3.5;
-      opacity: 1;
-    }
-  }
-  @-moz-keyframes pulsating-circle {
-    0% {
-      r: 3.5;
-      opacity: 1;
-    }
-    20% {
-      r: 6;
-      opacity: 1;
-    }
-    100% {
-      r: 3.5;
-      opacity: 1;
-    }
-  }
-  @-ms-keyframes pulsating-circle {
-    0% {
-      r: 3.5;
-      opacity: 1;
-    }
-    20% {
-      r: 6;
-      opacity: 1;
-    }
-    100% {
-      r: 3.5;
-      opacity: 1;
-    }
-  }
   @keyframes pulsating-circle {
     0% {
+      /* clean-css ignore:start */
       r: 3.5;
-      opacity: 1;
+      /* clean-css ignore:end */
     }
     20% {
+      /* clean-css ignore:start */
       r: 6;
-      opacity: 1;
+      /* clean-css ignore:end */
     }
     100% {
+      /* clean-css ignore:start */
       r: 3.5;
-      opacity: 1;
+      /* clean-css ignore:end */
     }
   }
   /* clean-css ignore:end */

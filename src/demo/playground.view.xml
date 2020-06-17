@@ -174,7 +174,7 @@
             value="{store>}"
             low="{store>low}"
             high="{store>high}"
-            highlightAnimation="None"
+            highlightAnimation="Pulsate"
             type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
         </ChartSeries>
       </series>

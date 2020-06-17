@@ -529,8 +529,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     onAfterRendering: function onAfterRendering() {
       var _this = this;
 
-      console.log('onAfterRendering'); // exit if chart is not availale in DOM
-
+      // console.log('onAfterRendering')
+      // exit if chart is not availale in DOM
       if (!this.getDomRef()) {
         return;
       }
@@ -1942,8 +1942,17 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           _this5.fireChartDataUpdate(); // ensure repaint is performed, after load animation is done
 
 
-          setTimeout(_this5._chart.flush, _this5._chart.internal.config.transition_duration);
-          lodashDefer(_this5._chart.flush);
+          var fnSecureFlush = function () {
+            // Catch all errors here, as chart could already be destroyed due to timeout (PSA-3015)
+            try {
+              this._chart.flush();
+            } catch (error) {
+              console.warn('Could not flush, probably chart is destroyed already');
+            }
+          }.bind(_this5);
+
+          setTimeout(fnSecureFlush, _this5._chart.internal.config.transition_duration);
+          lodashDefer(fnSecureFlush);
         }
       };
 
