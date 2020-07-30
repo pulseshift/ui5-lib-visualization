@@ -1369,38 +1369,38 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@openui5/sap.m@1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@openui5/sap.m/-/sap.m-1.79.0.tgz#387705d2b89e0da3f3c7ef2ba1537d91b9090109"
-  integrity sha512-OXxWl4zo23Nk01ePEv7GLWG1/Oi0K44LNK7ovqyXsWSJmnfrfJdnscM9bf0bM5MflUkdqkQBIPU5bHM3Bby5GQ==
+"@openui5/sap.m@1.77.2":
+  version "1.77.2"
+  resolved "https://registry.yarnpkg.com/@openui5/sap.m/-/sap.m-1.77.2.tgz#c90c81c07f0351af540a7350f8e0ba3951acdb42"
+  integrity sha512-SRqIk0oJhzfVARbdnUGkCB2QJ+MbrBfIm6Nbw79zHpJ1A0rdCC/1NpSwqbF94Hy4db7bFcJkDs9TyBgz333IQg==
   dependencies:
-    "@openui5/sap.ui.core" "1.79.0"
-    "@openui5/sap.ui.layout" "1.79.0"
-    "@openui5/sap.ui.unified" "1.79.0"
+    "@openui5/sap.ui.core" "1.77.2"
+    "@openui5/sap.ui.layout" "1.77.2"
+    "@openui5/sap.ui.unified" "1.77.2"
 
-"@openui5/sap.ui.core@1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.core/-/sap.ui.core-1.79.0.tgz#70e18b2447d462fd82508b2f1777a842d934f52e"
-  integrity sha512-GBNE03TFpHjEdgPwBuJzBFa8Z2uOfxiJLFOlke4++ckNOssXAbsTHPwRqcoqPoVRQwWw0i25c2zbhetHFt+oGg==
+"@openui5/sap.ui.core@1.77.2":
+  version "1.77.2"
+  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.core/-/sap.ui.core-1.77.2.tgz#610de9ac01913c793eb20db0fdfebb75a8c42721"
+  integrity sha512-L5mMy8sEx4v65Q55p7M8jeBjxHq1lyBp0hieFvwyK69FCIlXbUpkXKHI5/DZSMVUtI4bWMYRnKSSj3udROjPmw==
 
-"@openui5/sap.ui.layout@1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.layout/-/sap.ui.layout-1.79.0.tgz#3e48fc754407352b6838ba5317310c54f3233d11"
-  integrity sha512-atP/7yXJZaOHlSCw4S7LLIHdmEVvTouL7Yj5ahi3vrTMiT0RDLj4QGwXCFoFX5bKh0Zzb1tmSvPm3qtd079KkA==
+"@openui5/sap.ui.layout@1.77.2":
+  version "1.77.2"
+  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.layout/-/sap.ui.layout-1.77.2.tgz#6d0030470379f5c204a6ce767dba3ba7a1512509"
+  integrity sha512-VAK+taksU9kvm1jtZGYdzx2N5DG33vIZnkglZVbfCRTp+SAtE1osmUjmW+cbu/gvrs/v1Dn+tOW8k5vUUlhmSw==
   dependencies:
-    "@openui5/sap.ui.core" "1.79.0"
+    "@openui5/sap.ui.core" "1.77.2"
 
-"@openui5/sap.ui.unified@1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.unified/-/sap.ui.unified-1.79.0.tgz#54eece718bc1dd0eacf49ed6bd7c71144bc9e887"
-  integrity sha512-MYZ4coJuon3anTkokMK7J7tyaNtwaaxB7QSmT/phhqGePys1kGuZ1U68J73c/viqQseTXisPqbDH7Z2MPzDQ6A==
+"@openui5/sap.ui.unified@1.77.2":
+  version "1.77.2"
+  resolved "https://registry.yarnpkg.com/@openui5/sap.ui.unified/-/sap.ui.unified-1.77.2.tgz#a7d9317992182d80e3acc82ef455a4ce0103fab2"
+  integrity sha512-UJgBCINy9OXXQ8NhWvKys29IRNGQF9GmrM8vK1eWrZesmBcqHxVfSPbuAs4nk6Gbd48AE/tMnfN5c3O+8IMGPA==
   dependencies:
-    "@openui5/sap.ui.core" "1.79.0"
+    "@openui5/sap.ui.core" "1.77.2"
 
-"@openui5/themelib_sap_belize@1.79.0":
-  version "1.79.0"
-  resolved "https://registry.yarnpkg.com/@openui5/themelib_sap_belize/-/themelib_sap_belize-1.79.0.tgz#6cbb7f37a85746a40aca834304a84dde5c32ebb8"
-  integrity sha512-gY3iu2E5HrWcCFWMgBTELvXxDntZsPJxLjztK9/LxLOUYtu4Q2CL+gEgji6ptG0Py2ZhPJjliUuI3mOo5zw5Dw==
+"@openui5/themelib_sap_belize@1.77.2":
+  version "1.77.2"
+  resolved "https://registry.yarnpkg.com/@openui5/themelib_sap_belize/-/themelib_sap_belize-1.77.2.tgz#a6e265308b0d7bf02f82dd492d5de733ce81542b"
+  integrity sha512-uSW83NVUhwzUOLu0GT4WhT0c7aPHRpIGltVV3fwebdQiRBipXJUJlkP52/bEqkryFpx75yJDmuNQhsAR2K7qpg==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -5144,9 +5144,9 @@ elegant-spinner@^1.0.1:
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
 
 elliptic@^6.0.0, elliptic@^6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.2.tgz#05c5678d7173c049d8ca433552224a495d0e3762"
-  integrity sha512-f4x70okzZbIQl/NSRLkI/+tteV/9WqL98zx+SQ69KbXxmVrmjwsNUPn/gYJJ0sHvEak24cZgHIPegRePAtA/xw==
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"
+  integrity sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"
