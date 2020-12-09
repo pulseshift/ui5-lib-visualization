@@ -327,13 +327,13 @@ sap.ui.define(
           halt() {
             ++Chart._haltCount
             if (Chart._haltCount !== 0) {
-              Chart.setBusy(true)
+              // Chart.setBusy(true)
             }
           },
           release() {
             --Chart._haltCount
             if (Chart._haltCount === 0) {
-              Chart.setBusy(false)
+              // Chart.setBusy(false)
             }
           },
           isHalted() {
@@ -499,12 +499,14 @@ sap.ui.define(
        * @override
        */
       onBeforeRendering() {
+        // console.log('onBeforeRendering')
         // don't process update routine rendering procedure
         this._getChartUpdateHandler().halt()
 
         // destroy chart before rerendering
         if (this._chart) {
           this._chart.destroy()
+          this._chart = null
         }
       },
 
@@ -536,8 +538,10 @@ sap.ui.define(
         // console.log('onAfterRendering')
         // exit if chart is not availale in DOM
         if (!this.getDomRef()) {
+          // console.log('onAfterRendering - no DOM ref')
           return
         }
+        // console.log('onAfterRendering')
 
         const oXAxis = this.getXAxis()
         const oYAxis = this.getYAxis()
@@ -1143,7 +1147,12 @@ sap.ui.define(
        * @private
        * @override
        */
-      exit() {},
+      exit() {
+        if (this._chart) {
+          this._chart.destroy()
+          this._chart = null
+        }
+      },
 
       /* =========================================================== */
       /* override methods                                            */
@@ -1977,12 +1986,12 @@ sap.ui.define(
       },
 
       /**
-       * Update chart data. This method shoud only be called in a debounced mode.
+       * Update chart data. This method should only be called in a debounced mode.
        *
        * @private
        */
       _onDataUpdate() {
-        // exit if chart is not availalein DOM
+        // exit if chart is not available in DOM
         if (!this.getDomRef()) {
           return
         }
