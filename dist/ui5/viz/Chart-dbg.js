@@ -322,15 +322,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         halt: function halt() {
           ++Chart._haltCount;
 
-          if (Chart._haltCount !== 0) {
-            Chart.setBusy(true);
+          if (Chart._haltCount !== 0) {// Chart.setBusy(true)
           }
         },
         release: function release() {
           --Chart._haltCount;
 
-          if (Chart._haltCount === 0) {
-            Chart.setBusy(false);
+          if (Chart._haltCount === 0) {// Chart.setBusy(false)
           }
         },
         isHalted: function isHalted() {
@@ -494,12 +492,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     onBeforeRendering: function onBeforeRendering() {
+      // console.log('onBeforeRendering')
       // don't process update routine rendering procedure
       this._getChartUpdateHandler().halt(); // destroy chart before rerendering
 
 
       if (this._chart) {
         this._chart.destroy();
+
+        this._chart = null;
       }
     },
 
@@ -532,15 +533,22 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // console.log('onAfterRendering')
       // exit if chart is not availale in DOM
       if (!this.getDomRef()) {
+        // console.log('onAfterRendering - no DOM ref')
         return;
-      }
+      } // console.log('onAfterRendering')
+
 
       var oXAxis = this.getXAxis();
       var oYAxis = this.getYAxis();
       var oY2Axis = this.getY2Axis();
       var aSeries = this.getSeries();
       var sChartHtmlID = this.getId();
-      var aHighlightedDataPoints = []; // enable/disable axis depending on microMode is active or not
+      var aHighlightedDataPoints = []; // Needs to be adapted for new types!
+
+      var aNoXAxisTypes = [ui5.viz.ChartSeriesType.Pie, ui5.viz.ChartSeriesType.Donut];
+      var bNeedsXAxis = aSeries.some(function (s) {
+        return !aNoXAxisTypes.includes(s.getType());
+      }); // enable/disable axis depending on microMode is active or not
 
       if (this.getMicroMode()) {
         var suppressRerender = true;
@@ -565,6 +573,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
           bottom: oXAxis.getShowTitle() && oXAxis.getVisible() && oXAxis.getTitle() ? 15 : undefined,
           left: this.getMicroMode() ? 0 : undefined,
           right: this.getMicroMode() ? 0 : undefined
+        },
+        interaction: {
+          enabled: !this.getMicroMode()
         },
         subchart: {
           show: this.getShowSubchart()
@@ -623,47 +634,65 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         line: {
           connectNull: true
         },
+        pie: {
+          label: {
+            show: !this.getMicroMode()
+          }
+        },
+        donut: {
+          label: {
+            show: !this.getMicroMode()
+          }
+        },
         data: {
-          x: 'x',
-          columns: [// add x axis values first
-          ['x'].concat(_toConsumableArray(oXAxis.getLabels().map(function (oLabel, iIndex) {
-            var vValue = oLabel.getValue(); // check if an index based formatter function must be used or a time based formatter
+          x: bNeedsXAxis ? 'x' : undefined,
+          columns: function () {
+            // add series e.g. ['data1', 1, 4, 6, 8, 10, ...]
+            var aColumns = aSeries.map(function (oSeries) {
+              // get all data points
+              var aData = oSeries.getData().map(function (oDataPoint, iIndex) {
+                // check if data point should be highlighted
+                var isVisible = oDataPoint.getVisible();
 
-            switch (_this.getXAxisType()) {
-              // TIME BASED VALUES
-              case library.AxisType.Time:
-                return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined;
-              // INDEX BASED LABELS
+                if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
+                  aHighlightedDataPoints.push({
+                    series: oSeries.getKey(),
+                    point: iIndex,
+                    animation: oDataPoint.getHighlightAnimation()
+                  });
+                }
 
-              case library.AxisType.Indexed:
-                return parseFloat(vValue) || iIndex;
-              // CATEGORY BASED LABELS
+                return oDataPoint.getValueOrValuePair();
+              }) || []; // add key of data series
 
-              case library.AxisType.Category:
-              default:
-                return vValue;
+              aData.unshift(oSeries.getKey()); // return series structure
+
+              return aData; // e.g. ['data1', 1, 4, 6, 8, 10, ...]
+            });
+
+            if (bNeedsXAxis) {
+              aColumns.unshift(['x'].concat(_toConsumableArray(oXAxis.getLabels().map(function (oLabel, iIndex) {
+                var vValue = oLabel.getValue(); // check if an index based formatter function must be used or a time based formatter
+
+                switch (_this.getXAxisType()) {
+                  // TIME BASED VALUES
+                  case library.AxisType.Time:
+                    return /^\d{4}-\d{2}-\d{2}$/.test(vValue) ? vValue : undefined;
+                  // INDEX BASED LABELS
+
+                  case library.AxisType.Indexed:
+                    return parseFloat(vValue) || iIndex;
+                  // CATEGORY BASED LABELS
+
+                  case library.AxisType.Category:
+                  default:
+                    return vValue;
+                }
+              }))));
             }
-          })))].concat(_toConsumableArray(aSeries.map(function (oSeries) {
-            // get all data points
-            var aData = oSeries.getData().map(function (oDataPoint, iIndex) {
-              // check if data point should be highlighted
-              var isVisible = oDataPoint.getVisible();
 
-              if (isVisible && oDataPoint.getHighlightAnimation() !== library.DataPointAnimation.None) {
-                aHighlightedDataPoints.push({
-                  series: oSeries.getKey(),
-                  point: iIndex,
-                  animation: oDataPoint.getHighlightAnimation()
-                });
-              }
-
-              return oDataPoint.getValueOrValuePair();
-            }) || []; // add key of data series
-
-            aData.unshift(oSeries.getKey()); // return series structure
-
-            return aData; // e.g. ['data1', 1, 4, 6, 8, 10, ...]
-          }))),
+            return aColumns;
+          }(),
           axes: aSeries.length === 0 ? [] : aSeries.reduce(function (oTypes, oSeries) {
             // return a map with the structure: { @seriesKey: @seriesYAxis, ... }
             oTypes[oSeries.getKey()] = oSeries.getYAxis().toLowerCase();
@@ -1017,7 +1046,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @private
      * @override
      */
-    exit: function exit() {},
+    exit: function exit() {
+      if (this._chart) {
+        this._chart.destroy();
+
+        this._chart = null;
+      }
+    },
 
     /* =========================================================== */
 
@@ -1814,14 +1849,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     },
 
     /**
-     * Update chart data. This method shoud only be called in a debounced mode.
+     * Update chart data. This method should only be called in a debounced mode.
      *
      * @private
      */
     _onDataUpdate: function _onDataUpdate() {
       var _this5 = this;
 
-      // exit if chart is not availalein DOM
+      // exit if chart is not available in DOM
       if (!this.getDomRef()) {
         return;
       } // don't call update routine if it is halted

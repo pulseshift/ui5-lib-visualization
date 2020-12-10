@@ -34,21 +34,21 @@ All properties have corresponding getters and setters. ([read which property met
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `dataVisible` | `boolean` | `true` | Shows or hides data series and legend. |
-| `width` | [sap.ui.core.CSSSize](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSSize) | `100%` | A CSS size property defining the width of the chart. |
-| `height` | [sap.ui.core.CSSSize](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSSize) | `360px` | A CSS size property defining the hright of the chart. |
-| `showSubchart` | `boolean` | `false` | Shows a subchart for naviagtion Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `microMode` | `boolean` | `false` | Enables the chart to be displayed an a small scale Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `zoomEnabled` | `boolean` | `false` | Enables zoom functionality (inactive if subchart is used). |
-| `clipZoomOverflow` | `boolean` | `true` | If true, elements outside of the chart area (happend during zooming) is hidden. |
-| `showDataPoints` | `boolean` | `true` | If false, data points on lines or splines are hidden. |
-| `backgroundColor` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `transparent` | Sets the background color of the chart. |
-| `legendPosition` | `ui5.viz.ChartLegendPosition` | `library.ChartLegendPosition.Right` | Sets the legend position Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `showLegend` | `boolean` | `false` | Sets tthe legend visibility. |
-| `showTooltip` | `boolean` | `false` | Enables tooltips on chart data elements Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `groupedTooltip` | `boolean` | `false` | Sets the tooltip behaviour, whether it should show tooltip for grouped or single data points Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `switchAxisPosition` | `boolean` | `false` | Switches x (by default horizontally) and y (by default vertically) axis Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `xAxisType` | `ui5.viz.AxisType` | `library.AxisType.Category` | Set type of x axis Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `dataVisible` | `boolean` | `true,` | Shows or hides data series and legend. |
+| `width` | [sap.ui.core.CSSSize](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSSize) | `100%,` | A CSS size property defining the width of the chart. |
+| `height` | [sap.ui.core.CSSSize](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSSize) | `360px,` | A CSS size property defining the hright of the chart. |
+| `showSubchart` | `boolean` | `false,` | Shows a subchart for naviagtion Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `microMode` | `boolean` | `false,` | Enables the chart to be displayed an a small scale Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `zoomEnabled` | `boolean` | `false,` | Enables zoom functionality (inactive if subchart is used). |
+| `clipZoomOverflow` | `boolean` | `true,` | If true, elements outside of the chart area (happend during zooming) is hidden. |
+| `showDataPoints` | `boolean` | `true,` | If false, data points on lines or splines are hidden. |
+| `backgroundColor` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `transparent,` | Sets the background color of the chart. |
+| `legendPosition` | `ui5.viz.ChartLegendPosition` | `library.ChartLegendPosition.Right,` | Sets the legend position Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `showLegend` | `boolean` | `false,` | Sets tthe legend visibility. |
+| `showTooltip` | `boolean` | `false,` | Enables tooltips on chart data elements Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `groupedTooltip` | `boolean` | `false,` | Sets the tooltip behaviour, whether it should show tooltip for grouped or single data points Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `switchAxisPosition` | `boolean` | `false,` | Switches x (by default horizontally) and y (by default vertically) axis Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `xAxisType` | `ui5.viz.AxisType` | `library.AxisType.Category,` | Set type of x axis Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
 
 ## Aggregations
 All aggregations have one getter and several mutating methods depending on their cardinality. ([read which aggregation methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))

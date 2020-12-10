@@ -16,13 +16,13 @@ All properties have corresponding getters and setters. ([read which property met
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `title` | `string` | `null` | Sets the ttitleext of the ChartArea. |
-| `style` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Solid` | Sets the style of the shape. |
-| `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null` | Sets a custom color for the area. |
-| `axis` | `ui5.viz.Axis` | `library.Axis.X` | Sets the referenced y axis the line value property is related to. |
-| `visible` | `boolean` | `true` | Sets visibility of the element. |
-| `startValue` | `string` | `null` | Sets value that is matching a start position on the assigned axis. |
-| `endValue` | `string` | `null` | Sets value that is matching a end position on the assigned axis. |
+| `title` | `string` | `null}` | Sets the ttitleext of the ChartArea. |
+| `style` | `ui5.viz.ShapeStyle` | `library.ShapeStyle.Solid,` | Sets the style of the shape. |
+| `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null,` | Sets a custom color for the area. |
+| `axis` | `ui5.viz.Axis` | `library.Axis.X,` | Sets the referenced y axis the line value property is related to. |
+| `visible` | `boolean` | `true,` | Sets visibility of the element. |
+| `startValue` | `string` | `null}` | Sets value that is matching a start position on the assigned axis. |
+| `endValue` | `string` | `null},` | Sets value that is matching a end position on the assigned axis. |
 
 ## Aggregations
 There are no public aggregations defined for `ui5.viz.ChartArea`.

@@ -16,13 +16,13 @@ All properties have corresponding getters and setters. ([read which property met
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `title` | `string` | `null` | Sets axis title. |
-| `showTitle` | `boolean` | `true` | Sets axis title visibility. |
-| `showGridLines` | `boolean` | `false` | Sets visibility of grid lines Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
-| `minValue` | `string` | `null` | Sets the minimal value of the axis. (use index/position for category X-axis, too). |
-| `maxValue` | `string` | `null` | Sets the maximal value of the axis. (use index/position for category X-axis, too). |
-| `autoTickValues` | `boolean` | `false` | Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values. |
-| `visible` | `boolean` | `true` | Sets visibility of the element. |
+| `title` | `string` | `null}` | Sets axis title. |
+| `showTitle` | `boolean` | `true,` | Sets axis title visibility. |
+| `showGridLines` | `boolean` | `false,` | Sets visibility of grid lines Hint: live update by c3 API is not supported, yet, therefore we must rerender the chart. |
+| `minValue` | `string` | `null}` | Sets the minimal value of the axis. (use index/position for category X-axis, too). |
+| `maxValue` | `string` | `null}` | Sets the maximal value of the axis. (use index/position for category X-axis, too). |
+| `autoTickValues` | `boolean` | `false,` | Flag wether or not the <code>ui5.viz.ChartAxisLabel</code> should be used to define tick values. |
+| `visible` | `boolean` | `true,` | Sets visibility of the element. |
 
 ## Aggregations
 All aggregations have one getter and several mutating methods depending on their cardinality. ([read which aggregation methods are defined automatically](https://sapui5.hana.ondemand.com/#/api/sap.ui.base.ManagedObject))

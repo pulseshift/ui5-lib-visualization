@@ -16,7 +16,7 @@ All properties have corresponding getters and setters. ([read which property met
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null` | Sets the CSS value for the color. |
+| `color` | [sap.ui.core.CSSColor](https://openui5.hana.ondemand.com/#/api/sap.ui.core.CSSColor) | `null,` | Sets the CSS value for the color. |
 
 ## Aggregations
 There are no public aggregations defined for `ui5.viz.Color`.

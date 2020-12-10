@@ -16,9 +16,9 @@ All properties have corresponding getters and setters. ([read which property met
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| `value` | `any` | `null` | Sets axis value. |
-| `title` | `string` | `null` | Sets axis label title. |
-| `visible` | `boolean` | `true` | Sets visibility of the element. |
+| `value` | `any` | `null}` | Sets axis value. |
+| `title` | `string` | `null}` | Sets axis label title. |
+| `visible` | `boolean` | `true,` | Sets visibility of the element. |
 
 ## Aggregations
 There are no public aggregations defined for `ui5.viz.ChartAxisLabel`.
