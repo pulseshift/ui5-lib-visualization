@@ -1,44 +1,76 @@
 <mvc:View
-  xmlns:mvc="sap.ui.core.mvc"
-  xmlns="ui5.viz"
-  xmlns:m="sap.m"
-  height="100%"
-  controllerName="ui5.demo.playground">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="ui5.viz"
+    xmlns:m="sap.m"
+    height="100%"
+    controllerName="ui5.demo.playground">
   <m:Page
-    class="sapUiContentPadding"
-    floatingFooter="true">
+      class="sapUiContentPadding"
+      floatingFooter="true">
     <m:customHeader>
       <m:Toolbar>
-        <m:ToolbarSpacer/>
-        <m:Title text="{store>/title}" level="H2"/>
-        <m:ToolbarSpacer/>
+        <m:ToolbarSpacer />
+        <m:Title
+            text="{store>/title}"
+            level="H2" />
+        <m:ToolbarSpacer />
       </m:Toolbar>
     </m:customHeader>
     <m:subHeader>
       <m:Toolbar>
-        <m:Title class="sapUiTinyMarginBegin" text="Y Axis" />
-        <m:ToggleButton text="Min" pressed="{store>/yAxis/minEnabled}" />
-        <m:ToggleButton text="Max" pressed="{store>/yAxis/maxEnabled}" />
-        <m:ToggleButton text="Grid" pressed="{store>/yAxis/gridLines}" />
-        <m:ToggleButton text="Custom Labels" pressed="{store>/yAxis/customTicks}" />
-        <m:ToolbarSpacer/>
-        <m:Title class="sapUiTinyMarginBegin" text="X Axis" />
-        <m:ToggleButton text="Lines" pressed="{store>/lines/show}" />
-        <m:SegmentedButton selectedKey="{store>/lines/style}" enabled="{store>/lines/show}">
+        <m:Title
+            class="sapUiTinyMarginBegin"
+            text="Y Axis" />
+        <m:ToggleButton
+            text="Min"
+            pressed="{store>/yAxis/minEnabled}" />
+        <m:ToggleButton
+            text="Max"
+            pressed="{store>/yAxis/maxEnabled}" />
+        <m:ToggleButton
+            text="Grid"
+            pressed="{store>/yAxis/gridLines}" />
+        <m:ToggleButton
+            text="Custom Labels"
+            pressed="{store>/yAxis/customTicks}" />
+        <m:ToolbarSpacer />
+        <m:Title
+            class="sapUiTinyMarginBegin"
+            text="X Axis" />
+        <m:ToggleButton
+            text="Lines"
+            pressed="{store>/lines/show}" />
+        <m:SegmentedButton
+            selectedKey="{store>/lines/style}"
+            enabled="{store>/lines/show}">
           <m:items>
-            <m:SegmentedButtonItem text="Solid" key="Solid" />
-            <m:SegmentedButtonItem text="Dashed" key="Dashed" />
-            <m:SegmentedButtonItem text="Dotted" key="Dotted" />
+            <m:SegmentedButtonItem
+                text="Solid"
+                key="Solid" />
+            <m:SegmentedButtonItem
+                text="Dashed"
+                key="Dashed" />
+            <m:SegmentedButtonItem
+                text="Dotted"
+                key="Dotted" />
           </m:items>
         </m:SegmentedButton>
-        <m:ToggleButton text="Areas" pressed="{store>/areas/show}" />
-        <m:SegmentedButton selectedKey="{store>/areas/style}" enabled="{store>/areas/show}">
+        <m:ToggleButton
+            text="Areas"
+            pressed="{store>/areas/show}" />
+        <m:SegmentedButton
+            selectedKey="{store>/areas/style}"
+            enabled="{store>/areas/show}">
           <m:items>
-            <m:SegmentedButtonItem text="Solid" key="Solid" />
-            <m:SegmentedButtonItem text="Striped" key="Striped" />
+            <m:SegmentedButtonItem
+                text="Solid"
+                key="Solid" />
+            <m:SegmentedButtonItem
+                text="Striped"
+                key="Striped" />
           </m:items>
         </m:SegmentedButton>
-        <m:ToolbarSpacer/>
+        <m:ToolbarSpacer />
       </m:Toolbar>
     </m:subHeader>
 
@@ -56,126 +88,176 @@
       <m:ToolbarSpacer/>
     </m:Toolbar> -->
 
-    <m:GenericTile
-      class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
-      header="{store>/yAxis/title}"
-      subheader="Spline Microchart">
-      <m:TileContent
-        footer="last 6 months +">
-        <Chart
-          width="{store>/tileContentWidth}"
-          height="{store>/tileContentHeight}"
-          showTooltip="false"
-          microMode="true"
-          xAxisType="Category"
-          showDataPoints="false"
-          series="{store>/series}">
-          <ChartSeries
+    <m:HBox renderType="Bare">
+      <m:GenericTile
+          class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+          header="{store>/yAxis/title}"
+          subheader="Spline Microchart">
+        <m:TileContent footer="last 6 months +">
+          <Chart
+              width="{store>/tileContentWidth}"
+              height="{store>/tileContentHeight}"
+              showTooltip="false"
+              microMode="true"
+              xAxisType="Category"
+              showDataPoints="false"
+              series="{store>/series}">
+            <ChartSeries
+                type="{store>type}"
+                name="{store>name}"
+                lineStyle="{= ${store>forecast} ? 'Dashed' : 'Solid' }"
+                lineAnimationSpeed="Slow"
+                color="{store>color}"
+                data="{
+                path: 'store>dataPoints',
+                templateShareable: false
+              }">
+              <ChartDataPoint
+                  value="{store>}"
+                  low="{store>low}"
+                  high="{store>high}"
+                  type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
+            </ChartSeries>
+            <xAxis>
+              <ChartAxis labels="{
+                  path: 'store>/xAxis/labels',
+                  templateShareable: false
+                }">
+                <ChartAxisLabel value="{store>}" />
+              </ChartAxis>
+            </xAxis>
+          </Chart>
+        </m:TileContent>
+      </m:GenericTile>
+  
+      <m:GenericTile
+          class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+          header="Overall Population"
+          subheader="Area Spline Microchart">
+        <m:TileContent footer="last 6 months">
+          <Chart
+              width="{store>/tileContentWidth}"
+              height="{store>/tileContentHeight}"
+              showTooltip="false"
+              microMode="true"
+              xAxisType="Indexed"
+              showDataPoints="false">
+            <ChartSeries
+                type="AreaSpline"
+                groupKey="overallPopulationStack">
+              <ChartDataPoint value="3" />
+              <ChartDataPoint value="5" />
+              <ChartDataPoint value="8" />
+              <ChartDataPoint value="4" />
+            </ChartSeries>
+            <ChartSeries
+                type="AreaSpline"
+                groupKey="overallPopulationStack">
+              <ChartDataPoint value="3" />
+              <ChartDataPoint value="5" />
+              <ChartDataPoint value="8" />
+              <ChartDataPoint value="4" />
+            </ChartSeries>
+            <ChartSeries
+                type="AreaSpline"
+                groupKey="overallPopulationStack">
+              <ChartDataPoint value="3" />
+              <ChartDataPoint value="5" />
+              <ChartDataPoint value="8" />
+              <ChartDataPoint value="4" />
+            </ChartSeries>
+            <xAxis>
+              <ChartAxis>
+                <ChartAxisLabel value="1" />
+                <ChartAxisLabel value="2" />
+                <ChartAxisLabel value="3" />
+                <ChartAxisLabel value="4" />
+              </ChartAxis>
+            </xAxis>
+          </Chart>
+        </m:TileContent>
+      </m:GenericTile>
+  
+  
+      <m:GenericTile
+          class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+          header="Age Distribution"
+          subheader="Pie Microchart">
+        <m:TileContent footer="current">
+          <Chart
+              width="{store>/tileContentWidth}"
+              height="{store>/tileContentHeight}"
+              showTooltip="false"
+              microMode="true">
+            <ChartSeries type="Pie">
+              <ChartDataPoint value="3" />
+            </ChartSeries>
+            <ChartSeries type="Pie">
+              <ChartDataPoint value="8" />
+            </ChartSeries>
+            <ChartSeries type="Pie">
+              <ChartDataPoint value="4" />
+            </ChartSeries>
+          </Chart>
+        </m:TileContent>
+      </m:GenericTile>
+  
+      <m:GenericTile
+          class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
+          header="Age Distribution"
+          subheader="Donut Microchart">
+        <m:TileContent footer="current">
+          <Chart
+              width="{store>/tileContentWidth}"
+              height="{store>/tileContentHeight}"
+              showTooltip="false"
+              microMode="true">
+            <ChartSeries type="Donut">
+              <ChartDataPoint value="3" />
+            </ChartSeries>
+            <ChartSeries type="Donut">
+              <ChartDataPoint value="8" />
+            </ChartSeries>
+            <ChartSeries type="Donut">
+              <ChartDataPoint value="4" />
+            </ChartSeries>
+          </Chart>
+        </m:TileContent>
+      </m:GenericTile>
+    </m:HBox>
+
+
+    <!-- Axis CHART -->
+    <m:Title
+    text="Line Chart"
+    titleStyle="H2"
+    class="sapUiMediumMarginTop" />
+    <Chart
+        width="{store>/width}"
+        height="{store>/height}"
+        showTooltip="{store>/showTooltip}"
+        groupedTooltip="{store>/groupedTooltip}"
+        showLegend="{store>/showLegend}"
+        legendPosition="Bottom"
+        xAxisType="Category"
+        series="{store>/series}">
+      <series>
+        <ChartSeries
             type="{store>type}"
             name="{store>name}"
             lineStyle="{= ${store>forecast} ? 'Dashed' : 'Solid' }"
             lineAnimationSpeed="Slow"
             color="{store>color}"
             data="{
-              path: 'store>dataPoints',
-              templateShareable: false
-            }">
-            <ChartDataPoint
-              value="{store>}"
-              low="{store>low}"
-              high="{store>high}"
-              type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
-          </ChartSeries>
-          <xAxis>
-            <ChartAxis
-              labels="{
-                path: 'store>/xAxis/labels',
-                templateShareable: false
-              }">
-              <ChartAxisLabel value="{store>}" />
-            </ChartAxis>
-          </xAxis>
-        </Chart>
-      </m:TileContent>
-    </m:GenericTile>
-
-    <m:GenericTile
-      class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom"
-      header="Overall Population"
-      subheader="Area Spline Microchart">
-      <m:TileContent
-        footer="last 6 months">
-        <Chart
-          width="{store>/tileContentWidth}"
-          height="{store>/tileContentHeight}"
-          showTooltip="false"
-          microMode="true"
-          xAxisType="Indexed"
-          showDataPoints="false">
-          <ChartSeries
-            type="AreaSpline"
-            groupKey="overallPopulationStack">
-            <ChartDataPoint value="3" />
-            <ChartDataPoint value="5" />
-            <ChartDataPoint value="8" />
-            <ChartDataPoint value="4" />
-          </ChartSeries>
-          <ChartSeries
-            type="AreaSpline"
-            groupKey="overallPopulationStack">
-            <ChartDataPoint value="3" />
-            <ChartDataPoint value="5" />
-            <ChartDataPoint value="8" />
-            <ChartDataPoint value="4" />
-          </ChartSeries>
-          <ChartSeries
-            type="AreaSpline"
-            groupKey="overallPopulationStack">
-            <ChartDataPoint value="3" />
-            <ChartDataPoint value="5" />
-            <ChartDataPoint value="8" />
-            <ChartDataPoint value="4" />
-          </ChartSeries>
-          <xAxis>
-            <ChartAxis>
-              <ChartAxisLabel value="1" />
-              <ChartAxisLabel value="2" />
-              <ChartAxisLabel value="3" />
-              <ChartAxisLabel value="4" />
-            </ChartAxis>
-          </xAxis>
-        </Chart>
-      </m:TileContent>
-    </m:GenericTile>
-
-
-    <!-- CHART -->
-    <Chart
-      width="{store>/width}"
-      height="{store>/height}"
-      showTooltip="{store>/showTooltip}"
-      groupedTooltip="{store>/groupedTooltip}"
-      showLegend="{store>/showLegend}"
-      legendPosition="Bottom"
-      xAxisType="Category"
-      series="{store>/series}">
-      <series>
-        <ChartSeries
-          type="{store>type}"
-          name="{store>name}"
-          lineStyle="{= ${store>forecast} ? 'Dashed' : 'Solid' }"
-          lineAnimationSpeed="Slow"
-          color="{store>color}"
-          data="{
             path: 'store>dataPoints',
             templateShareable: false
           }">
           <ChartDataPoint
-            value="{store>}"
-            low="{store>low}"
-            high="{store>high}"
-            highlightAnimation="Pulsate"
-            type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
+              value="{store>}"
+              low="{store>low}"
+              high="{store>high}"
+              highlightAnimation="Pulsate"
+              type="{= ${store>type} ? ${store>type} : 'SingleValue' }" />
         </ChartSeries>
       </series>
       <xAxis>
@@ -184,39 +266,54 @@
             templateShareable: false
           }">
           <ChartAxisLabel
-            value="{store>}"
-            title="{= ${store>}.substring(0,3).toUpperCase() }" />
+              value="{store>}"
+              title="{= ${store>}.substring(0,3).toUpperCase() }" />
         </ChartAxis>
       </xAxis>
       <yAxis>
         <ChartAxis
-          title="{store>/yAxis/title}"
-          showGridLines="{store>/yAxis/gridLines}"
-          maxValue="{= ${store>/yAxis/maxEnabled} ? 15 : null}"
-          minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}">
-          <ChartAxisLabel value="0" title="😯" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="5" title="😐" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="10" title="🙂" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="15" title="😀" visible="{store>/yAxis/customTicks}" />
-          <ChartAxisLabel value="20" title="😃" visible="{store>/yAxis/customTicks}" />
+            title="{store>/yAxis/title}"
+            showGridLines="{store>/yAxis/gridLines}"
+            maxValue="{= ${store>/yAxis/maxEnabled} ? 15 : null}"
+            minValue="{= ${store>/yAxis/minEnabled} ? 5 : null}">
+          <ChartAxisLabel
+              value="0"
+              title="😯"
+              visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel
+              value="5"
+              title="😐"
+              visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel
+              value="10"
+              title="🙂"
+              visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel
+              value="15"
+              title="😀"
+              visible="{store>/yAxis/customTicks}" />
+          <ChartAxisLabel
+              value="20"
+              title="😃"
+              visible="{store>/yAxis/customTicks}" />
         </ChartAxis>
       </yAxis>
       <lines>
         <ChartLine
-          axis="X"
-          value="July"
-          style="{store>/lines/style}"
-          title=" 🦌 deer recruiting day"
-          visible="{store>/lines/show}" />
+            axis="X"
+            value="July"
+            style="{store>/lines/style}"
+            title=" 🦌 deer recruiting day"
+            visible="{store>/lines/show}" />
         <ChartLine
-          axis="X"
-          value="September"
-          style="{store>/lines/style}"
-          title="last sightings"
-          showLineSelector="true"
-          selectorPress="oneSelectorPress"
-          color="{store>/lines/todayColor}"
-          visible="{store>/lines/show}" />
+            axis="X"
+            value="September"
+            style="{store>/lines/style}"
+            title="last sightings"
+            showLineSelector="true"
+            selectorPress="oneSelectorPress"
+            color="{store>/lines/todayColor}"
+            visible="{store>/lines/show}" />
         <!-- <ChartLine
           axis="Y"
           value="20"
@@ -227,13 +324,13 @@
       </lines>
       <areas>
         <ChartArea
-          axis="X"
-          startValue="April"
-          endValue="June"
-          style="{store>/areas/style}"
-          title="🌧️ rainy spring"
-          color="{store>/areas/areaColor}"
-          visible="{store>/areas/show}" />
+            axis="X"
+            startValue="April"
+            endValue="June"
+            style="{store>/areas/style}"
+            title="🌧️ rainy spring"
+            color="{store>/areas/areaColor}"
+            visible="{store>/areas/show}" />
         <!-- <ChartArea
           axis="Y"
           startValue="0"
@@ -243,6 +340,63 @@
           visible="{store>/areas/show}" /> -->
       </areas>
     </Chart>
+
+
+    <!-- No Axis Chart Sample -->
+    <m:Title
+        text="Charts without Axis"
+        titleStyle="H2"
+        class="sapUiMediumMarginTop" />
+    <m:HBox renderType="Bare" justifyContent="SpaceAround">
+      <Chart
+          width="300px"
+          height="300px"
+          showTooltip="{store>/showTooltip}"
+          groupedTooltip="{store>/groupedTooltip}"
+          showLegend="{store>/showLegend}"
+          legendPosition="Bottom"
+          class="sapUiSmallMargin">
+        <ChartSeries
+            type="Pie"
+            name="Young">
+          <ChartDataPoint value="3" />
+        </ChartSeries>
+        <ChartSeries
+            type="Pie"
+            name="Medium">
+          <ChartDataPoint value="8" />
+        </ChartSeries>
+        <ChartSeries
+            type="Pie"
+            name="Old">
+          <ChartDataPoint value="4" />
+        </ChartSeries>
+      </Chart>
+      <Chart
+          width="300px"
+          height="300px"
+          showTooltip="{store>/showTooltip}"
+          groupedTooltip="{store>/groupedTooltip}"
+          showLegend="{store>/showLegend}"
+          legendPosition="Bottom"
+          class="sapUiSmallMargin">
+        <ChartSeries
+            type="Donut"
+            name="Young">
+          <ChartDataPoint value="3" />
+        </ChartSeries>
+        <ChartSeries
+            type="Donut"
+            name="Medium">
+          <ChartDataPoint value="8" />
+        </ChartSeries>
+        <ChartSeries
+            type="Donut"
+            name="Old">
+          <ChartDataPoint value="4" />
+        </ChartSeries>
+      </Chart>
+    </m:HBox>
 
     <m:footer>
       <!-- <m:Toolbar>

@@ -550,6 +550,15 @@ sap.ui.define(
         const sChartHtmlID = this.getId()
         let aHighlightedDataPoints = []
 
+        // Needs to be adapted for new types!
+        const aNoXAxisTypes = [
+          ui5.viz.ChartSeriesType.Pie,
+          ui5.viz.ChartSeriesType.Donut,
+        ]
+        const bNeedsXAxis = aSeries.some(
+          (s) => !aNoXAxisTypes.includes(s.getType())
+        )
+
         // enable/disable axis depending on microMode is active or not
         if (this.getMicroMode()) {
           const suppressRerender = true
@@ -582,6 +591,9 @@ sap.ui.define(
                 : undefined,
             left: this.getMicroMode() ? 0 : undefined,
             right: this.getMicroMode() ? 0 : undefined,
+          },
+          interaction: {
+            enabled: !this.getMicroMode(),
           },
           subchart: {
             show: this.getShowSubchart(),
@@ -643,34 +655,21 @@ sap.ui.define(
           line: {
             connectNull: true,
           },
+          pie: {
+            label: {
+              show: !this.getMicroMode(),
+            },
+          },
+          donut: {
+            label: {
+              show: !this.getMicroMode(),
+            },
+          },
           data: {
-            x: 'x',
-            columns: [
-              // add x axis values first
-              [
-                'x',
-                ...oXAxis.getLabels().map((oLabel, iIndex) => {
-                  const vValue = oLabel.getValue()
-
-                  // check if an index based formatter function must be used or a time based formatter
-                  switch (this.getXAxisType()) {
-                    // TIME BASED VALUES
-                    case library.AxisType.Time:
-                      return /^\d{4}-\d{2}-\d{2}$/.test(vValue)
-                        ? vValue
-                        : undefined
-                    // INDEX BASED LABELS
-                    case library.AxisType.Indexed:
-                      return parseFloat(vValue) || iIndex
-                    // CATEGORY BASED LABELS
-                    case library.AxisType.Category:
-                    default:
-                      return vValue
-                  }
-                }),
-              ],
+            x: bNeedsXAxis ? 'x' : undefined,
+            columns: (() => {
               // add series e.g. ['data1', 1, 4, 6, 8, 10, ...]
-              ...aSeries.map((oSeries) => {
+              const aColumns = aSeries.map((oSeries) => {
                 // get all data points
                 let aData =
                   oSeries.getData().map((oDataPoint, iIndex) => {
@@ -695,8 +694,34 @@ sap.ui.define(
 
                 // return series structure
                 return aData // e.g. ['data1', 1, 4, 6, 8, 10, ...]
-              }),
-            ],
+              })
+
+              if (bNeedsXAxis) {
+                aColumns.unshift([
+                  'x',
+                  ...oXAxis.getLabels().map((oLabel, iIndex) => {
+                    const vValue = oLabel.getValue()
+
+                    // check if an index based formatter function must be used or a time based formatter
+                    switch (this.getXAxisType()) {
+                      // TIME BASED VALUES
+                      case library.AxisType.Time:
+                        return /^\d{4}-\d{2}-\d{2}$/.test(vValue)
+                          ? vValue
+                          : undefined
+                      // INDEX BASED LABELS
+                      case library.AxisType.Indexed:
+                        return parseFloat(vValue) || iIndex
+                      // CATEGORY BASED LABELS
+                      case library.AxisType.Category:
+                      default:
+                        return vValue
+                    }
+                  }),
+                ])
+              }
+              return aColumns
+            })(),
             axes:
               aSeries.length === 0
                 ? []

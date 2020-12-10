@@ -101,6 +101,8 @@ sap.ui.define(['./libs/d3'], function (d3) {
     Spline: 'spline',
     Line: 'line',
     Bar: 'bar',
+    Pie: 'pie',
+    Donut: 'donut',
     Step: 'step',
     AreaLine: 'area',
     AreaSpline: 'area-spline',
