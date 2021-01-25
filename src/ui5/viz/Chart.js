@@ -2191,6 +2191,9 @@ sap.ui.define(
             lodashDefer(fnSecureFlush)
           },
         }
+
+        // Do not set columns in case of "empty" update w/o any series/data (PSA-3262)
+        aUpdateSeries.columns = aUpdateSeries.columns.length === 1 ? [] : aUpdateSeries.columns
         this._chart.load(aUpdateSeries)
 
         // highlight data points
