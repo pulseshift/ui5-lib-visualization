@@ -1706,10 +1706,10 @@
   dependencies:
     "@openui5/sap.ui.core" "1.77.2"
 
-"@openui5/themelib_sap_belize@1.77.2":
-  version "1.77.2"
-  resolved "https://registry.yarnpkg.com/@openui5/themelib_sap_belize/-/themelib_sap_belize-1.77.2.tgz#a6e265308b0d7bf02f82dd492d5de733ce81542b"
-  integrity sha512-uSW83NVUhwzUOLu0GT4WhT0c7aPHRpIGltVV3fwebdQiRBipXJUJlkP52/bEqkryFpx75yJDmuNQhsAR2K7qpg==
+"@openui5/themelib_sap_belize@1.78.0":
+  version "1.78.0"
+  resolved "https://registry.yarnpkg.com/@openui5/themelib_sap_belize/-/themelib_sap_belize-1.78.0.tgz#18c3e290872634d3af6db54b27982f19094fc220"
+  integrity sha512-fdaYzFxE83J+unS2DbobNzc0R5Tn1JegLjBFVO0zMEvTs8Stc2XMbBJcieW4JW5WSg16QHHNTpR7FLznwEuqmw==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
