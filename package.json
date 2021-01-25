@@ -140,7 +140,7 @@
     "yargs": "16.2.0"
   },
   "dependencies": {
-    "@openui5/sap.m": "1.77.2",
+    "@openui5/sap.m": "1.78.0",
     "@openui5/sap.ui.core": "1.77.2",
     "@openui5/themelib_sap_belize": "1.77.2",
     "c3": "https://github.com/pulseshift/c3#master",
