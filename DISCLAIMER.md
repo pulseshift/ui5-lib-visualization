@@ -36190,3 +36190,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+Usage Error: Couldn't find a script named "licenses".
+
+$ yarn run [--inspect] [--inspect-brk] <scriptName> ...
