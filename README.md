@@ -201,13 +201,16 @@ yarn dist
 
 This will build the app, test the code with linters and updates all docs automatically. Afterwards, the production app build can be tested by run `yarn start:dist`. The app should open in your browser automatically, otherwise open: `http://localhost:3000/demo/index.html`
 
+Increase version number according to [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning) e.g.
+```
+yarn version patch
+```
+
 If the app build matches your requirements, upload your build to **npm**:
 
 ```
 yarn publish
 ```
-
-_When asked for bumping the version, please use correct [semantic versioning](https://docs.npmjs.com/getting-started/semantic-versioning)._
 
 ### Contributing & Troubleshooting
 
