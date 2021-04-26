@@ -1573,7 +1573,7 @@ sap.ui.define(
         }
 
         // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
-        if (['lines', 'areas'].includes(sAggregationName)) {
+        if (['lines', 'areas', 'series'].includes(sAggregationName)) {
           // important: update value, before fire event
           Control.prototype.insertAggregation.call(
             this,
@@ -1585,11 +1585,15 @@ sap.ui.define(
 
           // forward aggregation update events & inform observers about data update
           switch (sAggregationName) {
-            // case 'series':
-            //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
-            //     oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
-            //     this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
-            //     break;
+            case 'series':
+              oObject.attachSeriesDataUpdate((oEvent) =>
+                this._onDataUpdateByCode(oEvent.getParameter('code'))
+              )
+              oObject.attachSeriesVisibilityChange(
+                this._onSeriesVisibilityUpdate.bind(this)
+              )
+              this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint)
+              break
             case 'lines':
               oObject.attachLineUpdate((oEvent) =>
                 this._onDataUpdateByCode(oEvent.getParameter('code'))
@@ -1635,7 +1639,7 @@ sap.ui.define(
         }
 
         // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
-        if (['lines', 'areas'].includes(sAggregationName)) {
+        if (['lines', 'areas', 'series'].includes(sAggregationName)) {
           // important: update value, before fire event
           Control.prototype.addAggregation.call(
             this,
@@ -1646,11 +1650,15 @@ sap.ui.define(
 
           // forward aggregation update events & inform observers about data update
           switch (sAggregationName) {
-            // case 'series':
-            //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
-            //     oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
-            //     this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
-            //     break;
+            case 'series':
+              oObject.attachSeriesDataUpdate((oEvent) =>
+                this._onDataUpdateByCode(oEvent.getParameter('code'))
+              )
+              oObject.attachSeriesVisibilityChange(
+                this._onSeriesVisibilityUpdate.bind(this)
+              )
+              this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint)
+              break
             case 'lines':
               oObject.attachLineUpdate((oEvent) =>
                 this._onDataUpdateByCode(oEvent.getParameter('code'))
@@ -2020,10 +2028,6 @@ sap.ui.define(
         if (!this.getDomRef()) {
           return
         }
-        // don't call update routine if it is halted
-        if (this._getChartUpdateHandler().isHalted()) {
-          return
-        }
 
         // console.error('UPDATE THE CHART');
         const sChartHtmlID = this.getId()
@@ -2193,7 +2197,8 @@ sap.ui.define(
         }
 
         // Do not set columns in case of "empty" update w/o any series/data (PSA-3262)
-        aUpdateSeries.columns = aUpdateSeries.columns.length === 1 ? [] : aUpdateSeries.columns
+        aUpdateSeries.columns =
+          aUpdateSeries.columns.length === 1 ? [] : aUpdateSeries.columns
         this._chart.load(aUpdateSeries)
 
         // highlight data points
@@ -2277,7 +2282,6 @@ sap.ui.define(
        * @private
        */
       _updateChartLines() {
-
         // Avoid property access if chart is already destroyed in the mean time (PSA-3366)
         if (!this._chart) return
 

@@ -1,7 +1,13 @@
 sap.ui.define(
   ['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
   function (Controller, Toast) {
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
     return Controller.extend('ui5.demo.playground', {
+
       onInit() {
         const aColorPalette = ui5.viz.ColorPalette.Material500
 
@@ -103,14 +109,97 @@ sap.ui.define(
               forecast: true,
             },
           ],
+          barChart: {
+            labels: [
+              'Last Year',
+              'This Year',
+            ],
+            series: [
+              {
+                name: 'Young',
+                dataPoints: [3, 4],
+              },
+              {
+                name: 'Medium',
+                dataPoints: [8, 9],
+              },
+              {
+                name: 'Old',
+                dataPoints: [4, 5],
+              },
+            ],
+          },
+          pieChart: {
+            width: '300px',
+            height: '300px',
+            series: [
+              {
+                name: 'Young',
+                dataPoints: [3],
+              },
+              {
+                name: 'Medium',
+                dataPoints: [8],
+              },
+              {
+                name: 'Old',
+                dataPoints: [4],
+              },
+            ],
+          }
         })
 
+        this.oModel = oModel
         this.getView().setModel(oModel, 'store')
       },
 
       oneSelectorPress(oEvent) {
         Toast.show('Line Selector pressed: ' + oEvent.getSource().getTitle())
       },
+
+      onGenerateBarChartData() {
+        const newSeries = [
+          {
+            name: 'Young',
+            dataPoints: [randomInt(10, 30), randomInt(20, 50)],
+          },
+          {
+            name: 'Medium',
+            dataPoints: [randomInt(70, 80), randomInt(80, 90)],
+          },
+          {
+            name: 'Old',
+            dataPoints: [randomInt(20, 40), randomInt(40, 50)],
+          },
+        ]
+
+        const newLabels = [
+          'Year #' + randomInt(1, 40),
+          'Year #' + randomInt(50, 90),
+        ]
+
+        this.oModel.setProperty('/barChart/series', newSeries)
+        this.oModel.setProperty('/barChart/labels', newLabels)
+      },
+
+      onGeneratePieChartData() {
+        const newSeries = [
+          {
+            name: 'Young',
+            dataPoints: [randomInt(10, 30)],
+          },
+          {
+            name: 'Medium',
+            dataPoints: [randomInt(60, 90)],
+          },
+          {
+            name: 'Old',
+            dataPoints: [randomInt(20, 50)],
+          },
+        ]
+
+        this.oModel.setProperty('/pieChart/series', newSeries)
+      }
     })
   }
 )

@@ -342,35 +342,79 @@
     </Chart>
 
 
-    <!-- No Axis Chart Sample -->
-    <m:Title
-        text="Charts without Axis"
-        titleStyle="H2"
-        class="sapUiMediumMarginTop" />
+    <!-- Bar Chart Sample -->
+    <m:HBox renderType="Bare" justifyContent="SpaceBetween" alignItems="End">
+      <m:Title
+          text="Bar Chart"
+          titleStyle="H2"
+          class="sapUiMediumMarginTop" />
+          <m:Button text="Update Data" type="Transparent" press="onGenerateBarChartData"/>
+    </m:HBox>
     <m:HBox renderType="Bare" justifyContent="SpaceAround">
       <Chart
-          width="300px"
-          height="300px"
+          width="{store>/width}"
+          height="{store>/height}"
           showTooltip="{store>/showTooltip}"
           groupedTooltip="{store>/groupedTooltip}"
           showLegend="{store>/showLegend}"
           legendPosition="Bottom"
-          class="sapUiSmallMargin">
+          class="sapUiSmallMargin"
+          series="{store>/barChart/series}">
+          <xAxis>
+            <ChartAxis labels="{
+                path: 'store>/barChart/labels',
+                templateShareable: false
+              }">
+              <ChartAxisLabel
+                  value="{store>}"
+                  title="{store>}" />
+            </ChartAxis>
+          </xAxis>
+          <series>
+            <ChartSeries
+                type="Bar"
+                name="{store>name}"            
+                data="{
+                  path: 'store>dataPoints',
+                  templateShareable: false
+                }">
+                <ChartDataPoint
+                    value="{store>}" />
+              </ChartSeries>
+           </series>
+      </Chart>
+    </m:HBox>
+
+    <!-- No Axis Chart Sample -->
+    <m:HBox renderType="Bare" justifyContent="SpaceBetween" alignItems="End">
+      <m:Title
+          text="Charts without Axis"
+          titleStyle="H2"
+          class="sapUiMediumMarginTop" />
+          <m:Button text="Update Data" type="Transparent" press="onGeneratePieChartData"/>
+    </m:HBox>
+    <m:HBox renderType="Bare" justifyContent="SpaceAround">
+      <Chart
+          width="{store>/pieChart/width}"
+          height="{store>/pieChart/height}"
+          showTooltip="{store>/showTooltip}"
+          groupedTooltip="{store>/groupedTooltip}"
+          showLegend="{store>/showLegend}"
+          legendPosition="Bottom"
+          class="sapUiSmallMargin"
+          series="{store>/pieChart/series}">
+          <series>
         <ChartSeries
             type="Pie"
-            name="Young">
-          <ChartDataPoint value="3" />
+            name="{store>name}"            
+            data="{
+              path: 'store>dataPoints',
+              templateShareable: false
+            }">
+            <ChartDataPoint
+                value="{store>}" />
         </ChartSeries>
-        <ChartSeries
-            type="Pie"
-            name="Medium">
-          <ChartDataPoint value="8" />
-        </ChartSeries>
-        <ChartSeries
-            type="Pie"
-            name="Old">
-          <ChartDataPoint value="4" />
-        </ChartSeries>
+      </series>
       </Chart>
       <Chart
           width="300px"
@@ -379,21 +423,17 @@
           groupedTooltip="{store>/groupedTooltip}"
           showLegend="{store>/showLegend}"
           legendPosition="Bottom"
-          class="sapUiSmallMargin">
-        <ChartSeries
-            type="Donut"
-            name="Young">
-          <ChartDataPoint value="3" />
-        </ChartSeries>
-        <ChartSeries
-            type="Donut"
-            name="Medium">
-          <ChartDataPoint value="8" />
-        </ChartSeries>
-        <ChartSeries
-            type="Donut"
-            name="Old">
-          <ChartDataPoint value="4" />
+          class="sapUiSmallMargin"
+          series="{store>/pieChart/series}">
+          <ChartSeries
+          type="Donut"
+          name="{store>name}"            
+          data="{
+            path: 'store>dataPoints',
+            templateShareable: false
+          }">
+          <ChartDataPoint
+              value="{store>}" />
         </ChartSeries>
       </Chart>
     </m:HBox>

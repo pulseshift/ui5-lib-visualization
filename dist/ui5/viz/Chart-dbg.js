@@ -6,7 +6,7 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
@@ -1435,16 +1435,21 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       } // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
 
 
-      if (['lines', 'areas'].includes(sAggregationName)) {
+      if (['lines', 'areas', 'series'].includes(sAggregationName)) {
         // important: update value, before fire event
         Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, true); // forward aggregation update events & inform observers about data update
 
         switch (sAggregationName) {
-          // case 'series':
-          //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
-          //     oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
-          //     this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
-          //     break;
+          case 'series':
+            oObject.attachSeriesDataUpdate(function (oEvent) {
+              return _this3._onDataUpdateByCode(oEvent.getParameter('code'));
+            });
+            oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
+
+            this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
+
+            break;
+
           case 'lines':
             oObject.attachLineUpdate(function (oEvent) {
               return _this3._onDataUpdateByCode(oEvent.getParameter('code'));
@@ -1492,16 +1497,21 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       } // Hint: because, data.format can't be updated by c3js api, yet, we must rerender the chart, when a new aggregation was added
 
 
-      if (['lines', 'areas'].includes(sAggregationName)) {
+      if (['lines', 'areas', 'series'].includes(sAggregationName)) {
         // important: update value, before fire event
         Control.prototype.addAggregation.call(this, sAggregationName, oObject, true); // forward aggregation update events & inform observers about data update
 
         switch (sAggregationName) {
-          // case 'series':
-          //     oObject.attachSeriesDataUpdate(oEvent => this._onDataUpdateByCode(oEvent.getParameter('code')));
-          //     oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
-          //     this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
-          //     break;
+          case 'series':
+            oObject.attachSeriesDataUpdate(function (oEvent) {
+              return _this4._onDataUpdateByCode(oEvent.getParameter('code'));
+            });
+            oObject.attachSeriesVisibilityChange(this._onSeriesVisibilityUpdate.bind(this));
+
+            this._onDataUpdateByCode(library.ChartUpdateCode.DataPoint);
+
+            break;
+
           case 'lines':
             oObject.attachLineUpdate(function (oEvent) {
               return _this4._onDataUpdateByCode(oEvent.getParameter('code'));
@@ -1859,11 +1869,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       // exit if chart is not available in DOM
       if (!this.getDomRef()) {
         return;
-      } // don't call update routine if it is halted
-
-
-      if (this._getChartUpdateHandler().isHalted()) {
-        return;
       } // console.error('UPDATE THE CHART');
 
 
@@ -2067,6 +2072,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateChartLines: function _updateChartLines() {
       var _this6 = this;
 
+      // Avoid property access if chart is already destroyed in the mean time (PSA-3366)
+      if (!this._chart) return;
       var aOldXLines = [].concat(this._chart.xgrids());
       var aOldYLines = [].concat(this._chart.ygrids());
       var aNewXLines = this.getLines().filter(function (oLine) {

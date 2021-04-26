@@ -183,12 +183,12 @@ Start developing:
 _Will build all resources start watcher task and start a HTTP server_
 
 ```
-yarn start
+yarn dev
 ```
 
 The app should open in your browser automatically, otherwise open: `http://localhost:3000/demo/index.html`
 
-Info: To get a more detailed logging, use `yarn start:verbose` instead.
+Info: To get a more detailed logging, use `yarn dev:verbose` instead.
 
 ## Distribution
 
