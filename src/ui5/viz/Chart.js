@@ -2277,6 +2277,10 @@ sap.ui.define(
        * @private
        */
       _updateChartLines() {
+
+        // Avoid property access if chart is already destroyed in the mean time (PSA-3366)
+        if (!this._chart) return
+
         const aOldXLines = [].concat(this._chart.xgrids())
         const aOldYLines = [].concat(this._chart.ygrids())
 
