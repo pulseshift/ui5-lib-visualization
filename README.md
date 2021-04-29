@@ -209,7 +209,7 @@ yarn version patch
 If the app build matches your requirements, upload your build to **npm**:
 
 ```
-yarn publish
+yarn npm publish
 ```
 
 ### Contributing & Troubleshooting
