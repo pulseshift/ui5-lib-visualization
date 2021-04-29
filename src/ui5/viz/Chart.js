@@ -513,20 +513,20 @@ sap.ui.define(
       /**
        * Renderer function of control <code>ui5.viz.Chart</code>.
        *
-       * @param {object} [oRm] Render Manager
+       * @param {object} [rm] Render Manager
        * @param {object} [oControl] Current control (this)
        * @override
        */
-      renderer(oRm, oControl) {
-        // start render wrapper div
-        oRm.write('<div')
-        oRm.writeControlData(oControl)
-        oRm.addClass(oControl.CSS_CLASS)
-        oRm.writeClasses()
-        oRm.write('>')
+      renderer: {
+        apiVersion: 2, // enable in-place DOM patching
 
-        // end render wrapper div
-        oRm.write('</div>')
+        render(rm, oControl) {
+          rm.openStart('div', oControl)
+          rm.class(oControl.CSS_CLASS)
+          rm.openEnd()
+
+          rm.close('div')
+        },
       },
 
       /**
