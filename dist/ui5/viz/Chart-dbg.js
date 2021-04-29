@@ -507,19 +507,19 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     /**
      * Renderer function of control <code>ui5.viz.Chart</code>.
      *
-     * @param {object} [oRm] Render Manager
+     * @param {object} [rm] Render Manager
      * @param {object} [oControl] Current control (this)
      * @override
      */
-    renderer: function renderer(oRm, oControl) {
-      // start render wrapper div
-      oRm.write('<div');
-      oRm.writeControlData(oControl);
-      oRm.addClass(oControl.CSS_CLASS);
-      oRm.writeClasses();
-      oRm.write('>'); // end render wrapper div
-
-      oRm.write('</div>');
+    renderer: {
+      apiVersion: 2,
+      // enable in-place DOM patching
+      render: function render(rm, oControl) {
+        rm.openStart('div', oControl);
+        rm.class(oControl.CSS_CLASS);
+        rm.openEnd();
+        rm.close('div');
+      }
     },
 
     /**
@@ -860,8 +860,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // inverted: false,
             // center: 0,
             padding: {
-              top: this.getMicroMode() ? undefined : 0,
-              // should maybe made configurable
+              top: oYAxis.getPaddingTop() ? undefined : 0,
               bottom: this.getMicroMode() ? undefined : 0
             },
             default: [// identify min and max value to set default range
@@ -913,9 +912,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
             // inverted: false,
             // center: 0,
             padding: {
-              top: 0,
-              // should maybe made configurable
-              bottom: 0
+              top: oYAxis.getPaddingTop() ? undefined : 0,
+              bottom: this.getMicroMode() ? undefined : 0
             },
             default: [// identify min and max value to set default range
             oY2Axis.getMinValue() || oY2Axis.getLabels().filter(function (o) {
@@ -994,8 +992,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
         transition: {
           duration: 175
         }
-      }; // for debugging purposes
-      // console.log(options)
+      }; // debug output
+      // console.log('chart options',options)
       // initialize c3 chart
 
       this._chart = c3.generate(options); // >>> continue styling
@@ -1019,10 +1017,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       this._updateAreaStyles(); // set clippath of zoom overflow area
 
 
-      if (this.getClipZoomOverflow()) {
-        this.removeStyleClass(this.CSS_CLASS_NOCLIP);
-      } else {
+      if (this.getZoomEnabled() && !this.getClipZoomOverflow()) {
         this.addStyleClass(this.CSS_CLASS_NOCLIP);
+      } else {
+        this.removeStyleClass(this.CSS_CLASS_NOCLIP);
       } // set background color
 
 
@@ -1184,10 +1182,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
      * @override
      */
     setClipZoomOverflow: function setClipZoomOverflow(bClipZoomOverflow) {
-      if (bClipZoomOverflow) {
-        this.removeStyleClass(this.CSS_CLASS_NOCLIP);
-      } else {
+      if (this.getZoomEnabled() && !bClipZoomOverflow) {
         this.addStyleClass(this.CSS_CLASS_NOCLIP);
+      } else {
+        this.removeStyleClass(this.CSS_CLASS_NOCLIP);
       }
 
       return this.setProperty('clipZoomOverflow', bClipZoomOverflow, true); // do not rerender
@@ -1536,6 +1534,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
       } else {
         Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
       }
+
+      return this;
+    },
+    updateAggregation: function updateAggregation(sAggregationName, sChangeReason, oEventInfo) {
+      Control.prototype.updateAggregation.call(this, sAggregationName, sChangeReason, oEventInfo);
+      this.invalidate(); // Trigger full rerender because update events of the aggregations might not fire in this case
 
       return this;
     },

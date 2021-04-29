@@ -362,6 +362,13 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
 
       return this;
     },
+    updateAggregation: function updateAggregation(sName, sChangeReason, oEventInfo) {
+      Element.prototype.updateAggregation.call(this, sName, sChangeReason, oEventInfo);
+      this.fireSeriesDataUpdate({
+        code: library.ChartUpdateCode.DataPoint
+      });
+      return this;
+    },
 
     /**
      * Removes all objects from the 0..n-aggregation named sAggregationName.

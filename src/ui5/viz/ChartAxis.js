@@ -96,6 +96,12 @@ sap.ui.define(
             defaultValue: false,
           },
 
+          paddingTop: {
+            type: 'int',
+            group: 'Appearance',
+            defaultValue: 0,
+          }, 
+
           /**
            * Sets visibility of the element.
            */
@@ -342,6 +348,21 @@ sap.ui.define(
         }
 
         return this
+      },
+
+      updateAggregation(sName, sChangeReason, oEventInfo) {
+
+        Element.prototype.updateAggregation.call(
+          this,
+          sName,
+          sChangeReason,
+          oEventInfo
+        )
+
+        this.fireAxisUpdate()
+
+        return this
+
       },
 
       /**

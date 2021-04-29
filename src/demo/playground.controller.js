@@ -154,7 +154,12 @@ sap.ui.define(
       },
 
       oneSelectorPress(oEvent) {
+        console.log(oEvent)
         Toast.show('Line Selector pressed: ' + oEvent.getSource().getTitle())
+      },
+
+      onShowHideBarChart() {
+        this.byId('barChart').setVisible(!this.byId('barChart').getVisible())
       },
 
       onGenerateBarChartData() {

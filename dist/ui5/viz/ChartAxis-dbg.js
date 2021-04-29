@@ -106,6 +106,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
           group: 'Appereance',
           defaultValue: false
         },
+        paddingTop: {
+          type: 'int',
+          group: 'Appearance',
+          defaultValue: 0
+        },
 
         /**
          * Sets visibility of the element.
@@ -300,6 +305,11 @@ sap.ui.define(['sap/ui/core/Element', './library'], function (Element, library) 
         Element.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
       }
 
+      return this;
+    },
+    updateAggregation: function updateAggregation(sName, sChangeReason, oEventInfo) {
+      Element.prototype.updateAggregation.call(this, sName, sChangeReason, oEventInfo);
+      this.fireAxisUpdate();
       return this;
     },
 

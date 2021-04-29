@@ -922,7 +922,7 @@ sap.ui.define(
               // inverted: false,
               // center: 0,
               padding: {
-                top: this.getMicroMode() ? undefined : 0, // should maybe made configurable
+                top: oYAxis.getPaddingTop() ? undefined : 0,
                 bottom: this.getMicroMode() ? undefined : 0,
               },
               default: [
@@ -995,8 +995,8 @@ sap.ui.define(
               // inverted: false,
               // center: 0,
               padding: {
-                top: 0, // should maybe made configurable
-                bottom: 0,
+                top: oYAxis.getPaddingTop() ? undefined : 0,
+                bottom: this.getMicroMode() ? undefined : 0,
               },
               default: [
                 // identify min and max value to set default range
@@ -1110,8 +1110,8 @@ sap.ui.define(
           },
         }
 
-        // for debugging purposes
-        // console.log(options)
+        // debug output
+        // console.log('chart options',options)
 
         // initialize c3 chart
         this._chart = c3.generate(options)
@@ -1141,10 +1141,10 @@ sap.ui.define(
         this._updateAreaStyles()
 
         // set clippath of zoom overflow area
-        if (this.getClipZoomOverflow()) {
-          this.removeStyleClass(this.CSS_CLASS_NOCLIP)
-        } else {
+        if (this.getZoomEnabled() && !this.getClipZoomOverflow()) {
           this.addStyleClass(this.CSS_CLASS_NOCLIP)
+        } else {
+          this.removeStyleClass(this.CSS_CLASS_NOCLIP)
         }
 
         // set background color
@@ -1310,10 +1310,10 @@ sap.ui.define(
        * @override
        */
       setClipZoomOverflow(bClipZoomOverflow) {
-        if (bClipZoomOverflow) {
-          this.removeStyleClass(this.CSS_CLASS_NOCLIP)
-        } else {
+        if (this.getZoomEnabled() && !bClipZoomOverflow) {
           this.addStyleClass(this.CSS_CLASS_NOCLIP)
+        } else {
+          this.removeStyleClass(this.CSS_CLASS_NOCLIP)
         }
         return this.setProperty('clipZoomOverflow', bClipZoomOverflow, true) // do not rerender
       },
@@ -1686,6 +1686,17 @@ sap.ui.define(
         return this
       },
 
+      updateAggregation(sAggregationName, sChangeReason, oEventInfo) {
+        Control.prototype.updateAggregation.call(
+          this,
+          sAggregationName,
+          sChangeReason,
+          oEventInfo
+        )
+        this.invalidate() // Trigger full rerender because update events of the aggregations might not fire in this case
+        return this
+      },
+
       /**
        * Removes an object from the aggregation named sAggregationName with cardinality 0..n.
        *
@@ -1829,11 +1840,11 @@ sap.ui.define(
        */
       setModel(/* oModel, sName */) {
         // to improve performance, we disable chart update until the complete model was assigned
-        this._getChartUpdateHandler().halt()
+         this._getChartUpdateHandler().halt()
 
         Control.prototype.setModel.apply(this, arguments)
 
-        this._getChartUpdateHandler().release()
+         this._getChartUpdateHandler().release()
 
         // trigger update method manually
         this._onDataUpdateByCode()

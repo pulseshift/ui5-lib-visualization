@@ -95,6 +95,7 @@
           subheader="Spline Microchart">
         <m:TileContent footer="last 6 months +">
           <Chart
+              id="lineChart"
               width="{store>/tileContentWidth}"
               height="{store>/tileContentHeight}"
               showTooltip="false"
@@ -349,9 +350,11 @@
           titleStyle="H2"
           class="sapUiMediumMarginTop" />
           <m:Button text="Update Data" type="Transparent" press="onGenerateBarChartData"/>
+          <!-- <m:Button text="Show/Hide" type="Transparent" press="onShowHideBarChart"/> -->
     </m:HBox>
     <m:HBox renderType="Bare" justifyContent="SpaceAround">
       <Chart
+          id="barChart"
           width="{store>/width}"
           height="{store>/height}"
           showTooltip="{store>/showTooltip}"
@@ -370,9 +373,13 @@
                   title="{store>}" />
             </ChartAxis>
           </xAxis>
+          <yAxis>
+            <ChartAxis paddingTop="8" visible="false"/>
+          </yAxis>
           <series>
             <ChartSeries
                 type="Bar"
+                showLabels="true"
                 name="{store>name}"            
                 data="{
                   path: 'store>dataPoints',

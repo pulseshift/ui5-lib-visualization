@@ -393,6 +393,24 @@ sap.ui.define(
         return this
       },
 
+
+      updateAggregation(sName, sChangeReason, oEventInfo) {
+
+        Element.prototype.updateAggregation.call(
+          this,
+          sName,
+          sChangeReason,
+          oEventInfo
+        )
+
+        this.fireSeriesDataUpdate({
+          code: library.ChartUpdateCode.DataPoint,
+        })
+
+        return this
+
+      },
+
       /**
        * Removes all objects from the 0..n-aggregation named sAggregationName.
        *
