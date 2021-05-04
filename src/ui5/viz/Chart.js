@@ -2389,6 +2389,10 @@ sap.ui.define(
        * @private
        */
       _updateChartAreas() {
+
+        // Chart might already be destroyed here due to debounced calling
+        if (!this._chart || !this._chart.regions) return
+
         const areas = this._chart.regions() || []
         // if only one area exist it may be returned as object and not wrapped in an arry, so we must do this manually
         const aOldAreas = Array.isArray(areas) ? areas : [areas]
