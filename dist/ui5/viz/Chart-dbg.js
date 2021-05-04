@@ -2176,6 +2176,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/format/DateFormat', './ChartA
     _updateChartAreas: function _updateChartAreas() {
       var _this7 = this;
 
+      // Chart might already be destroyed here due to debounced calling
+      if (!this._chart || !this._chart.regions) return;
       var areas = this._chart.regions() || []; // if only one area exist it may be returned as object and not wrapped in an arry, so we must do this manually
 
       var aOldAreas = Array.isArray(areas) ? areas : [areas];
