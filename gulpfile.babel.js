@@ -47,7 +47,7 @@ import fs from 'fs'
 import commander from 'commander'
 import handlebars from 'handlebars'
 import gulpHandlebars from 'gulp-handlebars-html'
-import favicons from 'gulp-favicons'
+// import favicons from 'gulp-favicons'
 import gzip from 'gulp-gzip'
 import brotli from 'gulp-brotli'
 
@@ -95,18 +95,18 @@ const DIST = 'dist'
 const UI5 = IS_DEV_MODE ? 'ui5' : `${DIST}/ui5`
 
 // create unique hash for current favicon image
-const isFaviconDefined =
-  pkg.favicon && pkg.favicon.src.length > 0 && fs.existsSync(pkg.favicon.src)
-const FAVICON_HASH = isFaviconDefined //TODO:get rid? Favicons NOT in root seesm to be an anit pattern? https://stackoverflow.com/questions/5273103/any-problems-with-favicons-in-a-subfolder
-  ? require('loader-utils')
-      .getHashDigest(
-        Buffer.concat([fs.readFileSync(pkg.favicon.src)]),
-        'sha512',
-        'base62',
-        8
-      )
-      .toLowerCase()
-  : ''
+// const isFaviconDefined =
+//   pkg.favicon && pkg.favicon.src.length > 0 && fs.existsSync(pkg.favicon.src)
+// const FAVICON_HASH = isFaviconDefined //TODO:get rid? Favicons NOT in root seesm to be an anit pattern? https://stackoverflow.com/questions/5273103/any-problems-with-favicons-in-a-subfolder
+//   ? require('loader-utils')
+//       .getHashDigest(
+//         Buffer.concat([fs.readFileSync(pkg.favicon.src)]),
+//         'sha512',
+//         'base62',
+//         8
+//       )
+//       .toLowerCase()
+//   : ''
 
 // read build settings
 const BUILD = {
@@ -224,7 +224,7 @@ const paths = {
 const start = gulp.series(
   logStart,
   cleanDev,
-  favicon,
+  // favicon,
   gulp.parallel(prepareOpenUI5, loadDependencies),
   gulp.parallel(copyUi5Theme, copyUi5LibraryThemes),
   gulp.parallel(
@@ -304,7 +304,7 @@ export default start
 const build = gulp.series(
   logStartDist,
   cleanDist,
-  favicon,
+  // favicon,
   gulp.parallel(
     //gulp.series(prepareOpenUI5, buildOpenUI5),
     gulp.series(prepareOpenUI5),
@@ -644,7 +644,7 @@ export function buildOpenUI5() {
 function cleanDev() {
   const VENDOR_SRC = pkg.ui5.vendor ? `${pkg.ui5.vendor.path}/**/*` : ''
   return del(
-    [`${DEV}/**/*`, `!${UI5}/**/*`, `!${DEV}/${FAVICON_HASH}`].concat(
+    [`${DEV}/**/*`, `!${UI5}/**/*`].concat(
       VENDOR_SRC
     )
   )
@@ -654,7 +654,7 @@ function cleanDev() {
 function cleanDist() {
   const VENDOR_SRC = pkg.ui5.vendor ? `${pkg.ui5.vendor.path}/**/*` : ''
   return del(
-    [`${DIST}/**/*`, `!${UI5}/**/*`, `!${DIST}/${FAVICON_HASH}`].concat(
+    [`${DIST}/**/*`, `!${UI5}/**/*`].concat(
       VENDOR_SRC
     )
   )
@@ -689,34 +689,34 @@ export function clean() {
  * ----------------------------------------------------------- */
 
 // [production & development build]
-function favicon() {
-  const targetPath = IS_DEV_MODE ? DEV : DIST
-  const isFaviconsDirCached = fs.existsSync(
-    `${targetPath}/favicons_results.html`
-  )
-  // use content hash of master image as directory name and cashe assets in dev mode
-  return isFaviconsDirCached || !isFaviconDefined
-    ? Promise.resolve()
-    : gulp
-        .src(pkg.favicon.src)
-        .pipe(plumber(buildErrorHandler))
-        .pipe(
-          favicons({
-            appName: pkg.ui5.indexTitle,
-            appDescription: pkg.description,
-            developerName: pkg.author,
-            version: pkg.version,
-            background: '#fefefe',
-            theme_color: '#fefefe',
-            path: ``,
-            html: 'favicons_results.html',
-            online: false,
-            preferOnline: false,
-            pipeHTML: true
-          })
-        )
-        .pipe(gulp.dest(`${targetPath}`))
-}
+// function favicon() {
+//   const targetPath = IS_DEV_MODE ? DEV : DIST
+//   const isFaviconsDirCached = fs.existsSync(
+//     `${targetPath}/favicons_results.html`
+//   )
+//   // use content hash of master image as directory name and cashe assets in dev mode
+//   return isFaviconsDirCached || !isFaviconDefined
+//     ? Promise.resolve()
+//     : gulp
+//         .src(pkg.favicon.src)
+//         .pipe(plumber(buildErrorHandler))
+//         .pipe(
+//           favicons({
+//             appName: pkg.ui5.indexTitle,
+//             appDescription: pkg.description,
+//             developerName: pkg.author,
+//             version: pkg.version,
+//             background: '#fefefe',
+//             theme_color: '#fefefe',
+//             path: ``,
+//             html: 'favicons_results.html',
+//             online: false,
+//             preferOnline: false,
+//             pipeHTML: true
+//           })
+//         )
+//         .pipe(gulp.dest(`${targetPath}`))
+// }
 
 /* ----------------------------------------------------------- *
  * optimize and compile app entry (src/index.handlebars)
@@ -788,13 +788,13 @@ function getHandlebarsProps(sEntryHTMLPath) {
         })
       }, {})
     ),
-    // create favicons
-    favicons: isFaviconDefined
-      ? fs.readFileSync(
-          `${IS_DEV_MODE ? DEV : DIST}/favicons_results.html`,
-          'utf8'
-        )
-      : '',
+    // // create favicons
+    // favicons: isFaviconDefined
+    //   ? fs.readFileSync(
+    //       `${IS_DEV_MODE ? DEV : DIST}/favicons_results.html`,
+    //       'utf8'
+    //     )
+    //   : '',
     // define HOST used for API calls in case a proxy is used
     devheader: ''
     // process.env.DEV_API_PROXY && IS_DEV_MODE
