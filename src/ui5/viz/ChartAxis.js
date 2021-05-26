@@ -100,7 +100,7 @@ sap.ui.define(
             type: 'int',
             group: 'Appearance',
             defaultValue: 0,
-          }, 
+          },
 
           /**
            * Sets visibility of the element.
@@ -351,7 +351,6 @@ sap.ui.define(
       },
 
       updateAggregation(sName, sChangeReason, oEventInfo) {
-
         Element.prototype.updateAggregation.call(
           this,
           sName,
@@ -362,7 +361,6 @@ sap.ui.define(
         this.fireAxisUpdate()
 
         return this
-
       },
 
       /**

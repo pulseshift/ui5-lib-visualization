@@ -1,13 +1,11 @@
 sap.ui.define(
   ['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
   function (Controller, Toast) {
-
     function randomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min
     }
 
     return Controller.extend('ui5.demo.playground', {
-
       onInit() {
         const aColorPalette = ui5.viz.ColorPalette.Material500
 
@@ -110,10 +108,7 @@ sap.ui.define(
             },
           ],
           barChart: {
-            labels: [
-              'Last Year',
-              'This Year',
-            ],
+            labels: ['Last Year', 'This Year'],
             series: [
               {
                 name: 'Young',
@@ -146,7 +141,7 @@ sap.ui.define(
                 dataPoints: [4],
               },
             ],
-          }
+          },
         })
 
         this.oModel = oModel
@@ -204,7 +199,7 @@ sap.ui.define(
         ]
 
         this.oModel.setProperty('/pieChart/series', newSeries)
-      }
+      },
     })
   }
 )

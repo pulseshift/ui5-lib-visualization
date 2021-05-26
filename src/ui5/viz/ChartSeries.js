@@ -393,9 +393,7 @@ sap.ui.define(
         return this
       },
 
-
       updateAggregation(sName, sChangeReason, oEventInfo) {
-
         Element.prototype.updateAggregation.call(
           this,
           sName,
@@ -408,7 +406,6 @@ sap.ui.define(
         })
 
         return this
-
       },
 
       /**

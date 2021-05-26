@@ -316,31 +316,31 @@ sap.ui.define(
        * @private
        * @type {object}
        */
-      _haltCount: 0,
-      _initChartUpdateHandler() {
-        const Chart = this
-        Chart._haltCount = 0
-      },
-      _getChartUpdateHandler() {
-        const Chart = this
-        return {
-          halt() {
-            ++Chart._haltCount
-            if (Chart._haltCount !== 0) {
-              // Chart.setBusy(true)
-            }
-          },
-          release() {
-            --Chart._haltCount
-            if (Chart._haltCount === 0) {
-              // Chart.setBusy(false)
-            }
-          },
-          isHalted() {
-            return Chart._haltCount !== 0
-          },
-        }
-      },
+      // _haltCount: 0,
+      // _initChartUpdateHandler() {
+      //   const Chart = this
+      //   Chart._haltCount = 0
+      // },
+      // _getChartUpdateHandler() {
+      //   const Chart = this
+      //   return {
+      //     halt() {
+      //       ++Chart._haltCount
+      //       if (Chart._haltCount !== 0) {
+      //         // Chart.setBusy(true)
+      //       }
+      //     },
+      //     release() {
+      //       --Chart._haltCount
+      //       if (Chart._haltCount === 0) {
+      //         // Chart.setBusy(false)
+      //       }
+      //     },
+      //     isHalted() {
+      //       return Chart._haltCount !== 0
+      //     },
+      //   }
+      // },
 
       /**
        * Number range object to set a unique key to series
@@ -462,11 +462,11 @@ sap.ui.define(
       init() {
         // init private attributes
         this._initNumberRangeCreator()
-        this._initChartUpdateHandler()
+        // this._initChartUpdateHandler()
         this._chart = null
 
         // don't process update routine during initialization phase of control
-        this._getChartUpdateHandler().halt()
+        // this._getChartUpdateHandler().halt()
 
         // init debounce update function instance
         this._debounceUpdate = lodashDebounce(this._onDataUpdate, 50)
@@ -490,7 +490,7 @@ sap.ui.define(
         Control.prototype.constructor.apply(this, arguments)
 
         // initialization phase finished, update routine is enabled again
-        this._getChartUpdateHandler().release()
+        // this._getChartUpdateHandler().release()
       },
 
       /**
@@ -501,7 +501,7 @@ sap.ui.define(
       onBeforeRendering() {
         // console.log('onBeforeRendering')
         // don't process update routine rendering procedure
-        this._getChartUpdateHandler().halt()
+        // this._getChartUpdateHandler().halt()
 
         // destroy chart before rerendering
         if (this._chart) {
@@ -1163,7 +1163,7 @@ sap.ui.define(
         }, 1500)
 
         // enable update loop, again
-        this._getChartUpdateHandler().release()
+        // this._getChartUpdateHandler().release()
       },
 
       /**
@@ -1840,11 +1840,11 @@ sap.ui.define(
        */
       setModel(/* oModel, sName */) {
         // to improve performance, we disable chart update until the complete model was assigned
-         this._getChartUpdateHandler().halt()
+        // this._getChartUpdateHandler().halt()
 
         Control.prototype.setModel.apply(this, arguments)
 
-         this._getChartUpdateHandler().release()
+        // this._getChartUpdateHandler().release()
 
         // trigger update method manually
         this._onDataUpdateByCode()
@@ -1989,15 +1989,8 @@ sap.ui.define(
        * @private
        */
       _onDataUpdateByCode(sCode) {
-        if (this._getChartUpdateHandler().isHalted()) {
-          // don't call update routine if it is halted
-          return
-        } else if (!this.getDomRef()) {
+        if (!this._chart || !this.getDomRef()) {
           // exit if chart is not availale in DOM
-          return
-        } else if (!this._chart) {
-          // trigger rerender if chart instance is not available, yet
-          this.rerender()
           return
         }
 
@@ -2389,7 +2382,6 @@ sap.ui.define(
        * @private
        */
       _updateChartAreas() {
-
         // Chart might already be destroyed here due to debounced calling
         if (!this._chart || !this._chart.regions) return
 
