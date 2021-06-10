@@ -171,7 +171,7 @@ this.getView().setModel(oModel, 'store')
 git clone git@github.com:pulseshift/ui5-lib-visualization.git
 ```
 
-Please ensure that you have installed [node](https://nodejs.org/en/) and [yarn](https://yarnpkg.com/en/docs/install) before you continue.
+Please ensure that you have installed [node](https://nodejs.org/en/) and [yarn2](https://yarnpkg.com/en/docs/install) before you continue.
 
 Install dependencies:
 

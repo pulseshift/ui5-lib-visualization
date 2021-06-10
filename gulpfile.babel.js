@@ -44,25 +44,30 @@ import ora from 'ora'
 import del from 'del'
 import path from 'path'
 import fs from 'fs'
-import commander from 'commander'
 import handlebars from 'handlebars'
 import gulpHandlebars from 'gulp-handlebars-html'
 // import favicons from 'gulp-favicons'
 import gzip from 'gulp-gzip'
 import brotli from 'gulp-brotli'
-
-// TODO: because build script becomes so feature rich it should be split into sub modules
+import yargs from 'yargs'
+import {hideBin} from 'yargs/helpers'
 
 /*
  * SETUP SCRIPT RUNTIME ENVIRONMENT
  */
 
 // parse program commands
-commander
-  .version(pkg.version)
-  .option('--silent')
-  .option('--local')
-  .parse(process.argv)
+  const options = yargs(hideBin(process.argv))
+  .option('silent', {
+    type: 'boolean',
+    default: true,
+    description: 'Run w/ reduced logging',
+  })
+  .option('local', {
+    type: 'boolean',
+    default: true,
+    description: 'Start an own HTTP server, serving the build output',
+  }).argv
 
 const hdlbars = gulpHandlebars(handlebars)
 const spinner = ora()
@@ -73,7 +78,7 @@ handlebars.registerHelper('secure', function(str) {
 })
 
 // switch between gulp log and custom log
-spinner.enabled = commander.silent
+spinner.enabled = options.silent
 spinner.print = sText =>
   spinner.stopAndPersist({
     text: sText
@@ -377,7 +382,7 @@ function watch() {
   )
 
   // start HTTP server
-  if (commander.local) {
+  if (options.local) {
     startHttpServer()
   }
 }
@@ -458,7 +463,7 @@ function str_pad(n) {
 
 // [development build]
 function reload(done) {
-  if (commander.silent) {
+  if (options.silent) {
     spinner.print(
       `\u{1F435}  Update completed, ready for reload... - ${currentTime()}`
     )
@@ -469,7 +474,7 @@ function reload(done) {
 }
 
 function startWatchTask(done) {
-  if (commander.silent) {
+  if (options.silent) {
     spinner.print(`\u{1F440}  Watch task started ... - ${currentTime()}`)
   } else {
     gutil.log(`Watch task started ... - ${currentTime()}`)
