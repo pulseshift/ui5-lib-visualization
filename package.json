@@ -1,6 +1,6 @@
 {
   "name": "ui5-lib-visualization",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "scripts": {
     "format": "prettier --write \"src/**/*{.js,.less}\"",
     "format:check": "prettier --check \"src/**/*{.js,.less}\"",

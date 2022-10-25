@@ -3446,46 +3446,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openui5/sap.m@npm:1.84.10":
-  version: 1.84.10
-  resolution: "@openui5/sap.m@npm:1.84.10"
+"@openui5/sap.m@npm:1.96.12":
+  version: 1.96.12
+  resolution: "@openui5/sap.m@npm:1.96.12"
   dependencies:
-    "@openui5/sap.ui.core": 1.84.10
-    "@openui5/sap.ui.layout": 1.84.10
-    "@openui5/sap.ui.unified": 1.84.10
-  checksum: 56b5bd367ebf1d3fe5906f13423ede8677a1341f63ac460cf917b7bcbd941f661bccbbb215fd4a195c91438807aa034d1662d9e728772157d57f9af5da7d4f40
+    "@openui5/sap.ui.core": 1.96.12
+    "@openui5/sap.ui.layout": 1.96.12
+    "@openui5/sap.ui.unified": 1.96.12
+  checksum: d2ee7b8c79798b5f957285450115a9635867086758ed0a815e3ba4aeba2aa48922db361e4b15c2075457ab147133ead15bdf74e921dcb104c639c68a91af6580
   languageName: node
   linkType: hard
 
-"@openui5/sap.ui.core@npm:1.84.10":
-  version: 1.84.10
-  resolution: "@openui5/sap.ui.core@npm:1.84.10"
-  checksum: 216b3d2050d9303a8620032658b6a30021c6e69f23597a51b3aeaecd547721843076be6476e926b523cb611b01386c151743d1970f8ea808f19eb21c75b6c0aa
+"@openui5/sap.ui.core@npm:1.96.12":
+  version: 1.96.12
+  resolution: "@openui5/sap.ui.core@npm:1.96.12"
+  checksum: e454f5d00ebd3b4b05d6d475aee14a7c22d0fd7d03d16d883c442369181c7769703cfd1562adcc2c21a9e0de2e5668d4d016cc4f9292914fe6fb002be39b3570
   languageName: node
   linkType: hard
 
-"@openui5/sap.ui.layout@npm:1.84.10":
-  version: 1.84.10
-  resolution: "@openui5/sap.ui.layout@npm:1.84.10"
+"@openui5/sap.ui.layout@npm:1.96.12":
+  version: 1.96.12
+  resolution: "@openui5/sap.ui.layout@npm:1.96.12"
   dependencies:
-    "@openui5/sap.ui.core": 1.84.10
-  checksum: a993e7e32463fdf859bb4f91cca3f78dbfceff33e843908ccdab3b715f544f343463f44ab2800e1fe3dd4954c426ebdf03ccf22e5d6024119f96e9353db006df
+    "@openui5/sap.ui.core": 1.96.12
+  checksum: cc2273e3cf285c3a0a4bfc67123f6193e75a630b111682aa4873c687b431435221137ffc44079d3c59ac0a5bc61870d6336b92bf7dd0739a707d647f03269445
   languageName: node
   linkType: hard
 
-"@openui5/sap.ui.unified@npm:1.84.10":
-  version: 1.84.10
-  resolution: "@openui5/sap.ui.unified@npm:1.84.10"
+"@openui5/sap.ui.unified@npm:1.96.12":
+  version: 1.96.12
+  resolution: "@openui5/sap.ui.unified@npm:1.96.12"
   dependencies:
-    "@openui5/sap.ui.core": 1.84.10
-  checksum: 549c4c6e7f823431b2e727cabdf5846ff54448174ff06edec6c89b476a5c0f1bd9e8c06623d5a89c1e6251a500139a7e1ecb74890d28b1ce15aec01c40ddfbce
+    "@openui5/sap.ui.core": 1.96.12
+  checksum: 524f73cb23e1f8d113c010f33e771eb539d2bf9afb0a874dbdc32ae69a70da359aa573f2fb432e45ca5fb427d75b85df421940c3a120842fc760e55bcc772778
   languageName: node
   linkType: hard
 
-"@openui5/themelib_sap_belize@npm:1.84.10":
-  version: 1.84.10
-  resolution: "@openui5/themelib_sap_belize@npm:1.84.10"
-  checksum: 91bb61651e5b20b9be7e96b801e664d4e5ebad67adfa692792a229dfbff6c7c7f24a7b7099d592572e112355f2dd5660688ea0301ace45af8e29387f8066c740
+"@openui5/themelib_sap_belize@npm:1.96.12":
+  version: 1.96.12
+  resolution: "@openui5/themelib_sap_belize@npm:1.96.12"
+  checksum: c78f4b5c57dd7ba288738ec6ac76ed8427e2dc3be3cc093248221a7322d034fd0b849430b2e07a60782b61416496f87df9ea35410591ac1d9ab54ae775645604
   languageName: node
   linkType: hard
 
@@ -18091,10 +18091,9 @@ typescript@^3.3.3:
     "@babel/plugin-syntax-import-meta": 7.10.4
     "@babel/preset-env": 7.14.5
     "@babel/preset-flow": 7.14.5
-    "@babel/register": ^7.18.9
-    "@openui5/sap.m": 1.84.10
-    "@openui5/sap.ui.core": 1.84.10
-    "@openui5/themelib_sap_belize": 1.84.10
+    "@openui5/sap.m": 1.96.12
+    "@openui5/sap.ui.core": 1.96.12
+    "@openui5/themelib_sap_belize": 1.96.12
     "@swc-node/core": ^1.5.1
     "@swc-node/register": ^1.3.2
     "@ui5/cli": 1.14.0
