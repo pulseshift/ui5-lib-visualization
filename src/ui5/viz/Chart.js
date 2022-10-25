@@ -2060,24 +2060,12 @@ sap.ui.define(
         }
 
         // enable/disable axis depending on microMode is active or not (call on Control to prevent fire update event)
-        Control.prototype.setProperty.call(
-          oXAxis,
-          'visible',
-          !this.getMicroMode(),
-          true
-        )
-        Control.prototype.setProperty.call(
-          oYAxis,
-          'visible',
-          !this.getMicroMode(),
-          true
-        )
-        Control.prototype.setProperty.call(
-          oY2Axis,
-          'visible',
-          !this.getMicroMode(),
-          true
-        )
+        if (this.getMicroMode()) {
+          const suppressRerender = true
+          oXAxis.setProperty('visible', false, suppressRerender)
+          oYAxis.setProperty('visible', false, suppressRerender)
+          oY2Axis.setProperty('visible', false, suppressRerender)
+        }
 
         // update x axis tick values before load (see: https://github.com/c3js/c3/issues/827)
         this._chart.internal.config.axis_x_tick_values =

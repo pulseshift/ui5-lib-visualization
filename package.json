@@ -32,7 +32,7 @@
     "srcLinks": {
       "cdn": {
         "url": "https://openui5.hana.ondemand.com/{{version}}/resources/sap-ui-core.js",
-        "version": "1.50.8",
+        "version": "1.96.12",
         "isPrebuild": true,
         "isArchive": false
       }
@@ -60,6 +60,7 @@
   "devDependencies": {
     "@babel/cli": "7.14.5",
     "@babel/core": "7.14.5",
+    "@babel/node": "^7.19.1",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-decorators": "7.14.2",
     "@babel/plugin-proposal-do-expressions": "7.14.0",
@@ -139,9 +140,9 @@
     "yargs": "17.0.1"
   },
   "dependencies": {
-    "@openui5/sap.m": "1.84.10",
-    "@openui5/sap.ui.core": "1.84.10",
-    "@openui5/themelib_sap_belize": "1.84.10",
+    "@openui5/sap.m": "1.96.12",
+    "@openui5/sap.ui.core": "1.96.12",
+    "@openui5/themelib_sap_belize": "1.96.12",
     "c3": "https://github.com/pulseshift/c3#master",
     "d3": "5.16.0",
     "lodash.debounce": "4.0.8",
